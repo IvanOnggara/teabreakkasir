@@ -49,12 +49,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="header-left" >
                 <img class="navbar-brand" align="left" src=<?php echo base_url("images/logo.png")?>>
                 <div class="dropdown active">
-                    <a href="<?php echo base_url("")?>" style="color: black;">KASIR</a>
+                    <a href=<?php echo base_url("")?> style="color: black;">KASIR</a>
                 </div>
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">STOK <i class="fa fa-caret-down"></i></a>
                     <div class="dropdown-menu">
-                        <a class="nav-link" href="#">Void Nota</a>
+                        <a class="nav-link" href=<?php echo base_url("voidnota")?>>Void Nota</a>
                     </div>
                 </div>
                 <div class="dropdown">
