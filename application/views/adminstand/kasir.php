@@ -35,6 +35,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- <script type="text/javascript" src=<echo base_url("https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js")?>></script> -->
 
 </head>
+<style type="text/css">
+.red{
+    color: red !important;
+}
+.green{
+    color: green !important;
+}
+</style>
 <body>
     <div class="header" id="header">
         <div class="col-md-7 col-sm-12">

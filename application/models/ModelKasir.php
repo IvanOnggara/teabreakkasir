@@ -59,6 +59,11 @@ class ModelKasir extends CI_Model{
         $this->db->delete($table);
     }
 
+    public function deleteWithCustomWhere($table, $where){
+        $this->db->where($where);
+        $this->db->delete($table);
+    }
+
     public function deleteAllData($table)
     {
         $this->db->empty_table($table);
@@ -96,6 +101,31 @@ class ModelKasir extends CI_Model{
         return $this->db->get()->result();
     }
 
+    public function checkExist($table,$id)
+    {
+        $listpk = array("stan"=>"id_stan","produk"=>"id_produk","nota"=>"id_nota","diskon"=>"id_diskon","detail_nota"=>"id_detail_nota","detail_stan_diskon"=>"id_diskon","detail_barang_diskon"=>"id_diskon");
+        $this->db->from($table);
+        $this->db->where($listpk[$table.""],$id);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0){
+            return true;    
+        }
+        else{
+            return false;
+        }
+    }
+
+    public function checkExistDetailBarangDiskon($where)
+    {
+        $res = $this->db->get_where('detail_barang_diskon',$where);
+        if ($res->num_rows() > 0){
+            return true;    
+        }
+        else{
+            return false;
+        }
+    }
+
     public function getAllDataOnline($table)
     {
         // $dbonline = $this->load->database('dbonline')->error();
@@ -114,18 +144,18 @@ class ModelKasir extends CI_Model{
         // // }
         // // $res=$dbonline->get($table);
         // return '$res->result()';
-        ini_set('display_errors', 0);
-        $con = mysqli_connect("localhost","root","","teabreak");
+        // ini_set('display_errors', 0);
+        // $con = mysqli_connect("localhost","root","","teabreak");
 
-        // Check connection
-        if (mysqli_connect_errno())
-          {
-          // echo "Failed to connect to MySQL: " . mysqli_connect_error();
-            return '';
-          }else{
-            $a = mysqli_query($con,"SELECT * FROM stan")->fetch_assoc();
-            return $a;
-          }
+        // // Check connection
+        // if (mysqli_connect_errno())
+        //   {
+        //   // echo "Failed to connect to MySQL: " . mysqli_connect_error();
+        //     return '';
+        //   }else{
+        //     $a = mysqli_query($con,"SELECT * FROM stan")->fetch_assoc();
+        //     return $a;
+        //   }
 
 
     }

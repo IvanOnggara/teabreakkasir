@@ -28,13 +28,44 @@ class AdminStand extends CI_Controller {
 
   	public function login()
   	{
-  		$dataallstan = $this->ModelKasir->getAllDataOnline('stan');
-  		var_dump($dataallstan);
-  		// if ($dataallstan) {
-  		// 	# code...
-  		// }
+		$json = @file_get_contents('http://localhost/teabreak/getDataStan');
+		if($json === FALSE){
+			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
+		}else{
+			$datas = json_decode($json);
+			$localdatastan = $this->ModelKasir->getSpecificColumn('stan','id_stan');
+			$onlinedatastan = array();
+			var_dump($localdatastan);
 
-  		$this->ModelKasir->deleteAllData('stan');
+			foreach ($datas as $data) {
+				$exist = $this->ModelKasir->checkExist('stan',$data->id_stan);
+				$array = array(
+			        'id_stan' => $data->id_stan,
+			        'nama_stan' => $data->nama_stan,
+			        'alamat' => $data->alamat,
+			        'password' => $data->password
+			    );
+
+				if ($exist) {
+					$where = array(
+				        'id_stan' => $data->id_stan
+				    );
+					$this->ModelKasir->update('stan', $array, $where);
+				}else{
+					$this->ModelKasir->insert('stan',$array);
+				}
+				array_push($onlinedatastan,$data->id_stan);
+			}
+
+			foreach ($localdatastan as $perstan) {
+				if (!in_array($perstan->id_stan, $onlinedatastan)) {
+					$this->ModelKasir->delete('stan',$perstan->id_stan);
+				}
+			}
+
+
+			echo "<p class='green'>(success) data stan terupdate</p>";
+		}
   		$akses = $this->session->userdata('aksesadminstan');
         if(empty($akses)){
             $this->load->view('adminstand/login');
@@ -47,7 +78,6 @@ class AdminStand extends CI_Controller {
   	{
   		$username = $this->input->post('username');
   		$password = $this->input->post('password');
-  		$password = md5($password);
   		$where = array('id_stan' => $username,'password' => $password);
   		
   		if ($this->ModelKasir->getRowCount('stan',$where) > 0) {
@@ -64,49 +94,9 @@ class AdminStand extends CI_Controller {
   	{
   		$this->session->unset_userdata('aksesadminstan');
   		$this->session->unset_userdata('id_stan');
+  		$this->session->unset_userdata('update');
   		redirect('login');
   	}
-
-  	// public function gantipassword()
-  	// {
-  	// 	$akses = $this->session->userdata('aksesadminstan');
-   //      if(empty($akses)){
-   //          redirect('login');
-   //      }else{
-   //          $this->load->view('superadminfranchise/gantipassword');//XXXX
-   //      }
-  		
-  	// }
-
-  	// public function prosesgantipassword()
-  	// {
-  	// 	$passlama = $this->input->post('passlama');
-  	// 	$passlama = md5($passlama);
-  	// 	$passbaru = $this->input->post('passbaru');
-  	// 	$passbaru = md5($passbaru);
-  	// 	$konfirmasipassbaru = $this->input->post('konfirmasipassbaru');
-  	// 	$username = $this->input->post('username');
-
-  	// 	$where = array('username' => $username,'password' => $passlama);
-  		
-  	// 	if ($this->Produk->getRowCount('alluser',$where) > 0) {
-  	// 		$data = array(
-			// 	'username' => $username,
-	  //       	'password' => $passbaru,
-	  //       	'usertype' => $usertype
-	  //       );
-			// $success = $this->Post->Update('alluser',$data,$where);
-			// if ($success) {
-			// 	echo 'true';
-			// }else{
-			// 	echo "servererror";
-			// }
-  		 	
-  	// 	}else{
-  	// 		echo "false";
-  	// 	} 
-
-  	// }
 
 	public function kasir()
 	{
@@ -114,6 +104,155 @@ class AdminStand extends CI_Controller {
         if(empty($akses)){
             redirect('login');
         }else{
+        	$updated = $this->session->userdata('update');
+
+        	if (empty($updated)) {
+        		$status = 'true';
+
+        		//DATA PRODUK
+        		$json = @file_get_contents('http://localhost/teabreak/getDataProduk');
+				if($json === FALSE){
+					
+					$status = 'false';
+				}else{
+					$datas = json_decode($json);
+					$localdataproduk = $this->ModelKasir->getSpecificColumn('produk','id_produk');
+					$onlinedataproduk = array();
+					// var_dump($localdataproduk);
+
+					foreach ($datas as $data) {
+						$exist = $this->ModelKasir->checkExist('produk',$data->id_produk);
+						$array = array(
+					        'id_produk' => $data->id_produk,
+					        'nama_produk' => $data->nama_produk,
+					        'kategori' => $data->kategori,
+					        'harga_jual' => $data->harga_jual
+					    );
+
+						if ($exist) {
+							$where = array(
+						        'id_produk' => $data->id_produk
+						    );
+							$this->ModelKasir->update('produk', $array, $where);
+						}else{
+							$this->ModelKasir->insert('produk',$array);
+						}
+						array_push($onlinedataproduk,$data->id_produk);
+					}
+
+					foreach ($localdataproduk as $perproduk) {
+						if (!in_array($perproduk->id_produk, $onlinedataproduk)) {
+							$this->ModelKasir->delete('produk',$perproduk->id_produk);
+						}
+					}
+					
+				}
+
+
+				$postdata = http_build_query(
+				    array(
+				        'id_stan' => $this->session->userdata('id_stan')
+				    )
+				);
+
+				$opts = array('http' =>
+				    array(
+				        'method'  => 'POST',
+				        'header'  => 'Content-type: application/x-www-form-urlencoded',
+				        'content' => $postdata
+				    )
+				);
+
+				$context  = stream_context_create($opts);
+
+
+
+				//DATA DISKON
+				$json = @file_get_contents('http://localhost/teabreak/getDataDiskon', false, $context);
+				if($json === FALSE){
+					
+					$status = 'false';
+				}else{
+					// var_dump($json);
+					$datas = json_decode($json);
+					$localdatadiskon = $this->ModelKasir->getSpecificColumn('diskon','id_diskon');
+					$onlinedatadiskon = array();
+					// var_dump($localdataproduk);
+
+					foreach ($datas as $data) {
+						$exist = $this->ModelKasir->checkExist('diskon',$data->id_diskon);
+						$array = array(
+					        'id_diskon' => $data->id_diskon,
+					        'nama_diskon' => $data->nama_diskon,
+					        'jenis_diskon' => $data->jenis_diskon,
+					        'tanggal_mulai' => $data->tanggal_mulai,
+					        'tanggal_akhir' => $data->tanggal_akhir,
+					        'jam_mulai' => $data->jam_mulai,
+					        'jam_akhir' => $data->jam_akhir,
+					        'hari' => $data->hari,
+					        'status' => $data->status,
+					    );
+
+						if ($exist) {
+							$where = array(
+						        'id_diskon' => $data->id_diskon
+						    );
+							$this->ModelKasir->update('diskon', $array, $where);
+						}else{
+							$this->ModelKasir->insert('diskon',$array);
+						}
+						array_push($onlinedatadiskon,$data->id_diskon);
+					}
+
+					foreach ($localdatadiskon as $perproduk) {
+						if (!in_array($perproduk->id_diskon, $onlinedatadiskon)) {
+							$this->ModelKasir->delete('diskon',$perproduk->id_diskon);
+						}
+					}
+					
+				}
+
+				//DATA DETAIL DISKON (BARANG)
+				$json = @file_get_contents('http://localhost/teabreak/getDataDetailDiskonProduk', false, $context);
+				if($json === FALSE){
+					
+					$status = 'false';
+				}else{
+					$datas = json_decode($json);
+					$localdatadetailbarangdiskon = $this->ModelKasir->getSpecificColumn('detail_barang_diskon','id_diskon,id_produk');
+					$onlinedatadetailbarangdiskon = array();
+					// var_dump($localdataproduk);
+
+					foreach ($datas as $data) {
+						$where = array('id_diskon' => $data->id_diskon,'id_produk' => $data->id_produk );
+						$exist = $this->ModelKasir->checkExistDetailBarangDiskon($where);
+						$array = array(
+							'id_diskon' => $data->id_diskon,
+					        'id_produk' => $data->id_produk
+					    );
+
+						if (!$exist) {
+							$this->ModelKasir->insert('detail_barang_diskon',$array);
+						}
+						array_push($onlinedatadetailbarangdiskon,[$data->id_diskon,$data->id_produk]);
+					}
+
+					foreach ($localdatadetailbarangdiskon as $perdetailproduk) {
+						if (!in_array([$perdetailproduk->id_diskon,$perdetailproduk->id_produk], $onlinedatadetailbarangdiskon)) {
+							$where2 = array('id_diskon' => $perdetailproduk->id_diskon,'id_produk' => $perdetailproduk->id_produk );
+							$this->ModelKasir->deleteWithCustomWhere('detail_barang_diskon', $where2);
+						}
+					}
+					if ($status == 'true') {
+						$this->session->set_userdata('update','updated');
+						echo "<p class='green'>(success) seluruh data telah terupdate</p>";
+					}else{
+						echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
+					}
+				}
+
+        	}
+
             $this->load->view('adminstand/kasir');
         }
 		

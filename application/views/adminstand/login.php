@@ -117,6 +117,20 @@
                 });
             }
         }
+
+        // $.ajax({
+        //   type:"post",
+        //   url: "http://localhost/teabreak/getDataStan",
+        //   data:{},
+        //   success:function(response)
+        //   {
+        //     console.log(response)
+        //   },
+        //   error: function (jqXHR, textStatus, errorThrown)
+        //   {
+        //     alert(errorThrown);
+        //   }
+        // });
     </script>
 
 </body>
