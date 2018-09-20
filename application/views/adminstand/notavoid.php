@@ -5,7 +5,7 @@
                 <h3 class="card-title"><strong>VOID ORDER</strong></h3>
             </div>
             <div class="card-body">
-              <button class="btn btn-info">+ Void Nota</button>
+              <!-- <button class="btn btn-info">+ Void Nota</button> -->
               <table id="mytable" class="table table-striped table-bordered">
                 <thead>
                   <tr>
@@ -30,6 +30,7 @@
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
               </div>
               <div class="modal-body">
+                  <p style="font-weight: 600!important;font-size: 4vh;color: black;text-align: center;" id="labelid"></p>
                   <div class="row">
                     <div class="col-lg-8 offset-lg-2">
                       <label class="col-lg-12">Password : <input type="password" id="password_stand"></label>
@@ -39,7 +40,7 @@
               </div>
               <div class="modal-footer">
                   <button type="button" data-dismiss="modal" onclick="reset_modal_void()" class="btn btn-default">Batal</button>
-                  <button type="button" onclick="confirm_void()" class="btn add_field_button btn-info">Tambah Item</button>
+                  <button type="button" onclick="confirm_void()" class="btn add_field_button btn-info">Void</button>
               </div>
           </div>
       </div>
@@ -78,6 +79,7 @@
     id_nota ="";
     $("#password_stand").val('');
     $("#modal_void").modal('hide');
+    $("#labelid").text('');
     $("#error").css("display", "none");;
   }
 
@@ -87,6 +89,7 @@
         keyboard: false
     });
     id_nota = id;
+    $("#labelid").text(id);
   }
 
   function confirm_void(){
@@ -97,10 +100,12 @@
             data:{ id_nota:id_nota,pwd:pwd},
             success:function(response)
             {
-              if(response[0]){
+              console.log(response);
+              if(response==true){
                 $("#error").css("display", "none");;
                 $("#modal_void").modal('hide');
                 alert("Nota dengan id "+id_nota+" sudah void!");
+                reload_table();
               }else{
                 $("#error").css("display", "block");;
               }
@@ -112,6 +117,8 @@
         }
     );
   }
+
+  var tabeldata;
 
   jQuery( document ).ready(function( $ ) {
     $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings){
@@ -140,7 +147,7 @@
         sProcessing: "loading..."
       },
       responsive: true,
-      serverSide: true,
+      serverSide: false,
       ajax: {
     "type"   : "POST",
     "url"    : "<?php echo base_url('adminstand/getListNota');?>",
@@ -153,50 +160,12 @@
           'tgl_nota'  : json[i].tanggal_nota,
           'status' : json[i].status,
           'total' : "Rp "+currency(json[i].total_harga),
-          'void' : '<button onclick=modal_confirm_void("'+json[i].id_nota+'") class="btn btn-warning" style="color:white;">Edit</button> '
+          'void' : '<button onclick=modal_confirm_void("'+json[i].id_nota+'") class="btn btn-warning" style="color:white;">Void</button> '
         })
       }
       return return_data;
     }
   },
-   dom: 'Bfrtlip',
-        buttons: [
-            {
-                extend: 'copyHtml5',
-                text: 'Copy',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            },{
-                extend: 'excelHtml5',
-                text: 'Excel',
-                className: 'exportExcel',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            },{
-                extend: 'csvHtml5',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            },{
-                extend: 'pdfHtml5',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            },{
-                extend: 'print',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            }
-        ],
-        "lengthChange": true,
   columns: [
     {'data': 'no_nota'},
     {'data': 'tgl_nota'},
@@ -213,8 +182,11 @@
       }
     });
 });
+
 function reload_table(){
   tabeldata.api().ajax.reload(null,false);
 }
+
+
 
 </script>
