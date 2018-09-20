@@ -253,6 +253,7 @@ class AdminStand extends CI_Controller {
 
         	}
 
+        	$this->load->view('adminstand/header');
             $this->load->view('adminstand/kasir');
         }
 		
