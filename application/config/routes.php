@@ -57,6 +57,7 @@ $route['login'] = 'adminstand/login';
 $route['logout'] = 'adminstand/logout';
 
 $route['kasir'] = 'adminstand/kasir';
+$route['voidnota'] = 'adminstand/viewvoidnota';
 
 $route['json'] = 'adminstand/json';
 $route['translate_uri_dashes'] = FALSE;

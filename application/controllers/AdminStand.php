@@ -285,4 +285,41 @@ class AdminStand extends CI_Controller {
 		$data = $this->ModelKasir->getAllData('nota');
 		echo json_encode($data);
 	}
+
+	public function getDiskon()
+	{
+		$data = $this->input->post('??');
+	}
+
+	public function saveNota()
+	{
+		$data = $this->input->post('??');
+		//SAVE NOTA + UPLOAD YANG BELUM TERUPLOAD
+	}
+
+	public function listNota()
+	{
+		$data = $this->ModelKasir->getAllData($table);
+		return json_encode($data);
+	}
+
+	public function voidNota()
+	{
+		$id = $this->input->post('id_nota');
+		$where = array('id_nota' => $id);
+		$data = array('status' => 'void' );
+
+		$this->ModelKasir->update('nota', $data, $where);
+	}
+
+	public function viewvoidnota(){
+
+        $akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/datatable_lappenjstan');
+        }
+	}
 }
