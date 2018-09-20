@@ -320,7 +320,7 @@ class AdminStand extends CI_Controller {
             redirect('login');
         }else{
         	$this->load->view('adminstand/header');
-			$this->load->view('adminstand/datatable_lappenjstan');
+			$this->load->view('adminstand/notavoid');
         }
 	}
 }
