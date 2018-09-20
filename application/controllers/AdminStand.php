@@ -281,12 +281,6 @@ class AdminStand extends CI_Controller {
 		echo json_encode($data);
 	}
 
-	public function getListNota()
-	{
-		$data = $this->ModelKasir->getAllData('nota');
-		echo json_encode($data);
-	}
-
 	public function getDiskon()
 	{
 		$data = $this->input->post('??');
@@ -298,11 +292,11 @@ class AdminStand extends CI_Controller {
 		//SAVE NOTA + UPLOAD YANG BELUM TERUPLOAD
 	}
 
-	public function listNota()
+	public function getListNota()
 	{
 		$where = array('status' => 'novoid');
-		$data = $this->ModelKasir->getData($where,$table);
-		return json_encode($data);
+		$data = $this->ModelKasir->getData($where,'nota');
+		echo json_encode($data);
 	}
 
 	public function voidNota()
