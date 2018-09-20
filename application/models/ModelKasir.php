@@ -125,39 +125,5 @@ class ModelKasir extends CI_Model{
             return false;
         }
     }
-
-    public function getAllDataOnline($table)
-    {
-        // $dbonline = $this->load->database('dbonline')->error();
-        // // $connected = $dbonline->initialize();
-        // // if (!$connected) {
-        // //   return 'error';
-        // // }else{
-        // //     return 'connect';
-        // // }
-        // var_dump($dbonline);
-        // // var_dump($dbonline);
-        // // if (!$this->dbutil->database_exists('teabreak')) {
-        // //     return 'error';
-        // // }else{
-        // //     return 'success';
-        // // }
-        // // $res=$dbonline->get($table);
-        // return '$res->result()';
-        // ini_set('display_errors', 0);
-        // $con = mysqli_connect("localhost","root","","teabreak");
-
-        // // Check connection
-        // if (mysqli_connect_errno())
-        //   {
-        //   // echo "Failed to connect to MySQL: " . mysqli_connect_error();
-        //     return '';
-        //   }else{
-        //     $a = mysqli_query($con,"SELECT * FROM stan")->fetch_assoc();
-        //     return $a;
-        //   }
-
-
-    }
 }
 ?>
