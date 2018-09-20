@@ -279,4 +279,10 @@ class AdminStand extends CI_Controller {
 		$data = $this->ModelKasir->getData($where,'produk');
 		echo json_encode($data);
 	}
+
+	public function getListNota()
+	{
+		$data = $this->ModelKasir->getAllData('nota');
+		echo json_encode($data);
+	}
 }
