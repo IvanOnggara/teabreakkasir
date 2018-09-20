@@ -300,17 +300,28 @@ class AdminStand extends CI_Controller {
 
 	public function listNota()
 	{
-		$data = $this->ModelKasir->getAllData($table);
+		$where = array('status' => 'novoid');
+		$data = $this->ModelKasir->getData($where,$table);
 		return json_encode($data);
 	}
 
 	public function voidNota()
 	{
 		$id = $this->input->post('id_nota');
-		$where = array('id_nota' => $id);
-		$data = array('status' => 'void' );
+		$password = $this->input->post('pwd');
+		$id_stan = $this->session->userdata('id_stan');
 
-		$this->ModelKasir->update('nota', $data, $where);
+		$where = array('id_stan' => $id_stan,'password' => $password);
+  		
+  		if ($this->ModelKasir->getRowCount('stan',$where) > 0) {
+  			$where2 = array('id_nota' => $id);
+			$data = array('status' => 'void' );
+
+			$this->ModelKasir->update('nota', $data, $where2);
+  		 	echo 'true';
+  		}else{
+  			echo "false";
+  		} 
 	}
 
 	public function viewvoidnota(){
