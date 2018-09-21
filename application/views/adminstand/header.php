@@ -83,7 +83,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <a class="nav-link" href="logout"><i class="fa fa-power-off"></i> Logout</a>
                     </div>
                 </div>
-                <button onclick="sinkronallnota()" class="dropdown float-right active">
+                <button onclick="sinkronnota()" class="dropdown float-right active">
                     <a style="color: white;"><i class="fa fa-refresh"></i> SINKRONISASI NOTA</a>
                 </button>
             </div>
