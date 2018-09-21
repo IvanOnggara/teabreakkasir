@@ -281,15 +281,67 @@ class AdminStand extends CI_Controller {
 		echo json_encode($data);
 	}
 
-	public function getDiskon()
+	public function getDiskon()//GET DISKON SETIAP PILIH PRODUK ATAU TAMBAH PRODUK ATAU KURANGI PRODUK
 	{
-		$data = $this->input->post('??');
+		$id_produk = $this->input->post('id');
+		$where = array('id_produk' => $id_produk);
+
+		$alldiskon = $this->ModelKasir->getDataDiskonForProduct($where);
+		echo json_encode($alldiskon);
 	}
 
 	public function saveNota()
 	{
-		$data = $this->input->post('??');
-		//SAVE NOTA + UPLOAD YANG BELUM TERUPLOAD
+		// $data = $this->input->post('??');
+
+
+		//SAVE NOTA
+
+
+
+
+		$whereforsinkron = array('status_upload' => 'not_upload');
+		$listnotabelumupload = $this->ModelKasir->getData($whereforsinkron,'nota');
+		$listnotarray = array();
+
+		foreach ($listnotabelumupload as $pernota) {
+			array_push($listnotarray, $pernota->id_nota);
+		}
+		$listalldetailnota = $this->ModelKasir->getDataIn('detail_nota',$listnotarray);
+		
+
+		$postdata = http_build_query(
+		    array(
+		        'allnota' => json_encode($listnotabelumupload),
+		        'detailnota' => json_encode($listalldetailnota),
+		    )
+		);
+
+		$opts = array('http' =>
+		    array(
+		        'method'  => 'POST',
+		        'header'  => 'Content-type: application/x-www-form-urlencoded',
+		        'content' => $postdata
+		    )
+		);
+
+		$context  = stream_context_create($opts);
+		//DATA DISKON
+		$send = @file_get_contents('http://localhost/teabreak/insertDataNota', false, $context);
+		if($send === FALSE){
+
+		}else{
+			if ($send == 'true') {
+				foreach ($listnotabelumupload as $nota) {
+					$where = array('id_nota' => $nota->id_nota );
+					$update = array('status_upload' => 'upload' );
+					$this->ModelKasir->update('nota',$update,$where);
+					echo "SUCCESS SAVE !";
+				}
+			}else{
+				echo $send;
+			}
+		}
 	}
 
 	public function getListNota()

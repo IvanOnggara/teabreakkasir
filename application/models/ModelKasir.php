@@ -125,5 +125,23 @@ class ModelKasir extends CI_Model{
             return false;
         }
     }
+
+    public function getDataDiskonForProduct($where)
+    {
+        $this->db->select('*');
+        $this->db->from('detail_barang_diskon');
+        $this->db->join('diskon', 'diskon.id_diskon = detail_barang_diskon.id_diskon');
+        $this->db->where($where);
+         
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function getDataIn($table,$list)
+    {
+        $this->db->from($table);
+        $this->db->where_in('id_nota', $list);
+        return $this->db->get()->result();
+    }
 }
 ?>

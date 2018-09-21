@@ -101,7 +101,7 @@
             success:function(response)
             {
               console.log(response);
-              if(response==true){
+              if(response=='true'){
                 $("#error").css("display", "none");;
                 $("#modal_void").modal('hide');
                 alert("Nota dengan id "+id_nota+" sudah void!");
