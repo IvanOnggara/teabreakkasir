@@ -300,6 +300,11 @@ class AdminStand extends CI_Controller {
 
 
 
+		sinkronnota();
+	}
+
+	public function sinkronnota()
+	{
 		$whereforsinkron = array('status_upload' => 'not_upload');
 		$listnotabelumupload = $this->ModelKasir->getData($whereforsinkron,'nota');
 		$listnotarray = array();
