@@ -136,5 +136,12 @@ class ModelKasir extends CI_Model{
         $query = $this->db->get();
         return $query->result();
     }
+
+    public function getDataIn($table,$list)
+    {
+        $this->db->from($table);
+        $this->db->where_in('id_nota', $list);
+        return $this->db->get()->result();
+    }
 }
 ?>
