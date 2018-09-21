@@ -214,8 +214,10 @@ var qty;
 var id_produk;
 var topping = new Array();
 var order = new Array();
+var order_diskon = new Array();
 var total_harus_byr=0;
 var diskon = 0;
+var diskonp=0;
 var subtotal = 0;
 var totalygdibayar=0;
 var isFirefox = typeof InstallTrigger !== 'undefined';
@@ -262,6 +264,7 @@ function tambah_item(){
     var status_topping = false;
     var count_topping = 0;
     var count;
+    var roworder;
 
     var table = document.getElementById("billtable");
     var list_idtopping = new Array();
@@ -299,6 +302,7 @@ function tambah_item(){
     }
 
     if (status_topping) {
+        roworder = count;
         order[count].qty++;
         order[count].total = order[count].qty*order[count].harga_produk;
         $("#qty"+order[count].id_order).text(order[count].qty);
@@ -320,6 +324,7 @@ function tambah_item(){
         cell5.innerHTML = '<div class="row"><p class="col-lg-9" id="totalharga'+table.rows.length+'">Rp '+currency(qty*harga_produk)+'</p><button class="col-lg-3 btn btn-danger btnremove" onclick="removeBtn(this);">X</button></div>';
         $("#modal_topping").modal('hide');
         var item = new Array();
+        roworder = table.rows.length;
         item.id_order = table.rows.length;
         item.list_idtopping = list_idtopping;
         item.nama_produk = nama_produk;
@@ -330,7 +335,39 @@ function tambah_item(){
         item.total = qty*harga_produk;
         order.push(item);
     }
-    
+
+    $.ajax({
+      type:"post",
+      url: "<?php echo base_url('adminstand/getDiskon')?>/",
+      dataType:"json",
+      data: {id:id_produk},
+      success:function(response)
+      {
+        console.log(response);
+        for(var i=0;i<response.length;i++){
+            if (response[i].jenis_diskon[0]=="p") {
+                diskonp = parseFloat(response[i].jenis_diskon.substring(6))/100;
+            }else if(response[i].jenis_diskon[0]=="r"){
+                diskon = parseInt(response[i].jenis_diskon.substring(5));
+            }else if(response[i].jenis_diskon[3]=="2"){
+                var totalqty = 0;
+                for (var j = 0; j < order.length; j++) {
+                    totalqty = totalqty+order[j].qty;
+                }
+                if (totalqty/2==0) {
+                    addDiskonItem(roworder,response[i].id_produk,nama_produk);
+                }
+            }else{
+                addDiskonItem(roworder,response[i].id_produk,nama_produk);
+            }
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown)
+      {
+        alert(errorThrown);
+      }
+    });
+
     nama_produk="";
     topping = [];
     list_idtopping = [];
@@ -342,8 +379,33 @@ function tambah_item(){
         $(this).toggleClass("activetopping");
     });
     countTotal();
-
     
+}
+
+function addDiskonItem(id,id_produk,nama_produk){
+    var table = document.getElementById("billtable");
+    var row = table.insertRow(1);
+    row.id = table.rows.length;
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    cell1.innerHTML = '<p id="#nama_produk'+table.rows.length+'">'+nama_produk+' (FREE)</p>';
+    cell2.innerHTML = '<p id="topping'+table.rows.length+'">-<button style="margin-left:1vh;" class="btn btn-success" onclick="">+</button></p>';
+    cell3.innerHTML = '<p id="qty'+table.rows.length+'" class="qtyitem btnqty">1</p>';
+    cell4.innerHTML = '<p id="satuan'+table.rows.length+'">Rp 0</p>';
+    cell5.innerHTML = '<div class="row"><p class="col-lg-9" id="totalharga'+table.rows.length+'">Rp 0</p></div>';
+    var item = new Array();
+    item.id_order = row;
+    item.list_idtopping = '-';
+    item.nama_produk = nama_produk+' FREE';
+    item.id_produk = id_produk;
+    item.topping = '-';
+    item.qty = 1;
+    item.harga_produk = 0;
+    item.total = 0;
+    order_diskon.push(item);
 }
 
 function plus(id,rowid){
@@ -398,7 +460,9 @@ function countTotal(){
     for (var i = 0;i < order.length; i++){
         subtotal = subtotal+order[i].total;
     }
-    total_harus_byr = subtotal-diskon;
+    var diskon_seluruhnya = (diskonp*subtotal)+diskon;
+    total_harus_byr = subtotal-diskon_seluruhnya;
+    $("#diskon").text("Rp "+currency(diskon_seluruhnya));
     $("#subtotal").text("Rp "+currency(subtotal));
     $("#total_harus_byr").text("Rp "+currency(total_harus_byr));
     $("#harus_bayar").text("Rp "+currency(total_harus_byr));
