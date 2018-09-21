@@ -281,14 +281,20 @@ class AdminStand extends CI_Controller {
 		echo json_encode($data);
 	}
 
-	public function getDiskon()
+	public function getDiskon()//GET DISKON SETIAP PILIH PRODUK ATAU TAMBAH PRODUK ATAU KURANGI PRODUK
 	{
-		$data = $this->input->post('??');
+		$id_produk = $this->input->post('id');
+		$where = array('id_produk' => $id_produk);
+
+		$alldiskon = $this->ModelKasir->getDataDiskonForProduct($where);
+		echo json_encode($alldiskon);
 	}
 
 	public function saveNota()
 	{
 		$data = $this->input->post('??');
+
+
 		//SAVE NOTA + UPLOAD YANG BELUM TERUPLOAD
 	}
 
