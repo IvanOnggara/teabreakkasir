@@ -673,7 +673,6 @@ function cetakNota() {
     // $("#myFrame").get(0).contentWindow.print();
     
     if (isFirefox) {
-        doc.autoPrint();
         window.open(doc.output('bloburl'), '_blank');
     }else{
         document.getElementById("myFrame").src = doc.output('bloburl');

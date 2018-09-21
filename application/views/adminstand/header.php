@@ -35,6 +35,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- <script type="text/javascript" src=<echo base_url("https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js")?>></script> -->
 
 </head>
+<script type="text/javascript">
+    function sinkronallnota() {
+        alert('sinkron');
+    }
+</script>
 <style type="text/css">
 .red{
     color: red !important;
@@ -64,10 +69,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <a class="nav-link" href="#">Menu 2</a>
                     </div>
                 </div>
+
+                
             </div>
         </div>
         <div class="col-md-5">
             <div class="header-right">
+
                 <div class="dropdown float-right">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Rio Christian</i></a>
                     <div class="dropdown-menu">
@@ -75,6 +83,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <a class="nav-link" href="logout"><i class="fa fa-power-off"></i> Logout</a>
                     </div>
                 </div>
+                <button onclick="sinkronallnota()" class="dropdown float-right active">
+                    <a style="color: white;"><i class="fa fa-refresh"></i> SINKRONISASI NOTA</a>
+                </button>
             </div>
         </div>
     </div>
