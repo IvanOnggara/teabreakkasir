@@ -611,7 +611,13 @@ function cetakNota() {
     var pembatas1 = 33;
     //inisialisasi pembatas2 = pembatas1+5
     // for(var i=0;i< order.length; i++){
-    //     //SETIAP ADA 1 ORDER JARAK PEMBATAS 2 AKAN BERTAMBAH SEBANYAK +11
+    //     
+            // doc.text('2x Tea Matcha Kelapa', 2, pembatas2);
+            // doc.text('topping : bubble', 2, pembatas1+3);
+            // doc.text('@ Rp.12.000,-', 2, pembatas1+6);
+            // doc.text('24.000,-', 56, pembatas1+3,'right');
+            //SETIAP ADA 1 ORDER JARAK PEMBATAS 2 AKAN BERTAMBAH SEBANYAK +11 (DITAMBAH SETELAH MENULISKAN TEXT PDF)
+
     // }
     var pembatas2 = pembatas1+24;
     var pembatas3 = pembatas2+21;
@@ -630,6 +636,7 @@ function cetakNota() {
 
     doc.text('============================================', 2, pembatas1);
 
+//KALAU SUDAH INI DIHAPUS SAJA
     doc.text('2x Tea Matcha Kelapa', 2, pembatas1+3);
     doc.text('topping : bubble', 2, pembatas1+6);
     doc.text('@ Rp.12.000,-', 2, pembatas1+9);
@@ -639,6 +646,8 @@ function cetakNota() {
     doc.text('topping : tidak ada', 2, pembatas1+17);
     doc.text('@ Rp.10.000,-', 2, pembatas1+20);
     doc.text('30.000,-', 56, pembatas1+17,'right');
+//BATAS MENGHAPUS
+
     doc.text('============================================', 2, pembatas2);
     doc.text('Total Item : 5', 2, pembatas2+3);
     doc.text('Total Harga :', 40, pembatas2+3,'right');
@@ -651,10 +660,8 @@ function cetakNota() {
     doc.text('100.000,-', 56, pembatas2+11,'right');
     doc.text('--------------------', 56, pembatas2+14,'right');
     doc.text('46.000,-', 56, pembatas2+17,'right');
-
     doc.text('============================================', 2, pembatas3);
 
-    // doc.addImage(imgPhone, 'JPEG', 29-15.5, 50, 3, 3)
     doc.text('Signature Milk Tea, Special Tea, ', 29, pembatas3+4, 'center');
     doc.text('Taste the Original Fresh!', 29, pembatas3+7, 'center');
     doc.setFontSize(8);
