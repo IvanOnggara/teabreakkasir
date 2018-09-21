@@ -132,6 +132,7 @@ class ModelKasir extends CI_Model{
         $this->db->from('detail_barang_diskon');
         $this->db->join('diskon', 'diskon.id_diskon = detail_barang_diskon.id_diskon');
         $this->db->where($where);
+        $this->db->order_by("jenis_diskon", "dsc");
          
         $query = $this->db->get();
         return $query->result();
