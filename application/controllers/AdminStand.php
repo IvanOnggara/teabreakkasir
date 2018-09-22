@@ -285,9 +285,26 @@ class AdminStand extends CI_Controller {
 	{
 		$id_produk = $this->input->post('id');
 		$where = array('id_produk' => $id_produk);
+		$arraytoui = array();
 
 		$alldiskon = $this->ModelKasir->getDataDiskonForProduct($where);
-		echo json_encode($alldiskon);
+
+		foreach ($alldiskon as $diskon) {
+			$where2 = array('id_diskon' => $diskon->id_diskon);
+			$listbarang = $this->ModelKasir->getListProductForDiskon($where2);
+			$produk2nya = '';
+			$first = true;
+			foreach ($listbarang as $produk2) {
+				if ($first) {
+					$produk2nya = $produk2nya.$produk2->id_produk;
+					$first = false;
+				}else{
+					$produk2nya = $produk2nya.','.$produk2->id_produk;
+				}
+			}
+			array_push($arraytoui, array('id_diskon' => $diskon->id_diskon,'nama_diskon' => $diskon->nama_diskon, 'jenis_diskon' => $diskon->jenis_diskon,'id_poduk'=> $produk2nya));
+		}
+		echo json_encode($arraytoui);
 	}
 
 	public function saveNota()
