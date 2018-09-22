@@ -334,17 +334,17 @@ class AdminStand extends CI_Controller {
 		//DATA DISKON
 		$send = @file_get_contents('http://localhost/teabreak/insertDataNota', false, $context);
 		if($send === FALSE){
-
+			echo 'CANTCONNECT';
 		}else{
 			if ($send == 'true') {
 				foreach ($listnotabelumupload as $nota) {
 					$where = array('id_nota' => $nota->id_nota );
 					$update = array('status_upload' => 'upload' );
 					$this->ModelKasir->update('nota',$update,$where);
-					echo "SUCCESS SAVE !";
+					echo "SUCCESSSAVE";
 				}
 			}else{
-				echo $send;
+				echo 'ERRORSAVE';
 			}
 		}
 	}

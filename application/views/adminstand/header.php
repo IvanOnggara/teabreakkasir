@@ -36,8 +36,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 </head>
 <script type="text/javascript">
-    function sinkronallnota() {
+    function sinkronnota() {
         alert('sinkron');
+        $('#labelsinkron').removeClass('red');
+        $('#labelsinkron').removeClass('green');
+
+        $('#labelsinkron').html('proses sinkronisasi sedang berjalan!');
+        $('#labelsinkron').addClass('orange');
+        $.ajax({
+              type:"post",
+              url: "<?php echo base_url('adminstand/sinkronnota')?>/",
+              dataType:"text",
+              success:function(response)
+              {
+                $('#labelsinkron').removeClass('orange');
+                if (response == 'CANTCONNECT') {
+                    $('#labelsinkron').html('tidak bisa konek server!');
+                    $('#labelsinkron').addClass('red');
+                }else if (response == 'SUCCESSSAVE') {
+                    $('#labelsinkron').html('sinkronisasi sukses!');
+                    $('#labelsinkron').addClass('green');
+                }else{
+                    $('#labelsinkron').html('terjadi kesalahan pada penyimpanan data!');
+                    $('#labelsinkron').addClass('red');
+                }
+              },
+              error: function (jqXHR, textStatus, errorThrown)
+              {
+                alert(errorThrown);
+              }
+          }
+    );
     }
 </script>
 <style type="text/css">
@@ -46,6 +75,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 }
 .green{
     color: green !important;
+}
+.orange{
+    color: orange !important;
 }
 </style>
 <body>
@@ -86,6 +118,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <button onclick="sinkronnota()" class="dropdown float-right active">
                     <a style="color: white;"><i class="fa fa-refresh"></i> SINKRONISASI NOTA</a>
                 </button>
+                <p class="dropdown float-right" id="labelsinkron"></p>
             </div>
         </div>
     </div>
