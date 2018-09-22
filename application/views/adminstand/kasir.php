@@ -210,6 +210,7 @@
 <script type="text/javascript">
 var nama_produk;
 var harga_produk;
+var harga_topping;
 var qty;
 var id_produk;
 var topping = new Array();
@@ -270,7 +271,7 @@ function tambah_item(){
     var list_idtopping = new Array();
     $.each($('.activetopping'), function (index, item) {
         topping.push(item.childNodes[2].value);
-        harga_produk = parseInt(harga_produk)+parseInt(item.childNodes[1].value);
+        harga_topping = parseInt(item.childNodes[1].value);
         list_idtopping.push(item.childNodes[1].id);
     });
 
@@ -304,7 +305,7 @@ function tambah_item(){
     if (status_topping) {
         roworder = count;
         order[count].qty++;
-        order[count].total = order[count].qty*order[count].harga_produk;
+        order[count].total = order[count].qty*(order[count].harga_produk+order[count].harga_topping);
         $("#qty"+order[count].id_order).text(order[count].qty);
         $("#totalharga"+order[count].id_order).text("Rp "+currency(order[count].total));
         $("#modal_topping").modal('hide');
@@ -331,8 +332,10 @@ function tambah_item(){
         item.id_produk = id_produk;
         item.topping = topping;
         item.qty = 1;
+        item.qtydisc = 0;
         item.harga_produk = harga_produk;
-        item.total = qty*harga_produk;
+        item.harga_topping = harga_topping;
+        item.total = qty*(harga_produk+harga_topping);
         order.push(item);
     }
 
@@ -343,22 +346,37 @@ function tambah_item(){
       data: {id:id_produk},
       success:function(response)
       {
-        console.log(response);
+        
         for(var i=0;i<response.length;i++){
             if (response[i].jenis_diskon[0]=="p") {
                 diskonp = parseFloat(response[i].jenis_diskon.substring(6))/100;
             }else if(response[i].jenis_diskon[0]=="r"){
                 diskon = parseInt(response[i].jenis_diskon.substring(5));
             }else if(response[i].jenis_diskon[3]=="2"){
+                
+                var arrId = new Array();
+                arrId = response[i].id_poduk.split(",");
+                
                 var totalqty = 0;
+                var total_pdiskon = 0;
+
                 for (var j = 0; j < order.length; j++) {
-                    totalqty = totalqty+order[j].qty;
+                    for(var k = 0; k < arrId.length; k++) {
+                        if(order[j].id_produk==arrId[k]){
+                            totalqty = totalqty+order[j].qty;
+                            order_diskon.push(order[j].id_order);
+                        }
+                    }
                 }
-                if (totalqty/2==0) {
-                    addDiskonItem(roworder,response[i].id_produk,nama_produk);
+
+                if ((totalqty/3)>=1) {
+                    total_pdiskon = (totalqty/3)+(totalqty%3);
+                    if (total_pdiskon>0) {
+                        diskon_termurah(total_pdiskon);    
+                    }
                 }
+                
             }else{
-                addDiskonItem(roworder,response[i].id_produk,nama_produk);
             }
         }
       },
@@ -368,11 +386,14 @@ function tambah_item(){
       }
     });
 
+    console.log(order);
     nama_produk="";
     topping = [];
     list_idtopping = [];
+    order_diskon = [];
     id_produk = "";
     harga_produk = 0;
+    harga_topping = 0;
     qty = 0;
     count=null;
     $.each($('.activetopping'), function (index, item) {
@@ -382,30 +403,37 @@ function tambah_item(){
     
 }
 
-function addDiskonItem(id,id_produk,nama_produk){
-    var table = document.getElementById("billtable");
-    var row = table.insertRow(1);
-    row.id = table.rows.length;
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
-    var cell5 = row.insertCell(4);
-    cell1.innerHTML = '<p id="#nama_produk'+table.rows.length+'">'+nama_produk+' (FREE)</p>';
-    cell2.innerHTML = '<p id="topping'+table.rows.length+'">-<button style="margin-left:1vh;" class="btn btn-success" onclick="">+</button></p>';
-    cell3.innerHTML = '<p id="qty'+table.rows.length+'" class="qtyitem btnqty">1</p>';
-    cell4.innerHTML = '<p id="satuan'+table.rows.length+'">Rp 0</p>';
-    cell5.innerHTML = '<div class="row"><p class="col-lg-9" id="totalharga'+table.rows.length+'">Rp 0</p></div>';
-    var item = new Array();
-    item.id_order = row;
-    item.list_idtopping = '-';
-    item.nama_produk = nama_produk+' FREE';
-    item.id_produk = id_produk;
-    item.topping = '-';
-    item.qty = 1;
-    item.harga_produk = 0;
-    item.total = 0;
-    order_diskon.push(item);
+function diskon_termurah(total){
+    var id_termurah=0;
+    var termurah=null;
+
+    while(total!=0){
+        for(var i=0;i<order;i++){
+            for(var j=0;j<order_diskon;j++){
+                if (order[i].id_order==order_diskon[j]&&order[i].qtydisc>=order[i].qty) {
+
+                    if (termurah==null) {
+                        termurah = order[i].harga_produk;
+                        id_termurah = i;
+                    }else{
+                        if (termurah>order[i].harga_produk) {
+                            termurah = order[i].harga_produk;
+                            id_termurah = i;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (total>order[id_termurah].qty) {
+            total = total-order[id_termurah].qty;
+            order[id_termurah].qtydisc = order[id_termurah].qty;
+        }else{
+            total = 0;
+            order[id_termurah].qtydisc = order[id_termurah].qty-total;
+        }
+    }
 }
 
 function plus(id,rowid){
