@@ -41,7 +41,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $('#labelsinkron').removeClass('red');
         $('#labelsinkron').removeClass('green');
 
-        $('#labelsinkron').html('proses sinkronisasi sedang berjalan!');
+        $('#labelsinkron').html('LOADING...');
         $('#labelsinkron').addClass('orange');
         $.ajax({
               type:"post",
@@ -51,13 +51,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
               {
                 $('#labelsinkron').removeClass('orange');
                 if (response == 'CANTCONNECT') {
-                    $('#labelsinkron').html('tidak bisa konek server!');
+                    $('#labelsinkron').html('KONEKSI ERROR!');
                     $('#labelsinkron').addClass('red');
                 }else if (response == 'SUCCESSSAVE') {
-                    $('#labelsinkron').html('sinkronisasi sukses!');
+                    $('#labelsinkron').html('SINKRONISASI SUKSES!');
                     $('#labelsinkron').addClass('green');
                 }else{
-                    $('#labelsinkron').html('terjadi kesalahan pada penyimpanan data!');
+                    $('#labelsinkron').html('PENYIMPANAN GAGAL!');
                     $('#labelsinkron').addClass('red');
                 }
               },
@@ -78,6 +78,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 }
 .orange{
     color: orange !important;
+}
+.center {
+    margin: auto;
+    padding: 10px;
 }
 </style>
 <body>
@@ -118,7 +122,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <button onclick="sinkronnota()" class="dropdown float-right active">
                     <a style="color: white;"><i class="fa fa-refresh"></i> SINKRONISASI NOTA</a>
                 </button>
-                <p class="dropdown float-right" id="labelsinkron"></p>
+                <p class="center float-right" id="labelsinkron"></p>
             </div>
         </div>
     </div>
