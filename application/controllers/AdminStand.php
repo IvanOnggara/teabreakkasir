@@ -284,7 +284,7 @@ class AdminStand extends CI_Controller {
 	public function getDiskon()//GET DISKON SETIAP PILIH PRODUK ATAU TAMBAH PRODUK ATAU KURANGI PRODUK
 	{
 		$id_produk = $this->input->post('id');
-		$where = array('diskon.id_produk' => $id_produk);
+		$where = array('produk.id_produk' => $id_produk);
 		$arraytoui = array();
 
 		$alldiskon = $this->ModelKasir->getDataDiskonForProduct($where);
