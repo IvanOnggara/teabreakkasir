@@ -210,7 +210,7 @@
 <script type="text/javascript">
 var nama_produk;
 var harga_produk;
-var harga_topping;
+var harga_topping=0;
 var qty;
 var id_produk;
 var topping = new Array();
@@ -246,19 +246,6 @@ function pembayaran(){
 function resetbyr(){
     $("#modal_bayar").modal('hide');
     $("#total_bayar").text('0');
-}
-
-function removeBtn(rowid){
-    var i = rowid.parentNode.parentNode.parentNode.rowIndex;
-    document.getElementById("billtable").deleteRow(i);
-    row = rowid.parentNode.parentNode.parentNode.id;
-    for (var i = 0; i < order.length; i++) {
-        if (order[i].id_order==row) {
-            order.splice(i, 1);
-            break;
-        }
-    }
-    countTotal();
 }
 
 function tambah_item(){
@@ -305,7 +292,7 @@ function tambah_item(){
     if (status_topping) {
         roworder = count;
         order[count].qty++;
-        order[count].total = order[count].qty*(order[count].harga_produk+order[count].harga_topping);
+        order[count].total = parseInt(order[count].qty)*(parseInt(order[count].harga_produk)+parseInt(order[count].harga_topping));
         $("#qty"+order[count].id_order).text(order[count].qty);
         $("#totalharga"+order[count].id_order).text("Rp "+currency(order[count].total));
         $("#modal_topping").modal('hide');
@@ -335,10 +322,27 @@ function tambah_item(){
         item.qtydisc = 0;
         item.harga_produk = harga_produk;
         item.harga_topping = harga_topping;
-        item.total = qty*(harga_produk+harga_topping);
+        item.total = parseInt(qty)*(parseInt(harga_produk)+parseInt(harga_topping));
         order.push(item);
     }
 
+    hitungDiskon(id_produk);
+
+    nama_produk="";
+    topping = [];
+    list_idtopping = [];
+    order_diskon = [];
+    id_produk = "";
+    harga_produk = 0;
+    harga_topping = 0;
+    qty = 0;
+    count=null;
+    $.each($('.activetopping'), function (index, item) {
+        $(this).toggleClass("activetopping");
+    });
+}
+
+function hitungDiskon(id_produk){
     $.ajax({
       type:"post",
       url: "<?php echo base_url('adminstand/getDiskon')?>/",
@@ -349,11 +353,13 @@ function tambah_item(){
         
         for(var i=0;i<response.length;i++){
             if (response[i].jenis_diskon[0]=="p") {
+                console.log("DISKONPERSEN "+response[i].id_poduk);
                 diskonp = parseFloat(response[i].jenis_diskon.substring(6))/100;
             }else if(response[i].jenis_diskon[0]=="r"){
+                console.log("DISKONRUPIAH "+response[i].id_produk);
                 diskon = parseInt(response[i].jenis_diskon.substring(5));
             }else if(response[i].jenis_diskon[3]=="2"){
-                
+                console.log("DISKONBUY2GET1 "+response[i].id_poduk);
                 var arrId = new Array();
                 arrId = response[i].id_poduk.split(",");
                 
@@ -369,54 +375,62 @@ function tambah_item(){
                     }
                 }
 
-                if ((totalqty/3)>=1) {
-                    total_pdiskon = (totalqty/3)+(totalqty%3);
-                    if (total_pdiskon>0) {
-                        diskon_termurah(total_pdiskon);    
+                total_pdiskon = parseInt(totalqty/3);
+                if (total_pdiskon>0) {
+                    diskon_termurah(total_pdiskon);    
+                }else{
+                    for (var l = 0; l < order.length; l++) {
+                        order[l].qtydisc = 0;
+                        order[l].total = parseInt(order[l].qty)*(parseInt(order[l].harga_produk)+parseInt(order[l].harga_topping));
+                        $("#totalharga"+order[l].id_order).text("Rp "+currency(order[l].total));
                     }
                 }
+
+            }else if(response[i].jenis_diskon[3]=="1"){
+                console.log("DISKONBUY1GET1 "+response[i].id_poduk);
+                var arrId = new Array();
+                arrId = response[i].id_poduk.split(",");
                 
-            }else{
+                var totalqty = 0;
+                var total_pdiskon = 0;
+
+                for (var j = 0; j < order.length; j++) {
+                    for(var k = 0; k < arrId.length; k++) {
+                        if(order[j].id_produk==arrId[k]){
+                            totalqty = totalqty+order[j].qty;
+                            order_diskon.push(order[j].id_order);
+                        }
+                    }
+                }
+
+                total_pdiskon = parseInt(totalqty/2);
+                if (total_pdiskon>0) {
+                    diskon_termurah(total_pdiskon);    
+                }
             }
         }
+
+        countTotal();
       },
       error: function (jqXHR, textStatus, errorThrown)
       {
         alert(errorThrown);
       }
     });
-
-    console.log(order);
-    nama_produk="";
-    topping = [];
-    list_idtopping = [];
-    order_diskon = [];
-    id_produk = "";
-    harga_produk = 0;
-    harga_topping = 0;
-    qty = 0;
-    count=null;
-    $.each($('.activetopping'), function (index, item) {
-        $(this).toggleClass("activetopping");
-    });
-    countTotal();
-    
 }
 
 function diskon_termurah(total){
     var id_termurah=0;
     var termurah=null;
-
     while(total!=0){
-        for(var i=0;i<order;i++){
-            for(var j=0;j<order_diskon;j++){
-                if (order[i].id_order==order_diskon[j]&&order[i].qtydisc>=order[i].qty) {
-
-                    if (termurah==null) {
+        for(var i=0;i<order.length;i++){
+            for(var j=0;j<order_diskon.length;j++){
+                if (order[i].id_order==order_diskon[j]&&order[i].qtydisc<=order[i].qty) {
+                    if (i==0) {
                         termurah = order[i].harga_produk;
                         id_termurah = i;
                     }else{
-                        if (termurah>order[i].harga_produk) {
+                        if (parseInt(order[i].harga_produk)<parseInt(termurah)) {
                             termurah = order[i].harga_produk;
                             id_termurah = i;
                         }
@@ -426,14 +440,22 @@ function diskon_termurah(total){
         }
 
 
-        if (total>order[id_termurah].qty) {
+        if (total>=parseInt(order[id_termurah].qty)) {
             total = total-order[id_termurah].qty;
             order[id_termurah].qtydisc = order[id_termurah].qty;
         }else{
+            order[id_termurah].qtydisc = total;
             total = 0;
-            order[id_termurah].qtydisc = order[id_termurah].qty-total;
         }
+        order[id_termurah].total = (parseInt(order[id_termurah].qty-order[id_termurah].qtydisc))*(parseInt(order[id_termurah].harga_produk)+(parseInt(order[id_termurah].harga_topping)*parseInt(order[id_termurah].qty)));
+        
+        $("#totalharga"+order[id_termurah].id_order).text("Rp "+currency(order[id_termurah].total));
     }
+
+    console.log(order);
+    console.log(id_termurah);
+    termurah = null;
+    id_termurah = 0;
 }
 
 function plus(id,rowid){
@@ -441,17 +463,34 @@ function plus(id,rowid){
     value = parseInt(value)+1;
     satuan = parseInt($("#satuan"+id).text().substring(3).replace('.',''));
     $("#qty"+id).text(value);
-    $("#totalharga"+id).text("Rp "+currency(value*satuan));
     row = rowid.parentNode.parentNode.id;
     for (var i = 0; i < order.length; i++) {
         if (order[i].id_order==row) {
             order[i].qty = value;
-            order[i].total = value*satuan;
+            hitungDiskon(order[i].id_produk);
             break;
+        }
+    }
+}
+
+function removeBtn(rowid){
+    var i = rowid.parentNode.parentNode.parentNode.rowIndex;
+    document.getElementById("billtable").deleteRow(i);
+    row = rowid.parentNode.parentNode.parentNode.id;
+    for (var i = 0; i < order.length; i++) {
+        for(var j = 0;j<order_diskon;j++){
+            if (order_diskon[j]==row) {
+                order_diskon.splice(j,1);
+            }
+        }
+        hitungDiskon(order[i].id_produk);
+        if (order[i].id_order==row) {
+            order.splice(i, 1);
         }
     }
     countTotal();
 }
+
 
 function minus(id,rowid){
     var value = $("#qty"+id).text();
@@ -463,16 +502,18 @@ function minus(id,rowid){
         for (var i = 0; i < order.length; i++) {
             if (order[i].id_order==row) {
                 order[i].qty = value;
-                order[i].total = value*satuan;
+                hitungDiskon(order[i].id_produk);
             }
         }
         $("#qty"+id).text(value);
         $("#totalharga"+id).text("Rp "+currency(value*satuan));
     }else{
-        var i = rowid.parentNode.parentNode.rowIndex;
-        document.getElementById("billtable").deleteRow(i);
-        row = rowid.parentNode.parentNode.id;
         for (var i = 0; i < order.length; i++) {
+            for(var j = 0;j<order_diskon;j++){
+                if (order_diskon[j]==row) {
+                    order_diskon.splice(j,1);
+                }
+            }
             if (order[i].id_order==row) {
                 order.splice(i, 1);
                 break;
@@ -486,10 +527,10 @@ function countTotal(){
     total_harus_byr=0;
     subtotal = 0;
     for (var i = 0;i < order.length; i++){
-        subtotal = subtotal+order[i].total;
+        subtotal = parseInt(subtotal)+parseInt(order[i].total);
     }
-    var diskon_seluruhnya = (diskonp*subtotal)+diskon;
-    total_harus_byr = subtotal-diskon_seluruhnya;
+    var diskon_seluruhnya = (parseInt(diskonp)*parseInt(subtotal))+parseInt(diskon);
+    total_harus_byr = parseInt(subtotal)-parseInt(diskon_seluruhnya);
     $("#diskon").text("Rp "+currency(diskon_seluruhnya));
     $("#subtotal").text("Rp "+currency(subtotal));
     $("#total_harus_byr").text("Rp "+currency(total_harus_byr));
