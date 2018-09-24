@@ -370,19 +370,18 @@ function hitungDiskon(id_produk){
         for(var i=0;i<response.length;i++){
             if (response[i].jenis_diskon[0]=="p") {
                 // console.log("DISKONPERSEN "+response[i].id_poduk);
-                var dis = parseFloat(response[i].jenis_diskon.substring(6))/100;
+                var dis = parseFloat(response[i].jenis_diskon.replace('persen',''))/100;
+                console.log(dis);
                 for (var a = 0; a < order.length; a++) {
 
                     var arrId = new Array();
                     arrId = response[i].id_poduk.split(",");
 
-                    for (var j = 0; j < order.length; j++) {
-                        for(var k = 0; k < arrId.length; k++) {
-                            if(order[j].id_produk==arrId[k]){
-                                if (!list_diskon.includes(response[i].id_diskon)) {
-                                    list_diskon.push(response[i].id_diskon);
-                                    diskon = parseInt(diskon)+(parseFloat(dis)*(parseInt((parseInt(order[j].qty)-parseInt(order[j].qtydisc))*parseInt(order[j].harga_produk))));
-                                }
+                    for(var k = 0; k < arrId.length; k++) {
+                        if(order[a].id_produk==arrId[k]){
+                            if (!list_diskon.includes(response[i].id_diskon)) {
+                                list_diskon.push(response[i].id_diskon);
+                                order[a].diskon = (parseFloat(dis)*(parseInt((parseInt(order[a].qty)-parseInt(order[a].qtydisc))*parseInt(order[a].harga_produk))));
                             }
                         }
                     }
@@ -391,21 +390,18 @@ function hitungDiskon(id_produk){
                     $("#totalharga"+order[a].id_order).text("Rp "+currency(order[a].total));
                 }
 
-            }else if(response[i].jenis_diskon[0]=="r"){
+            }else if(response[i].jenis_diskon[0]=="n"){
                 // console.log("DISKONRUPIAH "+response[i].id_produk);
-                var dis = parseInt(response[i].jenis_diskon.substring(5));
+                var dis = parseInt(response[i].jenis_diskon.replace('nominal',''));
                 for (var a = 0; a < order.length; a++) {
 
                     var arrId = new Array();
                     arrId = response[i].id_poduk.split(",");
-
-                    for (var j = 0; j < order.length; j++) {
-                        for(var k = 0; k < arrId.length; k++) {
-                            if(order[j].id_produk==arrId[k]){
-                                if (!list_diskon.includes(response[i].id_diskon)) {
-                                    list_diskon.push(response[i].id_diskon);
-                                    diskon = parseInt(diskon)+dis;
-                                }
+                    for(var k = 0; k < arrId.length; k++) {
+                        if(order[a].id_produk==arrId[k]){
+                            if (!list_diskon.includes(response[i].id_diskon)) {
+                                list_diskon.push(response[i].id_diskon);
+                                diskon = parseInt(diskon)+dis;
                             }
                         }
                     }
@@ -576,6 +572,14 @@ function minus(id,rowid){
                 order.splice(i, 1);
             }
         }
+        if (order.length>0) {
+            for(var k = 0;k<order.length;k++){
+                hitungDiskon(order[k].id_produk);
+            }
+        }else{
+            diskon = 0;
+            list_diskon = [];
+        }
         var a = rowid.parentNode.parentNode.rowIndex;
         document.getElementById("billtable").deleteRow(a);
     }
@@ -587,6 +591,7 @@ function countTotal(){
     subtotal = 0;
     for (var i = 0;i < order.length; i++){
         subtotal = parseInt(subtotal)+parseInt(order[i].total);
+        diskon = parseInt(diskon)+order[i].diskon;
     }
     total_harus_byr = parseInt(subtotal)-parseInt(diskon);
     $("#diskon").text("Rp "+currency(diskon));
