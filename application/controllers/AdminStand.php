@@ -402,4 +402,24 @@ class AdminStand extends CI_Controller {
 			$this->load->view('adminstand/notavoid');
         }
 	}
+
+	public function stokmasuk(){
+		# code...
+	}
+
+	public function stokkeluar(){
+		# code...
+	}
+
+	public function laporanstok(){
+		# code...
+	}
+
+	public function pengeluaranlain(){
+		# code...
+	}
+
+	public function orderproduk(){
+		# code...
+	}
 }

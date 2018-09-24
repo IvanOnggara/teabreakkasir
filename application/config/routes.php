@@ -58,6 +58,12 @@ $route['logout'] = 'adminstand/logout';
 
 $route['kasir'] = 'adminstand/kasir';
 $route['voidnota'] = 'adminstand/viewvoidnota';
+$route['stokmasuk'] = 'adminstand/stokmasuk';
+$route['stokkeluar'] = 'adminstand/stokkeluar';
+$route['laporanstok'] = 'adminstand/laporanstok';
+$route['pengeluaranlain'] = 'adminstand/pengeluaranlain';
+$route['orderproduk'] = 'adminstand/orderproduk';
+
 
 $route['json'] = 'adminstand/json';
 $route['translate_uri_dashes'] = FALSE;
