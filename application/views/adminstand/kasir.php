@@ -318,6 +318,7 @@ function tambah_item(){
         item.nama_produk = nama_produk;
         item.id_produk = id_produk;
         item.topping = topping;
+        item.diskon = 0;
         item.qty = 1;
         item.qtydisc = 0;
         item.harga_produk = harga_produk;
@@ -353,13 +354,13 @@ function hitungDiskon(id_produk){
         
         for(var i=0;i<response.length;i++){
             if (response[i].jenis_diskon[0]=="p") {
-                console.log("DISKONPERSEN "+response[i].id_poduk);
+                // console.log("DISKONPERSEN "+response[i].id_poduk);
                 diskonp = parseFloat(response[i].jenis_diskon.substring(6))/100;
             }else if(response[i].jenis_diskon[0]=="r"){
-                console.log("DISKONRUPIAH "+response[i].id_produk);
+                // console.log("DISKONRUPIAH "+response[i].id_produk);
                 diskon = parseInt(response[i].jenis_diskon.substring(5));
             }else if(response[i].jenis_diskon[3]=="2"){
-                console.log("DISKONBUY2GET1 "+response[i].id_poduk);
+                // console.log("DISKONBUY2GET1 "+response[i].id_poduk);
                 var arrId = new Array();
                 arrId = response[i].id_poduk.split(",");
                 
@@ -452,8 +453,6 @@ function diskon_termurah(total){
         $("#totalharga"+order[id_termurah].id_order).text("Rp "+currency(order[id_termurah].total));
     }
 
-    console.log(order);
-    console.log(id_termurah);
     termurah = null;
     id_termurah = 0;
 }
@@ -468,7 +467,6 @@ function plus(id,rowid){
         if (order[i].id_order==row) {
             order[i].qty = value;
             hitungDiskon(order[i].id_produk);
-            break;
         }
     }
 }
@@ -494,11 +492,10 @@ function removeBtn(rowid){
 
 function minus(id,rowid){
     var value = $("#qty"+id).text();
-
+    row = rowid.parentNode.parentNode.id;
     if (parseInt(value)>1) {
         value = parseInt(value)-1;
         satuan = parseInt($("#satuan"+id).text().substring(3).replace('.',''));
-        row = rowid.parentNode.parentNode.id;
         for (var i = 0; i < order.length; i++) {
             if (order[i].id_order==row) {
                 order[i].qty = value;
@@ -510,15 +507,16 @@ function minus(id,rowid){
     }else{
         for (var i = 0; i < order.length; i++) {
             for(var j = 0;j<order_diskon;j++){
-                if (order_diskon[j]==row) {
+                if (order_diskon[j]==rowid) {
                     order_diskon.splice(j,1);
                 }
             }
             if (order[i].id_order==row) {
                 order.splice(i, 1);
-                break;
             }
         }
+        var a = rowid.parentNode.parentNode.rowIndex;
+        document.getElementById("billtable").deleteRow(a);
     }
     countTotal();
 }
