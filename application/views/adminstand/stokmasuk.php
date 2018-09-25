@@ -26,18 +26,20 @@
 		</div>
 	</div>
 	<div class="row">
-		<table id="mytable" class="table table-striped table-bordered">
-	        <thead>
-	          <tr>
-	            <th>ID Produk</th>
-	            <th>Nama Produk</th>
-	            <th>Kategori</th>
-	            <th>Harga Jual</th>
-	            <th>Edit</th>
-	            <th>Delete</th>
-	          </tr>
-	        </thead>
-	    </table>
+		<div class="col-md-12 col-sm-12">
+			<table id="mytable" class="table table-striped table-bordered">
+		        <thead class="thead-dark">
+		          <tr>
+		            <th style="width: 15%;">ID Bahan Jadi</th>
+		            <th style="width: 35%;">Nama Bahan Jadi</th>
+		            <th style="width: 25%;">Tanggal</th>
+		            <th style="width: 12.5%;">Edit</th>
+		            <th style="width: 12.5%;">Delete</th>
+		          </tr>
+		        </thead>
+		    </table>
+		</div>
+		
 	</div>
 </div>
 
