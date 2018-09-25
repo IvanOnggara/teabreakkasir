@@ -6,6 +6,39 @@
 	        </div>
 		</div>
 	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-5 col-sm-12">
+			<div class="form-group">
+			  	<label>Nama Bahan Jadi</label>
+			  	<input type="text" class="form-control" id="namabahanjadi" placeholder="Nama Bahan Jadi">
+			</div>
+		</div>
+		<div class="col-md-5 col-sm-12">
+			<div class="form-group">
+			  	<label>Stok Masuk</label>
+			  	<input type="text" class="form-control" id="stokmasuk" placeholder="Stok Masuk">
+			</div>
+		</div>
+		<div class="col-md-2 col-sm-12">
+			<label for="usr">Action</label>
+			<button class="btn btn-success" id="buttontambahstok">Tambah Stok Masuk</button>
+		</div>
+	</div>
+	<div class="row">
+		<table id="mytable" class="table table-striped table-bordered">
+	        <thead>
+	          <tr>
+	            <th>ID Produk</th>
+	            <th>Nama Produk</th>
+	            <th>Kategori</th>
+	            <th>Harga Jual</th>
+	            <th>Edit</th>
+	            <th>Delete</th>
+	          </tr>
+	        </thead>
+	    </table>
+	</div>
 </div>
 
 
