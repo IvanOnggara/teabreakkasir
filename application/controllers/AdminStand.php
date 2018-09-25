@@ -288,25 +288,27 @@ class AdminStand extends CI_Controller {
 		$arraytoui = array();
 
 		// $alldiskon = $this->ModelKasir->getDataDiskonForProduct($where);
+		$alldiskon = $this->ModelKasir->getAllData('diskon');
 
-		// foreach ($alldiskon as $diskon) {
-		// 	$where2 = array('diskon.id_diskon' => $diskon->id_diskon);
-		// 	$listbarang = $this->ModelKasir->getListProductForDiskon($where2);
-		// 	$produk2nya = '';
-		// 	$first = true;
-		// 	foreach ($listbarang as $produk2) {
-		// 		if ($first) {
-		// 			$produk2nya = $produk2nya.$produk2->id_produk;
-		// 			$first = false;
-		// 		}else{
-		// 			$produk2nya = $produk2nya.','.$produk2->id_produk;
-		// 		}
-		// 	}
-		// 	array_push($arraytoui, array('id_diskon' => $diskon->id_diskon,'nama_diskon' => $diskon->nama_diskon, 'jenis_diskon' => $diskon->jenis_diskon,'id_poduk'=> $produk2nya));
-		// }
+		foreach ($alldiskon as $diskon) {
+			// $where2 = array('diskon.id_diskon' => $diskon->id_diskon);
+			$where2 = array('id_diskon' => $diskon->id_diskon);
+			$listbarang = $this->ModelKasir->getListProductForDiskon($where2);
+			$produk2nya = '';
+			$first = true;
+			foreach ($listbarang as $produk2) {
+				if ($first) {
+					$produk2nya = $produk2nya.$produk2->id_produk;
+					$first = false;
+				}else{
+					$produk2nya = $produk2nya.','.$produk2->id_produk;
+				}
+			}
+			array_push($arraytoui, array('id_diskon' => $diskon->id_diskon,'nama_diskon' => $diskon->nama_diskon, 'jenis_diskon' => $diskon->jenis_diskon,'id_poduk'=> $produk2nya));
+		}
 
-		$send = $this->ModelKasir->getAllData('diskon');
-		echo json_encode($send);
+		
+		echo json_encode($arraytoui);
 	}
 
 	public function saveNota()
