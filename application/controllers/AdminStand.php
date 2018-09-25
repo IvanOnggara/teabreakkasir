@@ -404,22 +404,52 @@ class AdminStand extends CI_Controller {
 	}
 
 	public function stokmasuk(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/stokmasuk');
+        }
 	}
 
 	public function stokkeluar(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/stokkeluar');
+        }
 	}
 
 	public function laporanstok(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/laporanstok');
+        }
 	}
 
 	public function pengeluaranlain(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/pengeluaranlain');
+        }
 	}
 
 	public function orderproduk(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/orderproduk');
+        }
 	}
 }
