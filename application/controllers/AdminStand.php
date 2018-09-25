@@ -292,7 +292,7 @@ class AdminStand extends CI_Controller {
 
 		foreach ($alldiskon as $diskon) {
 			// $where2 = array('diskon.id_diskon' => $diskon->id_diskon);
-			$where2 = array('id_diskon' => $diskon->id_diskon);
+			$where2 = array('diskon.id_diskon' => $diskon->id_diskon);
 			$listbarang = $this->ModelKasir->getListProductForDiskon($where2);
 			$produk2nya = '';
 			$first = true;
