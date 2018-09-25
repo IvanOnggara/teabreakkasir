@@ -244,14 +244,10 @@ function pembayaran(){
     hitungKembalian();
 }
 
-//MERESET NILAI DARI MODAL BAYAR
-
 function resetbyr(){
     $("#modal_bayar").modal('hide');
     $("#total_bayar").text('0');
 }
-
-//UNTUK MENAMBAHKAN ITEM BARU MELALUI PENEKANAN TOMBOL MENU
 
 function tambah_item(){
     var status_topping = false;
@@ -261,22 +257,15 @@ function tambah_item(){
 
     var table = document.getElementById("billtable");
     var list_idtopping = new Array();
-
-    //MENDAPATKAN LIST DAN HARGA TOPPING
-
     $.each($('.activetopping'), function (index, item) {
         topping.push(item.childNodes[2].value);
         harga_topping = parseInt(item.childNodes[1].value);
         list_idtopping.push(item.childNodes[1].id);
     });
 
-    //JIKA TOPPING TIDAK ADA MAKA DIBERI PENANDA
-
     if (topping.length<1) {
         topping.push("-");   
     }
-
-    //MENGECEK JIKA MEMILIKI ID PRODUK YANG SAMA DAN TOPPING YANG SAMA
 
     if (table.rows.length>1) {
         for (var i = 0; i < order.length; i++) {
@@ -300,8 +289,6 @@ function tambah_item(){
             }
         }
     }
-
-    //JIKA MEMILIKI ID DAN TOPPING YANG SAMA MAKA DILAKUKAN PENAMBAHAN QTY SAJA PADA PRODUK, JIKA TIDAK DITAMBAH ROW BARU
 
     if (status_topping) {
         roworder = count;
@@ -341,7 +328,7 @@ function tambah_item(){
         order.push(item);
     }
 
-    hitungDiskon();
+    hitungDiskon(id_produk);
 
     nama_produk="";
     topping = [];
@@ -357,112 +344,129 @@ function tambah_item(){
     });
 }
 
-function hitungDiskon(){
+function containDiskon(array,abc){
+    var stat = false;
+    for(var a = 0;a<array.length;a++){
+        if (array[a]==abc) {
+            stat = true;
+        }
+    }
+    console.log(array.length);
+    alert(stat+"_"+abc);
+    return stat;
+}
+
+function hitungDiskon(id_produk){
     $.ajax({
       type:"post",
       url: "<?php echo base_url('adminstand/getDiskon')?>/",
       dataType:"json",
+      data: {id:id_produk},
       success:function(response)
       {
-
-        list_diskon = [];
-
-        //UNTUK MENGOSONGKAN JUMLAH DISKON PADA ORDER
-
-        for(var i =0;i<order.length;i++){
-            order[i].qtydisc = 0;
-            order[i].diskon = 0;
-            order[i].total = (parseInt(order[i].qty)-parseInt(order[i].qtydisc))*(parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping));
-        }
-
-        //UNTUK MENGECEK DAN MENGHITUNG DISKON
-
-        for(var i =0;i<order.length;i++){
-            for(var j = 0;j<response.length;j++){
-                if (response[j].jenis_diskon[0]=="p") {
-                    var arrId = new Array();
-                    arrId = response[j].id_poduk.split(",");
-                    if (arrId.includes(order[i].id_produk)) {
-                        var dis = parseFloat(response[j].jenis_diskon.replace('persen',''))/100;
-                        var disc = (parseFloat(dis)*(parseInt((parseInt(order[i].qty)-parseInt(order[i].qtydisc))*parseInt(order[i].harga_produk))));
-                        order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
-                        if (!list_diskon.includes(response[j].id_diskon)) {
-                            list_diskon.push(response[j].id_diskon);
-                        }
-                    }
-                }else if(response[j].jenis_diskon[0]=="n"){
-                    var arrId = new Array();
-                    arrId = response[j].id_poduk.split(",");
-                    if (arrId.includes(order[i].id_produk)) {
-                        var dis = parseInt(response[j].jenis_diskon.replace('nominal',''));
-                        order[i].diskon = parseInt(order[i].diskon)+parseInt(dis);
-                        if (!list_diskon.includes(response[j].id_diskon)) {
-                            list_diskon.push(response[j].id_diskon);
-                        }
-                    }
-                }else if(response[j].jenis_diskon[3]=="2"){
+       list_diskon = new Array();
+       diskon = 0;
+       if (response.length>=1) {
+        for(var i=0;i<response.length;i++){
+            if (response[i].jenis_diskon[0]=="p") {
+                // console.log("DISKONPERSEN "+response[i].id_poduk);
+                var dis = parseFloat(response[i].jenis_diskon.replace('persen',''))/100;
+                console.log(dis);
+                for (var a = 0; a < order.length; a++) {
 
                     var arrId = new Array();
-                    arrId = response[j].id_poduk.split(",");
-                    
-                    var totalqty = 0;
-                    var total_pdiskon = 0;
+                    arrId = response[i].id_poduk.split(",");
 
-                    for (var k = 0; k < order.length; k++) {
-                        for(var l = 0; l < arrId.length; l++) {
-                            if(order[k].id_produk==arrId[l]){
-                                totalqty = totalqty+order[k].qty;
-                                if (!list_diskon.includes(response[j].id_diskon)) {
-                                    list_diskon.push(response[j].id_diskon);
-                                }
+                    for(var k = 0; k < arrId.length; k++) {
+                        if(order[a].id_produk==arrId[k]){
+                            if (!list_diskon.includes(response[i].id_diskon)) {
+                                list_diskon.push(response[i].id_diskon);
+                                order[a].diskon = (parseFloat(dis)*(parseInt((parseInt(order[a].qty)-parseInt(order[a].qtydisc))*parseInt(order[a].harga_produk))));
                             }
                         }
                     }
 
-                    total_pdiskon = parseInt(totalqty/3);
-                    if (total_pdiskon>0) {
-                        diskon_termurah(total_pdiskon);    
-                    }
+                    order[a].total = (parseInt(order[a].qty)-parseInt(order[a].qtydisc))*(parseInt(order[a].harga_produk)+parseInt(order[a].harga_topping));
+                    $("#totalharga"+order[a].id_order).text("Rp "+currency(order[a].total));
+                }
 
-                }else if(response[j].jenis_diskon[3]=="1"){
+            }else if(response[i].jenis_diskon[0]=="n"){
+                // console.log("DISKONRUPIAH "+response[i].id_produk);
+                var dis = parseInt(response[i].jenis_diskon.replace('nominal',''));
+                for (var a = 0; a < order.length; a++) {
+
                     var arrId = new Array();
-                    arrId = response[j].id_poduk.split(",");
-                    
-                    var totalqty = 0;
-                    var total_pdiskon = 0;
-
-                    for (var k = 0; k < order.length; k++) {
-                        for(var l = 0; l < arrId.length; l++) {
-                            if(order[k].id_produk==arrId[l]){
-                                totalqty = totalqty+order[k].qty;
-                                if (!list_diskon.includes(response[j].id_diskon)) {
-                                    list_diskon.push(response[j].id_diskon);
-                                }
+                    arrId = response[i].id_poduk.split(",");
+                    for(var k = 0; k < arrId.length; k++) {
+                        if(order[a].id_produk==arrId[k]){
+                            if (!list_diskon.includes(response[i].id_diskon)) {
+                                list_diskon.push(response[i].id_diskon);
+                                diskon = parseInt(diskon)+dis;
                             }
                         }
                     }
 
-                    total_pdiskon = parseInt(totalqty/2);
-                    if (total_pdiskon>0) {
-                        diskon_termurah(total_pdiskon);    
+                    order[a].total = (parseInt(order[a].qty)-parseInt(order[a].qtydisc))*(parseInt(order[a].harga_produk)+parseInt(order[a].harga_topping));
+                    $("#totalharga"+order[a].id_order).text("Rp "+currency(order[a].total));
+                }
+            }else if(response[i].jenis_diskon[3]=="2"){
+                // console.log("DISKONBUY2GET1 "+response[i].id_poduk);
+                var arrId = new Array();
+                arrId = response[i].id_poduk.split(",");
+                
+                var totalqty = 0;
+                var total_pdiskon = 0;
+
+                for (var j = 0; j < order.length; j++) {
+                    for(var k = 0; k < arrId.length; k++) {
+                        if(order[j].id_produk==arrId[k]){
+                            totalqty = totalqty+order[j].qty;
+                            order_diskon.push(order[j].id_order);
+                            if (!list_diskon.includes(response[i].id_diskon)) {
+                                list_diskon.push(response[i].id_diskon);
+                            }
+                        }
                     }
+                }
+
+                total_pdiskon = parseInt(totalqty/3);
+                if (total_pdiskon>0) {
+                    diskon_termurah(total_pdiskon);    
+                }
+
+            }else if(response[i].jenis_diskon[3]=="1"){
+                console.log("DISKONBUY1GET1 "+response[i].id_poduk);
+                var arrId = new Array();
+                arrId = response[i].id_poduk.split(",");
+                
+                var totalqty = 0;
+                var total_pdiskon = 0;
+
+                for (var j = 0; j < order.length; j++) {
+                    for(var k = 0; k < arrId.length; k++) {
+                        if(order[j].id_produk==arrId[k]){
+                            totalqty = totalqty+order[j].qty;
+                            order_diskon.push(order[j].id_order);
+                            if (!list_diskon.includes(response[i].id_diskon)) {
+                                list_diskon.push(response[i].id_diskon);
+                            }
+                        }
+                    }
+                }
+
+                total_pdiskon = parseInt(totalqty/2);
+                if (total_pdiskon>0) {
+                    diskon_termurah(total_pdiskon);    
                 }
             }
         }
-
-        if (list_diskon.length==0) {
-            list_diskon.push("none");
+       }else{
+        for (var l = 0; l < order.length; l++) {
+            order[l].qtydisc = 0;
+            order[l].total = parseInt(order[l].qty)*(parseInt(order[l].harga_produk)+parseInt(order[l].harga_topping));
+            $("#totalharga"+order[l].id_order).text("Rp "+currency(order[l].total));
         }
-
-        //UPDATE HARGA UNTUK DATA ORDER DAN TAMPILAN DI KASIR
-
-        for(var i = 0;i<order.length;i++){
-            var qtydiscount = parseInt(order[i].qty)-parseInt(order[i].qtydisc);
-            var hargatopping = parseInt(order[i].harga_topping)*parseInt(order[i].qty);
-            order[i].total = qtydiscount*(parseInt(order[i].harga_produk)+hargatopping);
-        
-            $("#totalharga"+order[i].id_order).text("Rp "+currency(order[i].total));
-        }
+       }
 
         countTotal();
       },
@@ -473,37 +477,42 @@ function hitungDiskon(){
     });
 }
 
-//UNTUK MENCARI ITEM YANG PALING MURAH DAN MASIH TERSEDIA UNTUK DILAKUKAN DISKON QTY
-
 function diskon_termurah(total){
     var id_termurah=0;
-    var termurah=order[0].harga_produk;;
-    while(total>0){
+    var termurah=null;
+    while(total!=0){
         for(var i=0;i<order.length;i++){
-            if (order[i].qtydisc<=order[i].qty) {
-                if (parseInt(order[i].harga_produk)<parseInt(termurah)) {
-                    termurah = order[i].harga_produk;
-                    id_termurah = i;
+            for(var j=0;j<order_diskon.length;j++){
+                if (order[i].id_order==order_diskon[j]&&order[i].qtydisc<=order[i].qty) {
+                    if (i==0) {
+                        termurah = order[i].harga_produk;
+                        id_termurah = i;
+                    }else{
+                        if (parseInt(order[i].harga_produk)<parseInt(termurah)) {
+                            termurah = order[i].harga_produk;
+                            id_termurah = i;
+                        }
+                    }
                 }
             }
         }
 
-        //JIKA JUMLAH ITEM YANG PERLU DIDISKON > ITEM TERMURAH MAKA HANYA MENGURANGI TOTAL DAN DILANJUTKAN PENCARIAN YG BARU
-        
-        if (total>parseInt(order[id_termurah].qty)) {
-            total = parseInt(total)-parseInt(order[id_termurah].qty);
+
+        if (total>=parseInt(order[id_termurah].qty)) {
+            total = total-order[id_termurah].qty;
             order[id_termurah].qtydisc = order[id_termurah].qty;
         }else{
             order[id_termurah].qtydisc = total;
             total = 0;
         }
+        order[id_termurah].total = (parseInt(order[id_termurah].qty-order[id_termurah].qtydisc))*(parseInt(order[id_termurah].harga_produk)+(parseInt(order[id_termurah].harga_topping)*parseInt(order[id_termurah].qty)));
+        
+        $("#totalharga"+order[id_termurah].id_order).text("Rp "+currency(order[id_termurah].total));
     }
 
     termurah = null;
     id_termurah = 0;
 }
-
-//UNTUK MENAMBAHKAM ITEM MENGGUNAKAN JIKA MENEKAN TOMBOL + PADA ORDER
 
 function plus(id,rowid){
     var value = $("#qty"+id).text();
@@ -514,27 +523,29 @@ function plus(id,rowid){
     for (var i = 0; i < order.length; i++) {
         if (order[i].id_order==row) {
             order[i].qty = value;
+            hitungDiskon(order[i].id_produk);
         }
     }
-    hitungDiskon();
 }
-
-//MENGHILANGKAN ITEM DARI LIST ORDER
 
 function removeBtn(rowid){
     var i = rowid.parentNode.parentNode.parentNode.rowIndex;
     document.getElementById("billtable").deleteRow(i);
     row = rowid.parentNode.parentNode.parentNode.id;
     for (var i = 0; i < order.length; i++) {
+        for(var j = 0;j<order_diskon;j++){
+            if (order_diskon[j]==row) {
+                order_diskon.splice(j,1);
+            }
+        }
+        hitungDiskon(order[i].id_produk);
         if (order[i].id_order==row) {
             order.splice(i, 1);
         }
     }
-    hitungDiskon();
     countTotal();
 }
 
-//MENGURANGI JUMLAH PADA ORDER, JIKA <1 MAKA DIHILANGKAN DARI LIST
 
 function minus(id,rowid){
     var value = $("#qty"+id).text();
@@ -545,10 +556,11 @@ function minus(id,rowid){
         for (var i = 0; i < order.length; i++) {
             if (order[i].id_order==row) {
                 order[i].qty = value;
+                hitungDiskon(order[i].id_produk);
             }
         }
-        hitungDiskon();
         $("#qty"+id).text(value);
+        $("#totalharga"+id).text("Rp "+currency(value*satuan));
     }else{
         for (var i = 0; i < order.length; i++) {
             for(var j = 0;j<order_diskon;j++){
@@ -560,27 +572,27 @@ function minus(id,rowid){
                 order.splice(i, 1);
             }
         }
-        hitungDiskon();
+        if (order.length>0) {
+            for(var k = 0;k<order.length;k++){
+                hitungDiskon(order[k].id_produk);
+            }
+        }else{
+            diskon = 0;
+            list_diskon = [];
+        }
         var a = rowid.parentNode.parentNode.rowIndex;
         document.getElementById("billtable").deleteRow(a);
     }
     countTotal();
 }
 
-//UNTUK MENGHITUNG DISCOUNT AKHIR DAN TOTAL PEMBAYARAN
-
 function countTotal(){
     total_harus_byr=0;
     subtotal = 0;
-    diskon = 0;
-
-    //MENDAPATKAN NILAI TOTAL PEMBAYARAN DAN TOTAL DISKON DARI LIST ORDER
     for (var i = 0;i < order.length; i++){
         subtotal = parseInt(subtotal)+parseInt(order[i].total);
-        diskon = parseInt(diskon)+parseInt(order[i].diskon);
-        alert(order[i].diskon);
+        diskon = parseInt(diskon)+order[i].diskon;
     }
-    
     total_harus_byr = parseInt(subtotal)-parseInt(diskon);
     $("#diskon").text("Rp "+currency(diskon));
     $("#subtotal").text("Rp "+currency(subtotal));
@@ -765,22 +777,12 @@ function currency(x) {
 
 function cetakNota() {
 
-    var harga_akhir = parseInt($("#total_bayar").html().split('.').join(""));
-    var tipe_pembayaran = $('input[name=tipe_bayar]:checked').val();
-    var keterangan = $("#keterangan").val();
-
-    if (keterangan.length==0) {
-        keterangan = "none";
-    }
-
     $.ajax({
           type:"post",
           url: "<?php echo base_url('adminstand/saveNota')?>/",
           dataType:"json",
-          data:{ order:order,list_diskon:list_diskon,harga_akhir:harga_akhir,tipe_pembayaran:tipe_pembayaran,keterangan:keterangan},
           success:function(response)
           {
-
             //BELUM SELESAI
             // alert(response);
           },
