@@ -287,24 +287,26 @@ class AdminStand extends CI_Controller {
 		$where = array('produk.id_produk' => $id_produk);
 		$arraytoui = array();
 
-		$alldiskon = $this->ModelKasir->getDataDiskonForProduct($where);
+		// $alldiskon = $this->ModelKasir->getDataDiskonForProduct($where);
 
-		foreach ($alldiskon as $diskon) {
-			$where2 = array('diskon.id_diskon' => $diskon->id_diskon);
-			$listbarang = $this->ModelKasir->getListProductForDiskon($where2);
-			$produk2nya = '';
-			$first = true;
-			foreach ($listbarang as $produk2) {
-				if ($first) {
-					$produk2nya = $produk2nya.$produk2->id_produk;
-					$first = false;
-				}else{
-					$produk2nya = $produk2nya.','.$produk2->id_produk;
-				}
-			}
-			array_push($arraytoui, array('id_diskon' => $diskon->id_diskon,'nama_diskon' => $diskon->nama_diskon, 'jenis_diskon' => $diskon->jenis_diskon,'id_poduk'=> $produk2nya));
-		}
-		echo json_encode($arraytoui);
+		// foreach ($alldiskon as $diskon) {
+		// 	$where2 = array('diskon.id_diskon' => $diskon->id_diskon);
+		// 	$listbarang = $this->ModelKasir->getListProductForDiskon($where2);
+		// 	$produk2nya = '';
+		// 	$first = true;
+		// 	foreach ($listbarang as $produk2) {
+		// 		if ($first) {
+		// 			$produk2nya = $produk2nya.$produk2->id_produk;
+		// 			$first = false;
+		// 		}else{
+		// 			$produk2nya = $produk2nya.','.$produk2->id_produk;
+		// 		}
+		// 	}
+		// 	array_push($arraytoui, array('id_diskon' => $diskon->id_diskon,'nama_diskon' => $diskon->nama_diskon, 'jenis_diskon' => $diskon->jenis_diskon,'id_poduk'=> $produk2nya));
+		// }
+
+		$send = $this->ModelKasir->getAllData('diskon');
+		echo json_encode($send);
 	}
 
 	public function saveNota()
@@ -404,22 +406,52 @@ class AdminStand extends CI_Controller {
 	}
 
 	public function stokmasuk(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/stokmasuk');
+        }
 	}
 
 	public function stokkeluar(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/stokkeluar');
+        }
 	}
 
 	public function laporanstok(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/laporanstok');
+        }
 	}
 
 	public function pengeluaranlain(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/pengeluaranlain');
+        }
 	}
 
 	public function orderproduk(){
-		# code...
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/orderproduk');
+        }
 	}
 }
