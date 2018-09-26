@@ -313,8 +313,8 @@ class AdminStand extends CI_Controller {
 
 	public function saveNota()
 	{
-		// $data = $this->input->post('??');
-
+		$data = $this->input->post('order');
+		var_dump($data);
 
 		//SAVE NOTA
 

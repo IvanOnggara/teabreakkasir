@@ -773,6 +773,8 @@ function cetakNota() {
         keterangan = "none";
     }
 
+    console.log(order);
+
     $.ajax({
           type:"post",
           url: "<?php echo base_url('adminstand/saveNota')?>/",
