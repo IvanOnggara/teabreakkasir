@@ -492,7 +492,6 @@ function diskon_termurah(total){
                 }
             }
         }
-
         //JIKA JUMLAH ITEM YANG PERLU DIDISKON > ITEM TERMURAH MAKA HANYA MENGURANGI TOTAL DAN DILANJUTKAN PENCARIAN YG BARU
         
         if (total>parseInt(order[id_termurah].qty)) {
@@ -779,7 +778,7 @@ function cetakNota() {
     if (keterangan.length==0) {
         keterangan = "none";
     }
-    
+
     $('#buttoncetaknota').prop("disabled", true);
     $('#cetaknotaulang').prop("disabled", false);
     

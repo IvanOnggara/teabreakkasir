@@ -330,7 +330,7 @@ class AdminStand extends CI_Controller {
 		}
 
 		date_default_timezone_set("Asia/Bangkok");
-		$idnota = IDNotaGenerator();
+		$idnota = $this->session->userdata('id_stan').IDNotaGenerator();
 		$datesave= date("Y-m-d");
 		$timesave = date("H:i");
 
@@ -378,11 +378,14 @@ class AdminStand extends CI_Controller {
 				}
 			}
 		}
-
+		$angkaid = 1;
 		for ($i=0; $i < count($listidproduk); $i++) {
 			$whereprod = array('id_produk'=>$listidproduk[$i]);
 			$dataprod = $this->ModelKasir->getData($whereprod,'produk');
+			
+			$id_detail_nota = $this->session->userdata('id_stan')."".IDDetailNotaGenerator()."ke".$angkaid;
 			$datadetail = array(
+				'id_detail_nota' => $id_detail_nota,
 				'id_nota' => $idnota,
 				'nama_produk' => $dataprod[0]->nama_produk,
 				'jumlah_produk' => $listjumlahproduk[$i],
@@ -391,6 +394,7 @@ class AdminStand extends CI_Controller {
 				'total_harga_produk' => intval($listjumlahproduk[$i])*intval($dataprod[0]->harga_jual)
 			);
 			$this->ModelKasir->insert('detail_nota',$datadetail);
+			$angkaid+=1;
 			array_push($listall, $datadetail);
 		}
 		// var_dump($listall);
@@ -398,53 +402,62 @@ class AdminStand extends CI_Controller {
 
 		//SAVE NOTA
 
-		sinkronnota();
+		$this->sinkronnota();
 	}
 
 	public function sinkronnota()
 	{
 		$whereforsinkron = array('status_upload' => 'not_upload');
-		$listnotabelumupload = $this->ModelKasir->getData($whereforsinkron,'nota');
-		$listnotarray = array();
 
-		foreach ($listnotabelumupload as $pernota) {
-			array_push($listnotarray, $pernota->id_nota);
-		}
-		$listalldetailnota = $this->ModelKasir->getDataIn('detail_nota',$listnotarray);
-		
-
-		$postdata = http_build_query(
-		    array(
-		        'allnota' => json_encode($listnotabelumupload),
-		        'detailnota' => json_encode($listalldetailnota),
-		    )
-		);
-
-		$opts = array('http' =>
-		    array(
-		        'method'  => 'POST',
-		        'header'  => 'Content-type: application/x-www-form-urlencoded',
-		        'content' => $postdata
-		    )
-		);
-
-		$context  = stream_context_create($opts);
-		//DATA NOTA
-		$send = @file_get_contents('http://localhost/teabreak/insertDataNota', false, $context);
-		if($send === FALSE){
-			echo 'CANTCONNECT';
+		if ($this->ModelKasir->getRowCount('nota',$whereforsinkron) <1) {
+			echo "SUCCESSSAVE";
 		}else{
-			if ($send == 'true') {
-				foreach ($listnotabelumupload as $nota) {
-					// $where = array('id_nota' => $nota->id_nota );
-					// $update = array('status_upload' => 'upload' );
-					// $this->ModelKasir->update('nota',$update,$where);
-					echo "SUCCESSSAVE";
-				}
+			$listnotabelumupload = $this->ModelKasir->getData($whereforsinkron,'nota');
+			$listnotarray = array();
+
+			foreach ($listnotabelumupload as $pernota) {
+				array_push($listnotarray, $pernota->id_nota);
+			}
+			$listalldetailnota = $this->ModelKasir->getDataIn('detail_nota',$listnotarray);
+			
+
+			$postdata = http_build_query(
+			    array(
+			        'allnota' => json_encode($listnotabelumupload),
+			        'detailnota' => json_encode($listalldetailnota),
+			        'id_stan' => $this->session->userdata('id_stan')
+			    )
+			);
+
+			$opts = array('http' =>
+			    array(
+			        'method'  => 'POST',
+			        'header'  => 'Content-type: application/x-www-form-urlencoded',
+			        'content' => $postdata
+			    )
+			);
+
+			$context  = stream_context_create($opts);
+			//DATA NOTA
+			$send = @file_get_contents('http://localhost/teabreak/insertDataNota', false, $context);
+			if($send === FALSE){
+				echo 'CANTCONNECT';
 			}else{
-				echo $send;
+				if ($send == 'true') {
+					// var_dump($send);
+					foreach ($listnotabelumupload as $nota) {
+						$where = array('id_nota' => $nota->id_nota );
+						$update = array('status_upload' => 'upload' );
+						$this->ModelKasir->update('nota',$update,$where);
+						
+					}
+					echo "SUCCESSSAVE";
+				}else{
+					echo "PENYIMPANANGAGAL";
+				}
 			}
 		}
+		
 	}
 
 	public function getListNota()
