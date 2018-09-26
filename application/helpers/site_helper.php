@@ -8,3 +8,11 @@
         $id = "PR-".$date;
         return $id;
       }
+
+      function IDNotaGenerator()
+      {
+        date_default_timezone_set("Asia/Bangkok");
+        $date = date("ymdHis");
+        $id = "NT-".$date;
+        return $id;
+      }
