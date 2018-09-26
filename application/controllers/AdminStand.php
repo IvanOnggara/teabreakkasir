@@ -347,7 +347,7 @@ class AdminStand extends CI_Controller {
 			'status_upload' => 'not_upload'
 		);
 
-		// var_dump($data);
+		var_dump($dataorder);
 		$this->ModelKasir->insert('nota',$data);
 		$listidproduk = array();
 		$listjumlahproduk = array();
@@ -410,7 +410,7 @@ class AdminStand extends CI_Controller {
 		$whereforsinkron = array('status_upload' => 'not_upload');
 
 		if ($this->ModelKasir->getRowCount('nota',$whereforsinkron) <1) {
-			echo "SUCCESSSAVE";
+			# code...
 		}else{
 			$listnotabelumupload = $this->ModelKasir->getData($whereforsinkron,'nota');
 			$listnotarray = array();
