@@ -180,7 +180,7 @@ class AdminStand extends CI_Controller {
 					$onlinedatadiskon = array();
 					// var_dump($localdataproduk);
 
-					if (!empty($datas) {
+					if (!empty($datas)) {
 						foreach ($datas as $data) {
 							$exist = $this->ModelKasir->checkExist('diskon',$data->id_diskon);
 							$array = array(
@@ -227,7 +227,7 @@ class AdminStand extends CI_Controller {
 					$localdatadetailbarangdiskon = $this->ModelKasir->getSpecificColumn('detail_barang_diskon','id_diskon,id_produk');
 					$onlinedatadetailbarangdiskon = array();
 					// var_dump($localdataproduk);
-					if (!empty($datas) {
+					if (!empty($datas)) {
 						foreach ($datas as $data) {
 							$where = array('id_diskon' => $data->id_diskon,'id_produk' => $data->id_produk );
 							$exist = $this->ModelKasir->checkExistDetailBarangDiskon($where);
