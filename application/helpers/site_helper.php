@@ -8,3 +8,19 @@
         $id = "PR-".$date;
         return $id;
       }
+
+      function IDNotaGenerator()
+      {
+        date_default_timezone_set("Asia/Bangkok");
+        $date = date("ymdHis");
+        $id = "NT-".$date;
+        return $id;
+      }
+
+      function IDDetailNotaGenerator()
+      {
+        date_default_timezone_set("Asia/Bangkok");
+        $date = date("ymdHis");
+        $id = "DN-".$date;
+        return $id;
+      }
