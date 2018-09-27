@@ -180,35 +180,39 @@ class AdminStand extends CI_Controller {
 					$onlinedatadiskon = array();
 					// var_dump($localdataproduk);
 
-					foreach ($datas as $data) {
-						$exist = $this->ModelKasir->checkExist('diskon',$data->id_diskon);
-						$array = array(
-					        'id_diskon' => $data->id_diskon,
-					        'nama_diskon' => $data->nama_diskon,
-					        'jenis_diskon' => $data->jenis_diskon,
-					        'tanggal_mulai' => $data->tanggal_mulai,
-					        'tanggal_akhir' => $data->tanggal_akhir,
-					        'jam_mulai' => $data->jam_mulai,
-					        'jam_akhir' => $data->jam_akhir,
-					        'hari' => $data->hari,
-					        'status' => $data->status,
-					    );
-
-						if ($exist) {
-							$where = array(
-						        'id_diskon' => $data->id_diskon
+					if (!empty($datas) {
+						foreach ($datas as $data) {
+							$exist = $this->ModelKasir->checkExist('diskon',$data->id_diskon);
+							$array = array(
+						        'id_diskon' => $data->id_diskon,
+						        'nama_diskon' => $data->nama_diskon,
+						        'jenis_diskon' => $data->jenis_diskon,
+						        'tanggal_mulai' => $data->tanggal_mulai,
+						        'tanggal_akhir' => $data->tanggal_akhir,
+						        'jam_mulai' => $data->jam_mulai,
+						        'jam_akhir' => $data->jam_akhir,
+						        'hari' => $data->hari,
+						        'status' => $data->status,
 						    );
-							$this->ModelKasir->update('diskon', $array, $where);
-						}else{
-							$this->ModelKasir->insert('diskon',$array);
-						}
-						array_push($onlinedatadiskon,$data->id_diskon);
-					}
 
-					foreach ($localdatadiskon as $perproduk) {
-						if (!in_array($perproduk->id_diskon, $onlinedatadiskon)) {
-							$this->ModelKasir->delete('diskon',$perproduk->id_diskon);
+							if ($exist) {
+								$where = array(
+							        'id_diskon' => $data->id_diskon
+							    );
+								$this->ModelKasir->update('diskon', $array, $where);
+							}else{
+								$this->ModelKasir->insert('diskon',$array);
+							}
+							array_push($onlinedatadiskon,$data->id_diskon);
 						}
+
+						foreach ($localdatadiskon as $perproduk) {
+							if (!in_array($perproduk->id_diskon, $onlinedatadiskon)) {
+								$this->ModelKasir->delete('diskon',$perproduk->id_diskon);
+							}
+						}
+					}else{
+						$this->ModelKasir->deleteAllData('diskon');
 					}
 					
 				}
@@ -223,27 +227,31 @@ class AdminStand extends CI_Controller {
 					$localdatadetailbarangdiskon = $this->ModelKasir->getSpecificColumn('detail_barang_diskon','id_diskon,id_produk');
 					$onlinedatadetailbarangdiskon = array();
 					// var_dump($localdataproduk);
+					if (!empty($datas) {
+						foreach ($datas as $data) {
+							$where = array('id_diskon' => $data->id_diskon,'id_produk' => $data->id_produk );
+							$exist = $this->ModelKasir->checkExistDetailBarangDiskon($where);
+							$array = array(
+								'id_diskon' => $data->id_diskon,
+						        'id_produk' => $data->id_produk
+						    );
 
-					foreach ($datas as $data) {
-						$where = array('id_diskon' => $data->id_diskon,'id_produk' => $data->id_produk );
-						$exist = $this->ModelKasir->checkExistDetailBarangDiskon($where);
-						$array = array(
-							'id_diskon' => $data->id_diskon,
-					        'id_produk' => $data->id_produk
-					    );
-
-						if (!$exist) {
-							$this->ModelKasir->insert('detail_barang_diskon',$array);
+							if (!$exist) {
+								$this->ModelKasir->insert('detail_barang_diskon',$array);
+							}
+							array_push($onlinedatadetailbarangdiskon,[$data->id_diskon,$data->id_produk]);
 						}
-						array_push($onlinedatadetailbarangdiskon,[$data->id_diskon,$data->id_produk]);
-					}
 
-					foreach ($localdatadetailbarangdiskon as $perdetailproduk) {
-						if (!in_array([$perdetailproduk->id_diskon,$perdetailproduk->id_produk], $onlinedatadetailbarangdiskon)) {
-							$where2 = array('id_diskon' => $perdetailproduk->id_diskon,'id_produk' => $perdetailproduk->id_produk );
-							$this->ModelKasir->deleteWithCustomWhere('detail_barang_diskon', $where2);
+						foreach ($localdatadetailbarangdiskon as $perdetailproduk) {
+							if (!in_array([$perdetailproduk->id_diskon,$perdetailproduk->id_produk], $onlinedatadetailbarangdiskon)) {
+								$where2 = array('id_diskon' => $perdetailproduk->id_diskon,'id_produk' => $perdetailproduk->id_produk );
+								$this->ModelKasir->deleteWithCustomWhere('detail_barang_diskon', $where2);
+							}
 						}
+					}else{
+						$this->ModelKasir->deleteAllData('detail_barang_diskon');
 					}
+					
 					if ($status == 'true') {
 						$this->session->set_userdata('update','updated');
 						echo "<p class='green'>(success) seluruh data telah terupdate</p>";
