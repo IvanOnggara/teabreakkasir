@@ -292,12 +292,54 @@ class AdminStand extends CI_Controller {
 
 	public function getDiskon()//GET DISKON SETIAP PILIH PRODUK ATAU TAMBAH PRODUK ATAU KURANGI PRODUK
 	{
+		date_default_timezone_set("Asia/Bangkok");
+		$datenow = date("Y-m-d");
+		$daynow = date("w");
+		$timenow = date("H:i:s");
+		switch ($daynow) {
+			case 0:
+				$daynow = 'minggu';
+				break;
+			case 1:
+				$daynow = 'senin';
+				break;
+			case 2:
+				$daynow = 'selasa';
+				break;
+			case 3:
+				$daynow = 'rabu';
+				break;
+			case 4:
+				$daynow = 'kamis';
+				break;
+			case 5:
+				$daynow = 'jumat';
+				break;
+			case 6:
+				$daynow = 'sabtu';
+				break;
+			
+			default:
+				break;
+		}
+		$daynow = "%".$daynow."%";
+
 		$id_produk = $this->input->post('id');
 		$where = array('produk.id_produk' => $id_produk);
 		$arraytoui = array();
 
+
 		// $alldiskon = $this->ModelKasir->getDataDiskonForProduct($where);
-		$alldiskon = $this->ModelKasir->getAllData('diskon');
+		$wheretanggal = array(
+			'tanggal_mulai<='=>$datenow,
+			'tanggal_akhir>='=>$datenow,
+			'hari LIKE'=>$daynow,
+			'jam_mulai<='=>$timenow,
+			'jam_akhir>='=>$timenow,
+		);
+
+		$alldiskon = $this->ModelKasir->getData($wheretanggal,'diskon');
+		// $alldiskon = $this->ModelKasir->getAllData('diskon');
 
 		foreach ($alldiskon as $diskon) {
 			// $where2 = array('diskon.id_diskon' => $diskon->id_diskon);
