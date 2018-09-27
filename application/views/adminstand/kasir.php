@@ -828,7 +828,7 @@ function cetakNota() {
     $.ajax({
           type:"post",
           url: "<?php echo base_url('adminstand/saveNota')?>/",
-          dataType:"json",
+          dataType:"text",
           data:{ order:JSON.stringify(arrorder),list_diskon:list_diskon,harga_akhir:harga_akhir,tipe_pembayaran:tipe_pembayaran,keterangan:keterangan},
           success:function(response)
           {

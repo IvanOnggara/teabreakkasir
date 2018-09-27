@@ -334,12 +334,20 @@ class AdminStand extends CI_Controller {
 		$datesave= date("Y-m-d");
 		$timesave = date("H:i");
 
+		if (empty(array_filter($arraynamadiskon))) {
+			$namadisk = 'none';
+			$jenisdisk = 'none';
+		}else{
+			$namadisk = implode(',', $arraynamadiskon);
+			$jenisdisk = implode(',', $arrayjenisdiskon);
+		}
+
 		$data = array(
 			'id_nota' => $idnota,
 			'tanggal_nota' => $datesave,
 			'waktu_nota' => $timesave, 
-			'nama_diskon' => implode(',', $arraynamadiskon),
-			'jenis_diskon' => implode(',', $arrayjenisdiskon),
+			'nama_diskon' => $namadisk,
+			'jenis_diskon' => $jenisdisk,
 			'status' => 'novoid',
 			'total_harga' => $harga_akhir,
 			'pembayaran' => $tipe_pembayaran,
@@ -347,7 +355,7 @@ class AdminStand extends CI_Controller {
 			'status_upload' => 'not_upload'
 		);
 
-		var_dump($dataorder);
+		// var_dump($dataorder);
 		$this->ModelKasir->insert('nota',$data);
 		$listidproduk = array();
 		$listjumlahproduk = array();
@@ -410,7 +418,7 @@ class AdminStand extends CI_Controller {
 		$whereforsinkron = array('status_upload' => 'not_upload');
 
 		if ($this->ModelKasir->getRowCount('nota',$whereforsinkron) <1) {
-			# code...
+			echo "SUCCESSSAVE";
 		}else{
 			$listnotabelumupload = $this->ModelKasir->getData($whereforsinkron,'nota');
 			$listnotarray = array();
