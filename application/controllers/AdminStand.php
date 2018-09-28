@@ -292,12 +292,54 @@ class AdminStand extends CI_Controller {
 
 	public function getDiskon()//GET DISKON SETIAP PILIH PRODUK ATAU TAMBAH PRODUK ATAU KURANGI PRODUK
 	{
+		date_default_timezone_set("Asia/Bangkok");
+		$datenow = date("Y-m-d");
+		$daynow = date("w");
+		$timenow = date("H:i:s");
+		switch ($daynow) {
+			case 0:
+				$daynow = 'minggu';
+				break;
+			case 1:
+				$daynow = 'senin';
+				break;
+			case 2:
+				$daynow = 'selasa';
+				break;
+			case 3:
+				$daynow = 'rabu';
+				break;
+			case 4:
+				$daynow = 'kamis';
+				break;
+			case 5:
+				$daynow = 'jumat';
+				break;
+			case 6:
+				$daynow = 'sabtu';
+				break;
+			
+			default:
+				break;
+		}
+		$daynow = "%".$daynow."%";
+
 		$id_produk = $this->input->post('id');
 		$where = array('produk.id_produk' => $id_produk);
 		$arraytoui = array();
 
+
 		// $alldiskon = $this->ModelKasir->getDataDiskonForProduct($where);
-		$alldiskon = $this->ModelKasir->getAllData('diskon');
+		$wheretanggal = array(
+			'tanggal_mulai<='=>$datenow,
+			'tanggal_akhir>='=>$datenow,
+			'hari LIKE'=>$daynow,
+			'jam_mulai<='=>$timenow,
+			'jam_akhir>='=>$timenow,
+		);
+
+		$alldiskon = $this->ModelKasir->getData($wheretanggal,'diskon');
+		// $alldiskon = $this->ModelKasir->getAllData('diskon');
 
 		foreach ($alldiskon as $diskon) {
 			// $where2 = array('diskon.id_diskon' => $diskon->id_diskon);
@@ -323,6 +365,7 @@ class AdminStand extends CI_Controller {
 	public function saveNota()
 	{
 		$dataorder = json_decode($this->input->post('order'));
+		var_dump($dataorder);
 		$list_diskon = $this->input->post('list_diskon');
 		$harga_akhir = $this->input->post('harga_akhir');
 		$tipe_pembayaran = $this->input->post('tipe_pembayaran');
@@ -367,6 +410,7 @@ class AdminStand extends CI_Controller {
 		$this->ModelKasir->insert('nota',$data);
 		$listidproduk = array();
 		$listjumlahproduk = array();
+		$listidprodukdiskon = array();
 		$listall = array();
 
 		foreach ($dataorder as $perorder) {
@@ -380,6 +424,13 @@ class AdminStand extends CI_Controller {
 					}
 				}
 			}
+
+			// if ($perorder->diskon>0) {
+				if (!array_key_exists($perorder->id_produk, $arraydiskonprod)) {
+				    $arraydiskonprod[$perorder->id_produk] = 0;
+				}
+				$arraydiskonprod[$perorder->id_produk] = $arraydiskonprod[$perorder->id_produk] + $perorder->diskon;
+			// }
 
 			foreach ($perorder->list_idtopping as $pertopping) {
 				if (!in_array($pertopping, $listidproduk)) {
@@ -400,6 +451,7 @@ class AdminStand extends CI_Controller {
 			$dataprod = $this->ModelKasir->getData($whereprod,'produk');
 			
 			$id_detail_nota = $this->session->userdata('id_stan')."".IDDetailNotaGenerator()."ke".$angkaid;
+
 			$datadetail = array(
 				'id_detail_nota' => $id_detail_nota,
 				'id_nota' => $idnota,
@@ -407,7 +459,7 @@ class AdminStand extends CI_Controller {
 				'jumlah_produk' => $listjumlahproduk[$i],
 				'kategori_produk' => $dataprod[0]->kategori,
 				'harga_produk' => $dataprod[0]->harga_jual,
-				'total_harga_produk' => intval($listjumlahproduk[$i])*intval($dataprod[0]->harga_jual)
+				'total_harga_produk' => intval($listjumlahproduk[$i])*intval($dataprod[0]->harga_jual)-$arraydiskonprod[$listidproduk[$i]]
 			);
 			$this->ModelKasir->insert('detail_nota',$datadetail);
 			$angkaid+=1;
