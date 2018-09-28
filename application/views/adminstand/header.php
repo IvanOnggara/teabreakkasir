@@ -26,6 +26,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link rel="stylesheet" href=<?php echo base_url("assets/css/cs-skin-elastic.css")?>>
     <link rel="stylesheet" href=<?php echo base_url("assets/datatable/datatables.css") ?>>
     <link rel="stylesheet" href=<?php echo base_url("assets/css/calculator.css") ?>>
+    <link rel="stylesheet" href=<?php echo base_url("assets/css/easy-autocomplete.min.css")?>>
+    <link rel="stylesheet" href=<?php echo base_url("assets/css/easy-autocomplete.themes.css")?>>
     <!-- <link rel="stylesheet" href=<echo base_url("assets/css/bootstrap-select.less")?>> -->
     <link rel="stylesheet" href=<?php echo base_url("assets/scss/style.css")?>>
     <link href=<?php echo base_url("assets/css/lib/vector-map/jqvmap.min.css")?> rel="stylesheet">
@@ -35,6 +37,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- <script type="text/javascript" src=<echo base_url("https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js")?>></script> -->
 
 </head>
+<style type="text/css">
+    .error{
+    border: 2px solid red!important;
+}
+.easy-autocomplete{
+    width: auto!important;
+}
+.red{
+    color: red !important;
+}
+</style>
 <script type="text/javascript">
     function sinkronnota() {
         alert('sinkron');
