@@ -344,7 +344,7 @@ function tambah_item(){
         item.topping = topping;
         item.diskon = 0;
         item.qty = 1;
-        // item.subtotal = parseInt(harga_produk)+parseInt(harga_topping);
+        item.subtotal = parseInt(harga_produk)+parseInt(harga_topping);
         item.qtydisc = 0;
         item.harga_produk = harga_produk;
         item.harga_topping = harga_topping;
@@ -393,28 +393,7 @@ function hitungDiskon(){
 
         for(var i =0;i<order.length;i++){
             for(var j = 0;j<response.length;j++){
-                if (response[j].jenis_diskon[0]=="p") {
-                    var arrId = new Array();
-                    arrId = response[j].id_poduk.split(",");
-                    if (arrId.includes(order[i].id_produk)) {
-                        var dis = parseFloat(response[j].jenis_diskon.replace('persen',''))/100;
-                        var disc = (parseFloat(dis)*(parseInt((parseInt(order[i].qty)-parseInt(order[i].qtydisc))*parseInt(order[i].harga_produk))));
-                        order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
-                        if (!list_diskon.includes(response[j].id_diskon)) {
-                            list_diskon.push(response[j].id_diskon);
-                        }
-                    }
-                }else if(response[j].jenis_diskon[0]=="n"){
-                    var arrId = new Array();
-                    arrId = response[j].id_poduk.split(",");
-                    if (arrId.includes(order[i].id_produk)) {
-                        var dis = parseInt(response[j].jenis_diskon.replace('nominal',''));
-                        order[i].diskon = parseInt(order[i].diskon)+parseInt(dis);
-                        if (!list_diskon.includes(response[j].id_diskon)) {
-                            list_diskon.push(response[j].id_diskon);
-                        }
-                    }
-                }else if(response[j].jenis_diskon[3]=="2"){
+                if(response[j].jenis_diskon[3]=="2"){
 
                     if (!list_diskon.includes(response[j].id_diskon)) {
 
@@ -475,6 +454,36 @@ function hitungDiskon(){
         if (totalsemuaproduk2>0) {
             diskon_termurah(totalsemuaproduk2,id_itemdisc2);
         }
+        
+        for(var i =0;i<order.length;i++){
+            for(var j = 0;j<response.length;j++){
+
+                if (response[j].jenis_diskon[0]=="p") {
+                    var arrId = new Array();
+                    arrId = response[j].id_poduk.split(",");
+                    if (arrId.includes(order[i].id_produk)) {
+                        var dis = parseFloat(response[j].jenis_diskon.replace('persen',''))/100;
+                        disc = (parseInt(order[i].qty)-parseInt(order[i].qtydisc))*(parseFloat(dis)*parseInt(order[i].harga_produk));
+                        order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
+                        if (!list_diskon.includes(response[j].id_diskon)) {
+                            list_diskon.push(response[j].id_diskon);
+                        }
+                    }
+                }else if(response[j].jenis_diskon[0]=="n"){
+                    var arrId = new Array();
+                    arrId = response[j].id_poduk.split(",");
+                    if (arrId.includes(order[i].id_produk)) {
+                        var dis = parseInt(response[j].jenis_diskon.replace('nominal',''));
+                        var disc = parseInt(dis)*((parseInt(order[i].qty)-parseInt(order[i].qtydisc)));
+                        order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
+                        if (!list_diskon.includes(response[j].id_diskon)) {
+                            list_diskon.push(response[j].id_diskon);
+                        }
+                    }
+                }
+
+            }
+        }
 
         if (list_diskon.length==0) {
             list_diskon.push("none");
@@ -484,7 +493,7 @@ function hitungDiskon(){
 
         for(var i = 0;i<order.length;i++){
             order[i].total = ((parseInt(order[i].qty)-parseInt(order[i].qtydisc))*(parseInt(order[i].harga_produk)))+(parseInt(order[i].qty)*parseInt(order[i].harga_topping));
-            // order[i].subtotal = parseInt(order[i].total)-parseInt(order[i].diskon);
+            order[i].subtotal = parseInt(order[i].total)-parseInt(order[i].diskon);
             $("#totalharga"+order[i].id_order).text("Rp "+currency(order[i].total));
         }
 
