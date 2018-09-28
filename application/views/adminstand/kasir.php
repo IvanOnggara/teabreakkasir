@@ -393,29 +393,7 @@ function hitungDiskon(){
 
         for(var i =0;i<order.length;i++){
             for(var j = 0;j<response.length;j++){
-                if (response[j].jenis_diskon[0]=="p") {
-                    var arrId = new Array();
-                    arrId = response[j].id_poduk.split(",");
-                    if (arrId.includes(order[i].id_produk)) {
-                        var dis = parseFloat(response[j].jenis_diskon.replace('persen',''))/100;
-                        disc = (parseInt(order[i].qty)-parseInt(order[i].qtydisc))*(parseFloat(dis)*parseInt(order[i].harga_produk));
-                        order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
-                        if (!list_diskon.includes(response[j].id_diskon)) {
-                            list_diskon.push(response[j].id_diskon);
-                        }
-                    }
-                }else if(response[j].jenis_diskon[0]=="n"){
-                    var arrId = new Array();
-                    arrId = response[j].id_poduk.split(",");
-                    if (arrId.includes(order[i].id_produk)) {
-                        var dis = parseInt(response[j].jenis_diskon.replace('nominal',''));
-                        var disc = parseInt(dis)*((parseInt(order[i].qty)-parseInt(order[i].qtydisc)));
-                        order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
-                        if (!list_diskon.includes(response[j].id_diskon)) {
-                            list_diskon.push(response[j].id_diskon);
-                        }
-                    }
-                }else if(response[j].jenis_diskon[3]=="2"){
+                if(response[j].jenis_diskon[3]=="2"){
 
                     if (!list_diskon.includes(response[j].id_diskon)) {
 
@@ -475,6 +453,36 @@ function hitungDiskon(){
         }
         if (totalsemuaproduk2>0) {
             diskon_termurah(totalsemuaproduk2,id_itemdisc2);
+        }
+        
+        for(var i =0;i<order.length;i++){
+            for(var j = 0;j<response.length;j++){
+
+                if (response[j].jenis_diskon[0]=="p") {
+                    var arrId = new Array();
+                    arrId = response[j].id_poduk.split(",");
+                    if (arrId.includes(order[i].id_produk)) {
+                        var dis = parseFloat(response[j].jenis_diskon.replace('persen',''))/100;
+                        disc = (parseInt(order[i].qty)-parseInt(order[i].qtydisc))*(parseFloat(dis)*parseInt(order[i].harga_produk));
+                        order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
+                        if (!list_diskon.includes(response[j].id_diskon)) {
+                            list_diskon.push(response[j].id_diskon);
+                        }
+                    }
+                }else if(response[j].jenis_diskon[0]=="n"){
+                    var arrId = new Array();
+                    arrId = response[j].id_poduk.split(",");
+                    if (arrId.includes(order[i].id_produk)) {
+                        var dis = parseInt(response[j].jenis_diskon.replace('nominal',''));
+                        var disc = parseInt(dis)*((parseInt(order[i].qty)-parseInt(order[i].qtydisc)));
+                        order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
+                        if (!list_diskon.includes(response[j].id_diskon)) {
+                            list_diskon.push(response[j].id_diskon);
+                        }
+                    }
+                }
+
+            }
         }
 
         if (list_diskon.length==0) {
