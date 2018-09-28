@@ -344,7 +344,7 @@ function tambah_item(){
         item.topping = topping;
         item.diskon = 0;
         item.qty = 1;
-        // item.subtotal = parseInt(harga_produk)+parseInt(harga_topping);
+        item.subtotal = parseInt(harga_produk)+parseInt(harga_topping);
         item.qtydisc = 0;
         item.harga_produk = harga_produk;
         item.harga_topping = harga_topping;
@@ -493,7 +493,7 @@ function hitungDiskon(){
 
         for(var i = 0;i<order.length;i++){
             order[i].total = ((parseInt(order[i].qty)-parseInt(order[i].qtydisc))*(parseInt(order[i].harga_produk)))+(parseInt(order[i].qty)*parseInt(order[i].harga_topping));
-            // order[i].subtotal = parseInt(order[i].total)-parseInt(order[i].diskon);
+            order[i].subtotal = parseInt(order[i].total)-parseInt(order[i].diskon);
             $("#totalharga"+order[i].id_order).text("Rp "+currency(order[i].total));
         }
 
