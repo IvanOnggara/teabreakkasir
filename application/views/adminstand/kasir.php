@@ -398,7 +398,7 @@ function hitungDiskon(){
                     arrId = response[j].id_poduk.split(",");
                     if (arrId.includes(order[i].id_produk)) {
                         var dis = parseFloat(response[j].jenis_diskon.replace('persen',''))/100;
-                        var disc = (parseFloat(dis)*(parseInt((parseInt(order[i].qty)-parseInt(order[i].qtydisc))*parseInt(order[i].harga_produk))));
+                        disc = (parseInt(order[i].qty)-parseInt(order[i].qtydisc))*(parseFloat(dis)*parseInt(order[i].harga_produk));
                         order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
                         if (!list_diskon.includes(response[j].id_diskon)) {
                             list_diskon.push(response[j].id_diskon);
@@ -409,7 +409,8 @@ function hitungDiskon(){
                     arrId = response[j].id_poduk.split(",");
                     if (arrId.includes(order[i].id_produk)) {
                         var dis = parseInt(response[j].jenis_diskon.replace('nominal',''));
-                        order[i].diskon = parseInt(order[i].diskon)+parseInt(dis);
+                        var disc = parseInt(dis)*((parseInt(order[i].qty)-parseInt(order[i].qtydisc)));
+                        order[i].diskon = parseInt(order[i].diskon)+parseInt(disc);
                         if (!list_diskon.includes(response[j].id_diskon)) {
                             list_diskon.push(response[j].id_diskon);
                         }
