@@ -365,6 +365,7 @@ class AdminStand extends CI_Controller {
 	public function saveNota()
 	{
 		$dataorder = json_decode($this->input->post('order'));
+		var_dump($dataorder);
 		$list_diskon = $this->input->post('list_diskon');
 		$harga_akhir = $this->input->post('harga_akhir');
 		$tipe_pembayaran = $this->input->post('tipe_pembayaran');
@@ -409,6 +410,7 @@ class AdminStand extends CI_Controller {
 		$this->ModelKasir->insert('nota',$data);
 		$listidproduk = array();
 		$listjumlahproduk = array();
+		$listidprodukdiskon = array();
 		$listall = array();
 
 		foreach ($dataorder as $perorder) {
@@ -422,6 +424,13 @@ class AdminStand extends CI_Controller {
 					}
 				}
 			}
+
+			// if ($perorder->diskon>0) {
+				if (!array_key_exists($perorder->id_produk, $arraydiskonprod)) {
+				    $arraydiskonprod[$perorder->id_produk] = 0;
+				}
+				$arraydiskonprod[$perorder->id_produk] = $arraydiskonprod[$perorder->id_produk] + $perorder->diskon;
+			// }
 
 			foreach ($perorder->list_idtopping as $pertopping) {
 				if (!in_array($pertopping, $listidproduk)) {
@@ -442,6 +451,7 @@ class AdminStand extends CI_Controller {
 			$dataprod = $this->ModelKasir->getData($whereprod,'produk');
 			
 			$id_detail_nota = $this->session->userdata('id_stan')."".IDDetailNotaGenerator()."ke".$angkaid;
+
 			$datadetail = array(
 				'id_detail_nota' => $id_detail_nota,
 				'id_nota' => $idnota,
@@ -449,7 +459,7 @@ class AdminStand extends CI_Controller {
 				'jumlah_produk' => $listjumlahproduk[$i],
 				'kategori_produk' => $dataprod[0]->kategori,
 				'harga_produk' => $dataprod[0]->harga_jual,
-				'total_harga_produk' => intval($listjumlahproduk[$i])*intval($dataprod[0]->harga_jual)
+				'total_harga_produk' => intval($listjumlahproduk[$i])*intval($dataprod[0]->harga_jual)-$arraydiskonprod[$listidproduk[$i]]
 			);
 			$this->ModelKasir->insert('detail_nota',$datadetail);
 			$angkaid+=1;
