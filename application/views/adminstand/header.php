@@ -31,6 +31,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- <link rel="stylesheet" href=<echo base_url("assets/css/bootstrap-select.less")?>> -->
     <link rel="stylesheet" href=<?php echo base_url("assets/scss/style.css")?>>
     <link href=<?php echo base_url("assets/css/lib/vector-map/jqvmap.min.css")?> rel="stylesheet">
+    <!-- bootstrap-daterangepicker -->
+    <link rel="stylesheet" href=<?php echo base_url("assets/vendors/bootstrap-daterangepicker/daterangepicker.css")?> >
+
+    <!-- bootstrap-datetimepicker -->
+    <link rel="stylesheet" href=<?php echo base_url("assets/vendors/Date-Time-Picker-Bootstrap-4/build/css/bootstrap-datetimepicker.min.css")?>>
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
 
@@ -110,14 +115,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">STOK <i class="fa fa-caret-down"></i></a>
+                    <a style="pointer-events: none; color: red !important" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">STOK <i class="fa fa-caret-down"></i></a>
                     <div class="dropdown-menu">
+                        <a class="nav-link" href=<?php echo base_url("sisastok")?>>Sisa Stok</a>
                         <a class="nav-link" href=<?php echo base_url("stokmasuk")?>>Stok Masuk</a>
                         <a class="nav-link" href=<?php echo base_url("stokkeluar")?>>Stok Keluar</a>
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">KAS <i class="fa fa-caret-down"></i></a>
+                    <a style="pointer-events: none; color: red !important" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">KAS <i class="fa fa-caret-down"></i></a>
                     <div class="dropdown-menu">
                         <a class="nav-link" href="#">Menu 1</a>
                         <a class="nav-link" href="#">Menu 2</a>

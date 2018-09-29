@@ -29,14 +29,16 @@ class AdminStand extends CI_Controller {
 
   	public function login()
   	{
-		$json = @file_get_contents('http://localhost/teabreak/getDataStan');
+  		
+  		$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataStan');
+		// $json = @file_get_contents('http://localhost/teabreak/getDataStan');
 		if($json === FALSE){
 			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
 		}else{
 			$datas = json_decode($json);
 			$localdatastan = $this->ModelKasir->getSpecificColumn('stan','id_stan');
 			$onlinedatastan = array();
-			var_dump($localdatastan);
+			// var_dump($localdatastan);
 
 			foreach ($datas as $data) {
 				$exist = $this->ModelKasir->checkExist('stan',$data->id_stan);
@@ -82,8 +84,10 @@ class AdminStand extends CI_Controller {
   		$where = array('id_stan' => $username,'password' => $password);
   		
   		if ($this->ModelKasir->getRowCount('stan',$where) > 0) {
+  			$uss = $this->ModelKasir->getData($where,'stan');
   			$this->session->set_userdata('aksesadminstan', 'granted');
   			$this->session->set_userdata('id_stan', $username);
+  			$this->session->set_userdata('alamat_stan', $uss[0]->alamat);
   		 	echo 'true';
   		}else{
   			echo "false";
@@ -96,6 +100,7 @@ class AdminStand extends CI_Controller {
   		$this->session->unset_userdata('aksesadminstan');
   		$this->session->unset_userdata('id_stan');
   		$this->session->unset_userdata('update');
+  		$this->session->unset_userdata('alamat_stan');
   		redirect('login');
   	}
 
@@ -111,7 +116,9 @@ class AdminStand extends CI_Controller {
         		$status = 'true';
 
         		//DATA PRODUK
-        		$json = @file_get_contents('http://localhost/teabreak/getDataProduk');
+        		
+        		$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataProduk');
+        		// $json = @file_get_contents('http://localhost/teabreak/getDataProduk');
 				if($json === FALSE){
 					
 					$status = 'false';
@@ -169,7 +176,9 @@ class AdminStand extends CI_Controller {
 
 
 				//DATA DISKON
-				$json = @file_get_contents('http://localhost/teabreak/getDataDiskon', false, $context);
+				
+				$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataDiskon', false, $context);
+				// $json = @file_get_contents('http://localhost/teabreak/getDataDiskon', false, $context);
 				if($json === FALSE){
 					
 					$status = 'false';
@@ -218,7 +227,9 @@ class AdminStand extends CI_Controller {
 				}
 
 				//DATA DETAIL DISKON (BARANG)
-				$json = @file_get_contents('http://localhost/teabreak/getDataDetailDiskonProduk', false, $context);
+				
+				$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataDetailDiskonProduk', false, $context);
+				// $json = @file_get_contents('http://localhost/teabreak/getDataDetailDiskonProduk', false, $context);
 				if($json === FALSE){
 					
 					$status = 'false';
@@ -411,6 +422,7 @@ class AdminStand extends CI_Controller {
 		$listidproduk = array();
 		$listjumlahproduk = array();
 		$listidprodukdiskon = array();
+		$arraydiskonprod = array();
 		$listall = array();
 
 		foreach ($dataorder as $perorder) {
@@ -443,6 +455,11 @@ class AdminStand extends CI_Controller {
 						}
 					}
 				}
+
+				if (!array_key_exists($pertopping, $arraydiskonprod)) {
+				    $arraydiskonprod[$pertopping] = 0;
+				}
+				$arraydiskonprod[$pertopping] = $arraydiskonprod[$pertopping] + $perorder->diskon;
 			}
 		}
 		$angkaid = 1;
@@ -507,7 +524,8 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			$send = @file_get_contents('http://localhost/teabreak/insertDataNota', false, $context);
+			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataNota', false, $context);
+			// $send = @file_get_contents('http://localhost/teabreak/insertDataNota', false, $context);
 			if($send === FALSE){
 				echo 'CANTCONNECT';
 			}else{
@@ -612,6 +630,17 @@ class AdminStand extends CI_Controller {
         }else{
         	$this->load->view('adminstand/header');
 			$this->load->view('adminstand/orderproduk');
+        }
+	}
+
+	public function sisastok()
+	{
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/sisastok');
         }
 	}
 }

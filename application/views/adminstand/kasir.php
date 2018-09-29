@@ -77,35 +77,35 @@
             <div class="modal-body">
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="row">
-                        <button class="btn btn-calc col-lg-3" onclick="kalkulatorkasir('7')">7
+                        <button id="angka7" class="btn btn-calc col-lg-3" onclick="kalkulatorkasir('7')">7
                         </button>
-                        <button class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('8')">8
+                        <button id="angka8" class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('8')">8
                         </button>
-                        <button class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('9')">9
-                        </button>
-                    </div>
-                    <div class="row">
-                        <button class="btn btn-calc col-lg-3" onclick="kalkulatorkasir('4')">4
-                        </button>
-                        <button class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('5')">5
-                        </button>
-                        <button class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('6')">6
+                        <button id="angka9" class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('9')">9
                         </button>
                     </div>
                     <div class="row">
-                        <button class="btn btn-calc col-lg-3" onclick="kalkulatorkasir('1')">1
+                        <button id="angka4" class="btn btn-calc col-lg-3" onclick="kalkulatorkasir('4')">4
                         </button>
-                        <button class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('2')">2
+                        <button id="angka5" class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('5')">5
                         </button>
-                        <button class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('3')">3
+                        <button id="angka6" class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('6')">6
                         </button>
                     </div>
                     <div class="row">
-                        <button class="btn btn-calc col-lg-3" onclick="kalkulatorkasir('0')">0
+                        <button id="angka1" class="btn btn-calc col-lg-3" onclick="kalkulatorkasir('1')">1
                         </button>
-                        <button class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('00')">00
+                        <button id="angka2" class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('2')">2
                         </button>
-                        <button class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('del')"><
+                        <button id="angka3" class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('3')">3
+                        </button>
+                    </div>
+                    <div class="row">
+                        <button id="angka0" class="btn btn-calc col-lg-3" onclick="kalkulatorkasir('0')">0
+                        </button>
+                        <button id="angka00" class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('00')">00
+                        </button>
+                        <button id="angkadel" class="btn btn-calc col-lg-3 offset-lg-1" onclick="kalkulatorkasir('del')"><
                         </button>
                     </div>
                 </div>
@@ -149,10 +149,10 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-3">
-                            <button class="btn btn-auto" onclick="autobtn()">Auto</button>
+                            <button id="buttonauto" class="btn btn-auto" onclick="autobtn()">Auto</button>
                         </div>
                         <div class="col-lg-3 offset-lg-1">
-                            <button class="btn btn-kembali" onclick="resetbyr()">Kembali</button>
+                            <button id="buttonkembali" class="btn btn-kembali" onclick="resetbyr()">Kembali</button>
                         </div>
                         <div class="col-lg-3">
                             <button id="buttoncetaknota" class="btn btn-cetak-dis" disabled="" onclick="cetakNota()">Cetak Nota</button>
@@ -256,8 +256,13 @@ function pembayaran(){
 //MERESET NILAI DARI MODAL BAYAR
 
 function resetbyr(){
-    $("#modal_bayar").modal('hide');
-    $("#total_bayar").text('0');
+    if ($('#buttonkembali').html() == 'Kembali') {
+        $("#modal_bayar").modal('hide');
+        $("#total_bayar").text('0');
+    }else{
+        location.reload();
+    }
+    
 }
 
 //UNTUK MENAMBAHKAN ITEM BARU MELALUI PENEKANAN TOMBOL MENU
@@ -693,10 +698,16 @@ function hitungKembalian(){
     selisih = totalygdibayar-total_harus_byr;
     if (selisih>=0) {
         $("#kembalian").text("Rp "+currency(total_harus_byr-totalygdibayar));
-        $('#buttoncetaknota').prop("disabled", false);
+        if ($('#buttonkembali').html() != "Selesai") {
+            $('#buttoncetaknota').prop("disabled", false);
+        }else{
+            $('#buttoncetaknota').prop("disabled", true);
+        }
     }else{
         $("#kembalian").text("- Rp "+currency(total_harus_byr-totalygdibayar));
         $('#buttoncetaknota').prop("disabled", true);
+        
+        
     }
     // alert(selisih);
 }
@@ -824,6 +835,24 @@ function cetakNota() {
 
     $('#buttoncetaknota').prop("disabled", true);
     $('#cetaknotaulang').prop("disabled", false);
+    $('#buttonauto').prop("disabled", true);
+    $('#buttonkembali').addClass('btn-success');
+    $('#buttonkembali').html("Selesai");
+
+    $('#angka1').prop("disabled", true);
+    $('#angka2').prop("disabled", true);
+    $('#angka3').prop("disabled", true);
+    $('#angka4').prop("disabled", true);
+    $('#angka5').prop("disabled", true);
+    $('#angka6').prop("disabled", true);
+    $('#angka7').prop("disabled", true);
+    $('#angka8').prop("disabled", true);
+    $('#angka9').prop("disabled", true);
+    $('#angka0').prop("disabled", true);
+    $('#angka00').prop("disabled", true);
+    $('#angkadel').prop("disabled", true);
+
+
     
     var arrorder = new Array();
 
@@ -870,7 +899,8 @@ function cetakNota() {
 
     doc.setFontSize(6);
     doc.addImage(imgData, 'JPEG', 29-15.5, 0, 31, 11);
-    doc.text('Jalan Villa Puncak Tidar H-21 Malang', 29, 13, 'center');
+    var alamat='<?php echo $_SESSION['alamat_stan'];?>';
+    doc.text(alamat, 29, 13, 'center');
     doc.text('Telp : 087842220111', 29, 16, 'center');
     doc.text('Email : teabreakindo@gmail.com', 29, 19, 'center');
     doc.setFontSize(8);

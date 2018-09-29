@@ -63,6 +63,7 @@ $route['stokkeluar'] = 'adminstand/stokkeluar';
 $route['laporanstok'] = 'adminstand/laporanstok';
 $route['pengeluaranlain'] = 'adminstand/pengeluaranlain';
 $route['orderproduk'] = 'adminstand/orderproduk';
+$route['sisastok'] = 'adminstand/sisastok';
 
 
 $route['json'] = 'adminstand/json';
