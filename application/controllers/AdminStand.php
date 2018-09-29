@@ -624,4 +624,15 @@ class AdminStand extends CI_Controller {
 			$this->load->view('adminstand/orderproduk');
         }
 	}
+
+	public function sisastok()
+	{
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/sisastok');
+        }
+	}
 }

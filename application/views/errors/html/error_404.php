@@ -5,6 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <head>
 <meta charset="utf-8">
 <title>404 Page Not Found</title>
+<link rel="stylesheet" href='<?php echo base_url("assets/vendors/bootstrap-4.1.3-dist/css/bootstrap.min.css")?>'>
 <style type="text/css">
 
 ::selection { background-color: #E13300; color: white; }
@@ -59,6 +60,13 @@ p {
 	<div id="container">
 		<h1><?php echo $heading; ?></h1>
 		<?php echo $message; ?>
+		<button onclick="relocate_home()" class="btn btn-success">Back to Main Page</button>
 	</div>
 </body>
 </html>
+<script>
+function relocate_home()
+{
+     location.href = "login";
+} 
+</script>
