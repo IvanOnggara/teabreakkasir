@@ -899,7 +899,8 @@ function cetakNota() {
 
     doc.setFontSize(6);
     doc.addImage(imgData, 'JPEG', 29-15.5, 0, 31, 11);
-    doc.text('Jalan Villa Puncak Tidar H-21 Malang', 29, 13, 'center');
+    var alamat='<?php echo $_SESSION['alamat_stan'];?>';
+    doc.text(alamat, 29, 13, 'center');
     doc.text('Telp : 087842220111', 29, 16, 'center');
     doc.text('Email : teabreakindo@gmail.com', 29, 19, 'center');
     doc.setFontSize(8);

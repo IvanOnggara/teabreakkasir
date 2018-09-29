@@ -84,8 +84,10 @@ class AdminStand extends CI_Controller {
   		$where = array('id_stan' => $username,'password' => $password);
   		
   		if ($this->ModelKasir->getRowCount('stan',$where) > 0) {
+  			$uss = $this->ModelKasir->getData($where,'stan');
   			$this->session->set_userdata('aksesadminstan', 'granted');
   			$this->session->set_userdata('id_stan', $username);
+  			$this->session->set_userdata('alamat_stan', $uss[0]->alamat);
   		 	echo 'true';
   		}else{
   			echo "false";
@@ -98,6 +100,7 @@ class AdminStand extends CI_Controller {
   		$this->session->unset_userdata('aksesadminstan');
   		$this->session->unset_userdata('id_stan');
   		$this->session->unset_userdata('update');
+  		$this->session->unset_userdata('alamat_stan');
   		redirect('login');
   	}
 
@@ -452,6 +455,11 @@ class AdminStand extends CI_Controller {
 						}
 					}
 				}
+
+				if (!array_key_exists($pertopping, $arraydiskonprod)) {
+				    $arraydiskonprod[$pertopping] = 0;
+				}
+				$arraydiskonprod[$pertopping] = $arraydiskonprod[$pertopping] + $perorder->diskon;
 			}
 		}
 		$angkaid = 1;
