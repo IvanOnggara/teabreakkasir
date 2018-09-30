@@ -23,8 +23,14 @@ class ModelKasir extends CI_Model{
         return $res->result();
     }
 
-    public function getAllDataDesc($table){
-        $res = $this->db->order_by("update_at", "desc")->get($table);
+    public function getAllDataDesc($table,$kolomto){
+        $res = $this->db->order_by($kolomto, "desc")->get($table);
+        return $res->result();
+    }
+
+    public function getDataWhereDesc($table,$where,$kolomto)
+    {
+        $res=$this->db->order_by($kolomto, "desc")->get_where($table,$where);
         return $res->result();
     }
  
@@ -53,7 +59,7 @@ class ModelKasir extends CI_Model{
  
     public function delete($table, $id){
 
-        $listpk = array("stan"=>"id_stan","produk"=>"id_produk","nota"=>"id_nota","diskon"=>"id_diskon","detail_nota"=>"id_detail_nota","detail_stan_diskon"=>"id_diskon","detail_barang_diskon"=>"id_diskon");
+        $listpk = array("stan"=>"id_stan","produk"=>"id_produk","nota"=>"id_nota","diskon"=>"id_diskon","detail_nota"=>"id_detail_nota","detail_stan_diskon"=>"id_diskon","detail_barang_diskon"=>"id_diskon","bahan_jadi"=>'id_bahan_jadi');
 
         $this->db->where($listpk[$table.""],$id);
         $this->db->delete($table);

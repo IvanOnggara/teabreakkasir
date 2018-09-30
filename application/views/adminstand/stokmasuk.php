@@ -31,11 +31,10 @@
 		        <thead class="thead-dark">
 		          <tr>
 		            <th style="width: 15%;">ID Bahan Jadi</th>
-		            <th style="width: 35%;">Nama Bahan Jadi</th>
-		            <th style="width: 15%;">Stok Masuk</th>
-		            <th style="width: 15%;">Tanggal</th>
-		            <th style="width: 10%;">Edit</th>
-		            <th style="width: 10%;">Delete</th>
+		            <th style="width: 37.5%;">Nama Bahan Jadi</th>
+		            <th style="width: 17.5%;">Stok Masuk</th>
+		            <th style="width: 17.5%;">Tanggal</th>
+		            <th style="width: 12.5%;">Edit</th>
 		          </tr>
 		        </thead>
 		    </table>
@@ -100,38 +99,47 @@ var option = {
 
 $('#namabahanjadi').change(function(){	
 	var data = $('#namabahanjadi').val();
-	$.ajax({
-          type:"post",
-          url: "<?php echo base_url('adminstand/getNamaBahanJadi')?>/",
-          dataType:"json",
-          success:function(list)
-          {
-          	// console.log(list);
-			list.forEach(function(item){
-				var found = false;
+	if (data == '') {
+		$('#namabahanjadi').removeClass("is-invalid");
+	}else{
+		$.ajax({
+	          type:"post",
+	          url: "<?php echo base_url('adminstand/getNamaBahanJadi')?>/",
+	          dataType:"json",
+	          success:function(list)
+	          {
+	          	// console.log(list);
+	          	var found = false;
+	          	for (var i = list.length - 1; i >= 0; i--) {
+	          		if (data==list[i].nama_bahan_jadi) {
+						found = true;
+						id = list[i].id_bahan_jadi;
 
-				if (data==item.nama_bahan_jadi) {
-					found = true;
-					id = item.id_bahan_jadi;
-
-					if ($('#namabahanjadi').has("is-invalid")) {
-						$('#namabahanjadi').removeClass("is-invalid");
+						if ($('#namabahanjadi').has("is-invalid")) {
+							$('#namabahanjadi').removeClass("is-invalid");
+						}
 					}
-				}else{
+
 					if (!found) {
 						id = 'unidentified';
+						$('#namabahanjadi').addClass("is-invalid");
 					}
-					
-					$('#namabahanjadi').addClass("is-invalid");
+	          	}
+
+				if (found) {
+					alert('ketemu');
+				}else{
+					alert('ga ketemu');
 				}
-			});
-          },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
-      }
-    );
+	          },
+	          error: function (jqXHR, textStatus, errorThrown)
+	          {
+	            alert(errorThrown);
+	          }
+	      }
+	    );
+	}
+	
 });
 
 $('.numeric').on('input', function (event) { 
@@ -163,9 +171,10 @@ function tambahstokbahan() {
                 {
                 	$("#namabahanjadi").val('');
                     $("#stokmasuk").val('');
+                    reload_table();
 
                   if(response == 'Berhasil Ditambahkan'){
-                    reload_table();
+                    
                     
                     if($('#namabahanjadi').has("is-invalid")){
                       $('#namabahanjadi').removeClass("is-invalid");
@@ -178,7 +187,7 @@ function tambahstokbahan() {
                     $("#namabahanjadi").focus();
 
                     alert(response);
-                  }else if(response =='ID Data Sudah ada di dalam database'){
+                  }else if(response =='Data telah di update!.'){
                     
                     alert(response);
                   }else{
@@ -235,8 +244,7 @@ jQuery( document ).ready(function( $ ) {
           'nama_bahan'  : json.data[i].nama_bahan_jadi,
           'stok_masuk' : json.data[i].stok_masuk,
           'tgl' : json.data[i].tanggal,
-          'edit' : '<button onclick="" class="btn btn-warning" style="color:white;">Edit</button> ',
-          'hapus' : '<button onclick="" class="btn btn-danger" style="color:white;">Delete</button>'
+          'edit' : '<button onclick="editSM()" class="btn btn-warning" style="color:white;">Edit</button> '
         })
       }
       return return_data;
@@ -285,8 +293,7 @@ jQuery( document ).ready(function( $ ) {
     {'data': 'nama_bahan'},
     {'data': 'stok_masuk'},
     {'data': 'tgl'},
-    {'data': 'edit','orderable':false,'searchable':false},
-    {'data': 'hapus','orderable':false,'searchable':false}
+    {'data': 'edit','orderable':false,'searchable':false}
   ],
       rowCallback: function(row, data, iDisplayIndex) {
         var info = this.fnPagingInfo();

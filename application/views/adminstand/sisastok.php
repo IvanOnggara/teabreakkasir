@@ -66,6 +66,7 @@
 
         $("#tanggalstok").on("dp.change", function(e) {
             console.log($("#tanggalstok").val());
+            
         });
     </script>
 </body>
