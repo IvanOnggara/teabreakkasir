@@ -68,10 +68,10 @@
 </html>
 <script type="text/javascript">
 var option = {
-	url : "<?php echo base_url('adminstand/getDiskon');?>",
+	url : "<?php echo base_url('adminstand/getNamaBahanJadi');?>",
 	getValue: function(element) {
 		console.log(element);
-		return element.nama_diskon;
+		return element.nama_bahan_jadi;
 	},
 	list :{
 		maxNumberOfElements: 10,
@@ -89,7 +89,7 @@ var option = {
 			enabled: true
 		},
 		onClickEvent: function() {
-			var bahan = $('#namabahanjadi').getSelectedItemData().nama_diskon;
+			var bahan = $('#namabahanjadi').getSelectedItemData().nama_bahan_jadi;
 
 			$('#namabahanjadi').val(bahan).trigger("change");
 		}  
@@ -100,32 +100,34 @@ $('#namabahanjadi').change(function(){
 	var data = $('#namabahanjadi').val();
 	$.ajax({
           type:"post",
-          url: "<?php echo base_url('adminstand/getDiskon')?>/",
+          url: "<?php echo base_url('adminstand/getNamaBahanJadi')?>/",
           dataType:"json",
           success:function(list)
           {
           	console.log(list);
-            for(var i=0;i< list.length; i++){
+   //        	if(data!=""){
+			// 	$('#namabahanjadi').removeClass("is-invalid");
+			// 	status=1;
+			// }
+            // for(var i=0;i< list.length; i++){
                 var status = 0;
 				list.forEach(function(item){
-					if (data==item.nama_diskon) {
+
+					if (data==item.nama_bahan_jadi) {
 						status=1;
 					}
-					if(data!=""){
-						$('#namabahanjadi').removeClass("error");
-						status=1;
-					}
+					
 					if (status==1) {
-						if(data!=""&&data==item.nama_diskon){
-							if ($('#namabahanjadi').has("error")) {
-								$('#namabahanjadi').removeClass("error");
+						if(data!=""&&data==item.nama_bahan_jadi){
+							if ($('#namabahanjadi').has("is-invalid")) {
+								$('#namabahanjadi').removeClass("is-invalid");
 							}
 						}
 					}else{
-						$('#namabahanjadi').addClass("error");
+						$('#namabahanjadi').addClass("is-invalid");
 					}
 				});
-            }
+            // }
           },
           error: function (jqXHR, textStatus, errorThrown)
           {

@@ -103,7 +103,7 @@ class ModelKasir extends CI_Model{
 
     public function checkExist($table,$id)
     {
-        $listpk = array("stan"=>"id_stan","produk"=>"id_produk","nota"=>"id_nota","diskon"=>"id_diskon","detail_nota"=>"id_detail_nota","detail_stan_diskon"=>"id_diskon","detail_barang_diskon"=>"id_diskon");
+        $listpk = array("stan"=>"id_stan","produk"=>"id_produk","nota"=>"id_nota","diskon"=>"id_diskon","detail_nota"=>"id_detail_nota","detail_stan_diskon"=>"id_diskon","detail_barang_diskon"=>"id_diskon","bahan_jadi" => 'id_bahan_jadi');
         $this->db->from($table);
         $this->db->where($listpk[$table.""],$id);
         $query = $this->db->get();

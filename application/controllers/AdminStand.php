@@ -263,12 +263,56 @@ class AdminStand extends CI_Controller {
 						$this->ModelKasir->deleteAllData('detail_barang_diskon');
 					}
 					
-					if ($status == 'true') {
-						$this->session->set_userdata('update','updated');
-						echo "<p class='green'>(success) seluruh data telah terupdate</p>";
+				}
+
+
+				//GET DATA BAHAN JADI TERBARU
+				// $json = @file_get_contents('http://teabreak.bekkostudio.com/getDataBahanJadi', false, $context);
+				$json = @file_get_contents('http://localhost/teabreak/getDataBahanJadi', false, $context);
+				if($json === FALSE){
+					
+					$status = 'false';
+				}else{
+					$datas = json_decode($json);
+					$localdatabahanjadi = $this->ModelKasir->getSpecificColumn('bahan_jadi','id_bahan_jadi');
+					$onlinedatabahanjadi = array();
+					// var_dump($localdataproduk);
+					if (!empty($datas)) {
+						foreach ($datas as $data) {
+							$exist = $this->ModelKasir->checkExist('bahan_jadi',$data->id_bahan_jadi);
+							$array = array(
+						        'id_bahan_jadi' => $data->id_bahan_jadi,
+						        'nama_bahan_jadi' => $data->nama_bahan_jadi
+						    );
+
+							if ($exist) {
+								$where = array(
+							        'id_bahan_jadi' => $data->id_bahan_jadi
+							    );
+								$this->ModelKasir->update('bahan_jadi', $array, $where);
+							}else{
+								$this->ModelKasir->insert('bahan_jadi',$array);
+							}
+							array_push($onlinedatabahanjadi,$data->id_bahan_jadi);
+						}
+
+						foreach ($localdatabahanjadi as $perbahanjadi) {
+							if (!in_array($perbahanjadi->id_bahan_jadi, $onlinedataproduk)) {
+								$this->ModelKasir->delete('bahan_jadi',$perbahanjadi->id_bahan_jadi);
+							}
+						}
 					}else{
-						echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
+						$this->ModelKasir->deleteAllData('bahan_jadi');
 					}
+					
+					
+				}
+
+				if ($status == 'true') {
+					$this->session->set_userdata('update','updated');
+					echo "<p class='green'>(success) seluruh data telah terupdate</p>";
+				}else{
+					echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
 				}
 
         	}
@@ -642,5 +686,11 @@ class AdminStand extends CI_Controller {
         	$this->load->view('adminstand/header');
 			$this->load->view('adminstand/sisastok');
         }
+	}
+
+	public function getNamaBahanJadi()
+	{
+		$data = $this->ModelKasir->getAllData('bahan_jadi');
+		echo json_encode($data);
 	}
 }
