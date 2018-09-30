@@ -693,4 +693,36 @@ class AdminStand extends CI_Controller {
 		$data = $this->ModelKasir->getAllData('bahan_jadi');
 		echo json_encode($data);
 	}
+
+	public function dataStokMasuk()
+	{
+		$this->load->library('datatables');
+		$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_masuk,tanggal');
+		$this->datatables->from('stok_bahan_jadi');
+		echo $this->datatables->generate();
+	}
+
+	public function tambah_stok_masuk()
+	{
+		$id = $this->input->post('id');
+		$nama = $this->input->post('nama');
+		$stokmasuk = $this->input->post('stokmasuk');
+
+		$where = array('id_bahan_jadi' => $id, 'tanggal' => 'test');
+		$count = $this->Produk->getRowCount('produk',$where);
+
+		if ($count>0) {
+			echo "ID Data Sudah ada di dalam database";
+		}else{
+			$data = array(
+	        'id_produk' => $this->input->post('id'),
+	        'nama_produk' => $this->input->post('nama'),
+	        'kategori' => $this->input->post('kategori'),
+	        'harga_jual' => $this->input->post('harga')
+	         );
+
+			$this->Produk->insert('produk',$data);
+			echo "Berhasil Ditambahkan";
+		}
+	}
 }
