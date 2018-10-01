@@ -801,4 +801,34 @@ class AdminStand extends CI_Controller {
 			echo "Berhasil Diatur";
 		}
 	}
+
+	public function dataSisaStok()
+	{
+		$tanggal = $this->input->post('tanggal');
+
+		if ($tanggal == '') {
+			$where = array('tanggal' => '');
+			$this->load->library('datatables');
+			$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_masuk,stok_keluar,stok_sisa');
+			$this->datatables->from('stok_bahan_jadi');
+			$this->datatables->where($where);
+			
+			echo $this->datatables->generate();
+		}else{
+			$tanggal = strtotime($tanggal);
+			$tanggal = date('Y-m-d',$tanggal);
+
+			$where = array('tanggal' => $tanggal);
+			// $alldata = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+
+			// return json_encode($alldata);
+
+			$this->load->library('datatables');
+			$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_masuk,stok_keluar,stok_sisa');
+			$this->datatables->from('stok_bahan_jadi');
+			$this->datatables->where($where);
+			
+			echo $this->datatables->generate();
+		}
+	}
 }

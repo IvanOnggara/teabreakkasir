@@ -59,15 +59,142 @@
     <!-- bootstrap-datetimepicker -->    
     <script src=<?php echo base_url("assets/vendors/Date-Time-Picker-Bootstrap-4/build/js/bootstrap-datetimepicker.min.js")?>></script>
     <script type="text/javascript">
+    	var tabeldata;
     	$('#tanggalstok').datetimepicker({
             format: 'DD/MM/YYYY',
             useCurrent: false
         });
 
         $("#tanggalstok").on("dp.change", function(e) {
-            console.log($("#tanggalstok").val());
-            
+            // console.log($("#tanggalstok").val());
+            reload_table();
+
+            // if ( $.fn.DataTable.isDataTable( '#tableliststan_edit' ) ) {
+            	
+            // }else{
+
+            // }
+
         });
+
+jQuery( document ).ready(function( $ ) {
+    $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings)
+    {
+      return {
+        "iStart": oSettings._iDisplayStart,
+        "iEnd": oSettings.fnDisplayEnd(),
+        "iLength": oSettings._iDisplayLength,
+        "iTotal": oSettings.fnRecordsTotal(),
+        "iFilteredTotal": oSettings.fnRecordsDisplay(),
+        "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+        "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+      };
+    };
+
+    tabeldata = $("#mytable").dataTable({
+      initComplete: function() {
+        var api = this.api();
+        $('#mytable_filter input')
+        .on('.DT')
+        .on('keyup.DT', function(e) {
+          if (e.keyCode == 13) {
+            api.search(this.value).draw();
+          }
+        });
+      },
+      oLanguage: {
+        sProcessing: "loading..."
+      },
+      responsive: true,
+      serverSide: true,
+      ajax: {
+    "type"   : "POST",
+    "url"    : "<?php echo base_url('adminstand/dataSisaStok');?>",
+    "data": function(d){
+        d.tanggal = getValueTanggal();
+    },
+    "dataSrc": function (json) {
+      var return_data = new Array();
+      for(var i=0;i< json.data.length; i++){
+        return_data.push({
+          'id_bahan_jadi': json.data[i].id_bahan_jadi,
+          'nama_bahan_jadi'  : json.data[i].nama_bahan_jadi,
+          'stok_masuk' : json.data[i].stok_masuk,
+          'stok_keluar' : json.data[i].stok_keluar,
+          'stok_sisa' : json.data[i].stok_sisa
+        })
+      }
+      return return_data;
+    }
+  },
+   dom: 'Bfrtlip',
+        buttons: [
+            {
+                extend: 'copyHtml5',
+                text: 'Copy',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3,4]
+                }
+            },{
+                extend: 'excelHtml5',
+                text: 'Excel',
+                className: 'exportExcel',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3,4]
+                }
+            },{
+                extend: 'csvHtml5',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3,4]
+                }
+            },{
+                extend: 'pdfHtml5',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3,4]
+                }
+            },{
+                extend: 'print',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3,4]
+                }
+            }
+        ],
+        "lengthChange": true,
+  columns: [
+    {'data': 'id_bahan_jadi'},
+    {'data': 'nama_bahan_jadi'},
+    {'data': 'stok_masuk'},
+    {'data': 'stok_keluar'},
+    {'data': 'stok_sisa'}
+  ],
+      rowCallback: function(row, data, iDisplayIndex) {
+        var info = this.fnPagingInfo();
+        var page = info.iPage;
+        var length = info.iLength;
+        var index = page * length + (iDisplayIndex + 1);
+        // $('td:eq(0)', row).html(index);
+      }
+    });
+});
+function reload_table(){
+  tabeldata.api().ajax.reload(null,false);
+}
+
+function getValueTanggal() {
+	var rett = '';
+	if ($("#tanggalstok").val() != '') {
+		var res = $("#tanggalstok").val().split("/");
+		rett = res[2]+"-"+res[1]+"-"+res[0];
+	}
+	
+	return rett;
+}
+
     </script>
 </body>
 </html>
