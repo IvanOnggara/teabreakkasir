@@ -31,10 +31,10 @@
 		        <thead class="thead-dark">
 		          <tr>
 		            <th style="width: 15%;">ID Bahan Jadi</th>
-		            <th style="width: 37.5%;">Nama Bahan Jadi</th>
-		            <th style="width: 17.5%;">Stok Masuk</th>
-		            <th style="width: 17.5%;">Tanggal</th>
-		            <th style="width: 12.5%;">Edit</th>
+		            <th style="width: 40%;">Nama Bahan Jadi</th>
+		            <th style="width: 20%;">Stok Masuk</th>
+		            <th style="width: 25%;">Tanggal</th>
+		            <!-- <th style="width: 12.5%;">Edit</th> -->
 		          </tr>
 		        </thead>
 		    </table>
@@ -42,6 +42,33 @@
 		
 	</div>
 </div>
+<!-- 
+<div class="modal fade" id="modal_edit" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="header modal-header">
+                <h4 class="modal-title">Edit</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="editid" class=" form-control-label">Stok Masuk</label>
+                            <input type="text" id="editsm" placeholder="Masukkan Stok Masuk" class="form-control numeric">
+                            <input type="hidden" name="id_lama" id="id_lama">
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default">Batal</button>
+                <button type="button" onclick="simpanedit()" class="btn add_field_button btn-info">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div> -->
 
 
 <script src=<?php echo base_url("assets/js/jquery.min.js")?>></script>
@@ -244,7 +271,7 @@ jQuery( document ).ready(function( $ ) {
           'nama_bahan'  : json.data[i].nama_bahan_jadi,
           'stok_masuk' : json.data[i].stok_masuk,
           'tgl' : json.data[i].tanggal,
-          'edit' : '<button onclick="editSM()" class="btn btn-warning" style="color:white;">Edit</button> '
+          // 'edit' : '<button onclick="editSM(\''+json.data[i].id_bahan_jadi.split(' ').join('+')+'\',\''+json.data[i].stok_masuk+'\',\''+json.data[i].tanggal+'\')" class="btn btn-warning" style="color:white;">Edit</button> '
         })
       }
       return return_data;
@@ -293,7 +320,7 @@ jQuery( document ).ready(function( $ ) {
     {'data': 'nama_bahan'},
     {'data': 'stok_masuk'},
     {'data': 'tgl'},
-    {'data': 'edit','orderable':false,'searchable':false}
+    // {'data': 'edit','orderable':false,'searchable':false}
   ],
       rowCallback: function(row, data, iDisplayIndex) {
         var info = this.fnPagingInfo();
@@ -307,4 +334,47 @@ jQuery( document ).ready(function( $ ) {
 function reload_table(){
   tabeldata.api().ajax.reload(null,false);
 }
+
+// var idedit = '';
+// var stokmasukedit = '';
+// var tanggaledit = '';
+
+// function editSM(id,stokmasuk,tanggal) {
+// 	$('#modal_edit').modal('toggle');
+// 	$('#editsm').val(stokmasuk);
+// 	idedit = id;
+// 	stokmasukedit = stokmasuk;
+// 	tanggaledit = tanggal;
+// }
+
+// function simpanedit() {
+// 	stokmasukedit = $('#editsm').val();
+
+// 	if (stokmasukedit == '') {
+// 		$('#editsm').addClass('is-invalid');
+// 	}else{
+// 		$('#editsm').removeClass('is-invalid');
+// 		$.ajax({
+// 	          type:"post",
+// 	          url: "<?php echo base_url('adminstand/edit_stok_masuk_keluar')?>/",
+// 	          data:{ id:idedit,stokmasuk:stokmasukedit,stokkeluar:'',tanggal:tanggaledit},
+// 	          success:function(response)
+// 	          {
+// 	            if(response == 'Berhasil Diupdate'){
+// 	              $("#modal_edit").modal('toggle');
+// 	              reload_table();
+// 	              alert(response);
+// 	            }else{
+// 	              alert('unknown error is happen! try again.');
+// 	            }
+	            
+// 	          },
+// 	          error: function (jqXHR, textStatus, errorThrown)
+// 	          {
+// 	            alert(errorThrown);
+// 	          }
+// 	    });
+// 	}
+
+// }
 </script>

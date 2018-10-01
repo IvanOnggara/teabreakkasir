@@ -884,4 +884,42 @@ class AdminStand extends CI_Controller {
 			echo $this->datatables->generate();
 		}
 	}
+
+	// public function edit_stok_masuk_keluar()
+	// {
+	// 	# code...id:idedit,stokmasuk:stokmasukedit,stokkeluar:'',tanggal:tanggaledit
+
+	// 	$id_bahan_jadi = $this->input->post('id');
+	// 	$stok_masuk = $this->input->post('stokmasuk');
+	// 	$stok_keluar = $this->input->post('stokkeluar');
+	// 	$tanggal = $this->input->post('tanggal');
+	// 	$where
+
+	// 	if ($stok_masuk == '') {
+	// 		$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+	// 		$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa + $dataBeforeUpdate[0]->stok_keluar;
+	// 		$data = array(
+	// 	        'stok_keluar' => $stokkeluar,
+	// 	        'stok_sisa' => $stoksisabefore-$stokkeluar,
+	// 	        'status_upload' => 'not_upload'
+	//          );
+
+	// 		$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
+	// 		$this->sinkronstokbahan();
+	// 		echo "Data telah di update!.";
+	// 	}else if ($stok_keluar == '') {
+	// 		$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+	// 		$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa + $dataBeforeUpdate[0]->stok_keluar;
+	// 		$data = array(
+	// 	        'stok_keluar' => $stokkeluar,
+	// 	        'stok_sisa' => $stoksisabefore-$stokkeluar,
+	// 	        'status_upload' => 'not_upload'
+	//          );
+
+	// 		$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
+	// 		$this->sinkronstokbahan();
+	// 		echo "Data telah di update!.";
+	// 	}
+
+	// }
 }
