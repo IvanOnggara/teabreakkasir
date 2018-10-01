@@ -68,3 +68,6 @@ $route['sisastok'] = 'adminstand/sisastok';
 
 $route['json'] = 'adminstand/json';
 $route['translate_uri_dashes'] = FALSE;
+
+
+$route['cobadisplay'] = 'controllerdisplay/functionuntukdisplaynya';
