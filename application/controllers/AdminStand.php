@@ -729,9 +729,11 @@ class AdminStand extends CI_Controller {
 			$data = array(
 		        'stok_masuk' => $stokmasuk,
 		        'stok_sisa' => $stoksisabefore+$stokmasuk,
+		        'status_upload' => 'not_upload'
 	         );
 
 			$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
+			$this->sinkronstokbahan();
 			echo "Data telah di update!.";
 		}else{
 			$data = array(
@@ -740,12 +742,16 @@ class AdminStand extends CI_Controller {
 		        'stok_masuk' => $stokmasuk,
 		        'stok_keluar' => 0,
 		        'stok_sisa' => $stoksisa+$stokmasuk,
-		        'tanggal' => $datenow
+		        'tanggal' => $datenow,
+		        'status_upload' => 'not_upload'
 	         );
 
 			$this->ModelKasir->insert('stok_bahan_jadi',$data);
+			$this->sinkronstokbahan();
 			echo "Berhasil Ditambahkan";
 		}
+
+		
 	}
 
 	public function dataStokKeluar()
@@ -783,9 +789,11 @@ class AdminStand extends CI_Controller {
 			$data = array(
 		        'stok_keluar' => $stokkeluar,
 		        'stok_sisa' => $stoksisabefore-$stokkeluar,
+		        'status_upload' => 'not_upload'
 	         );
 
 			$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
+			$this->sinkronstokbahan();
 			echo "Data telah di update!.";
 		}else{
 			$data = array(
@@ -794,11 +802,56 @@ class AdminStand extends CI_Controller {
 		        'stok_masuk' => 0,
 		        'stok_keluar' => $stokkeluar,
 		        'stok_sisa' => $stoksisa-$stokkeluar,
-		        'tanggal' => $datenow
+		        'tanggal' => $datenow,
+		        'status_upload' => 'not_upload'
 	         );
 
 			$this->ModelKasir->insert('stok_bahan_jadi',$data);
+			$this->sinkronstokbahan();
 			echo "Berhasil Diatur";
+		}
+	}
+
+	public function sinkronstokbahan()
+	{
+		$whereforsinkron = array('status_upload' => 'not_upload');
+
+		if ($this->ModelKasir->getRowCount('stok_bahan_jadi',$whereforsinkron) <1) {
+			echo "SUCCESSSAVE";
+		}else{
+			$liststokbelumupload = $this->ModelKasir->getData($whereforsinkron,'stok_bahan_jadi');
+
+			$postdata = http_build_query(
+			    array(
+			        'allstok' => json_encode($liststokbelumupload),
+			        'id_stan' => $this->session->userdata('id_stan')
+			    )
+			);
+
+			$opts = array('http' =>
+			    array(
+			        'method'  => 'POST',
+			        'header'  => 'Content-type: application/x-www-form-urlencoded',
+			        'content' => $postdata
+			    )
+			);
+
+			$context  = stream_context_create($opts);
+			//DATA NOTA
+			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
+			$send = @file_get_contents('http://localhost/teabreak/insertDataStok', false, $context);
+			if($send === FALSE){
+				echo 'CANTCONNECT';
+			}else{
+				if ($send == 'true') {
+					// var_dump($send);
+					$update = array('status_upload' => 'upload');
+					$this->ModelKasir->update('stok_bahan_jadi',$update,1);
+					echo "SUCCESSSAVE";
+				}else{
+					echo "PENYIMPANANGAGAL";
+				}
+			}
 		}
 	}
 
