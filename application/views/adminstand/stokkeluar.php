@@ -31,16 +31,43 @@
 		        <thead class="thead-dark">
 		          <tr>
 		            <th style="width: 15%;">ID Bahan Jadi</th>
-		            <th style="width: 37.5%;">Nama Bahan Jadi</th>
-		            <th style="width: 17.5%;">Stok Keluar</th>
-		            <th style="width: 17.5%;">Tanggal</th>
-		            <th style="width: 12.5%;">Edit</th>
+		            <th style="width: 40%;">Nama Bahan Jadi</th>
+		            <th style="width: 20%;">Stok Keluar</th>
+		            <th style="width: 25%;">Tanggal</th>
+		            <!-- <th style="width: 12.5%;">Edit</th> -->
 		          </tr>
 		        </thead>
 		    </table>
 		</div>
 		
 	</div>
+</div>
+
+<div class="modal fade" id="modal_edit" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="header modal-header">
+                <h4 class="modal-title">Edit</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="editid" class=" form-control-label">Stok Keluar</label>
+                            <input type="text" id="editsk" placeholder="Masukkan Stok Keluar" class="form-control numeric">
+                            <input type="hidden" name="id_lama" id="id_lama">
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default">Batal</button>
+                <button type="button" onclick="simpanedit()" class="btn add_field_button btn-info">Simpan</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -243,7 +270,7 @@ jQuery( document ).ready(function( $ ) {
           'nama_bahan'  : json.data[i].nama_bahan_jadi,
           'stok_keluar' : json.data[i].stok_keluar,
           'tgl' : json.data[i].tanggal,
-          'edit' : '<button onclick="editSK()" class="btn btn-warning" style="color:white;">Edit</button> '
+          // 'edit' : '<button onclick="editSK(\''+json.data[i].id_bahan_jadi.split(' ').join('+')+'\',\''+json.data[i].stok_keluar+'\',\''+json.data[i].tanggal+'\')" class="btn btn-warning" style="color:white;">Edit</button> '
         })
       }
       return return_data;
@@ -292,7 +319,7 @@ jQuery( document ).ready(function( $ ) {
     {'data': 'nama_bahan'},
     {'data': 'stok_keluar'},
     {'data': 'tgl'},
-    {'data': 'edit','orderable':false,'searchable':false}
+    // {'data': 'edit','orderable':false,'searchable':false}
   ],
       rowCallback: function(row, data, iDisplayIndex) {
         var info = this.fnPagingInfo();
@@ -306,4 +333,47 @@ jQuery( document ).ready(function( $ ) {
 function reload_table(){
   tabeldata.api().ajax.reload(null,false);
 }
+
+// var idedit = '';
+// var stokkeluaredit = '';
+// var tanggaledit = '';
+
+// function editSK(id,stokkeluar,tanggal) {
+// 	$('#modal_edit').modal('toggle');
+// 	$('#editsk').val(stokkeluar);
+// 	idedit = id;
+// 	stokkeluaredit = stokkeluar;
+// 	tanggaledit = tanggal;
+// }
+
+// function simpanedit() {
+// 	stokkeluaredit = $('#editsk').val();
+
+// 	if (stokkeluaredit == '') {
+// 		$('#editsk').addClass('is-invalid');
+// 	}else{
+// 		$('#editsk').removeClass('is-invalid');
+// 		$.ajax({
+// 	          type:"post",
+// 	          url: "<?php echo base_url('adminstand/edit_stok_masuk_keluar')?>/",
+// 	          data:{ id:idedit,stokkeluar:stokkeluaredit,stokmasuk:'',tanggal:tanggaledit},
+// 	          success:function(response)
+// 	          {
+// 	            if(response == 'Berhasil Diupdate'){
+// 	              $("#modal_edit").modal('toggle');
+// 	              reload_table();
+// 	              alert(response);
+// 	            }else{
+// 	              alert('unknown error is happen! try again.');
+// 	            }
+	            
+// 	          },
+// 	          error: function (jqXHR, textStatus, errorThrown)
+// 	          {
+// 	            alert(errorThrown);
+// 	          }
+// 	    });
+// 	}
+
+// }
 </script>
