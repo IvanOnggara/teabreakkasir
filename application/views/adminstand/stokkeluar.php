@@ -17,12 +17,12 @@
 		<div class="col-md-5 col-sm-12">
 			<div class="form-group">
 			  	<label>Stok Keluar</label>
-			  	<input type="text" class="form-control" id="stokmasuk" placeholder="Stok Keluar">
+			  	<input type="text" class="form-control numeric" id="stokkeluar" placeholder="Stok Masuk">
 			</div>
 		</div>
 		<div class="col-md-2 col-sm-12">
 			<label for="usr">Action</label>
-			<button class="btn btn-success" id="buttontambahstok">Tambah Stok Keluar</button>
+			<button class="btn btn-success" id="buttontambahstok" onclick="tambahstokbahan()">Set Stok Keluar</button>
 		</div>
 	</div>
 	<div class="row">
@@ -31,10 +31,10 @@
 		        <thead class="thead-dark">
 		          <tr>
 		            <th style="width: 15%;">ID Bahan Jadi</th>
-		            <th style="width: 35%;">Nama Bahan Jadi</th>
-		            <th style="width: 25%;">Tanggal</th>
+		            <th style="width: 37.5%;">Nama Bahan Jadi</th>
+		            <th style="width: 17.5%;">Stok Keluar</th>
+		            <th style="width: 17.5%;">Tanggal</th>
 		            <th style="width: 12.5%;">Edit</th>
-		            <th style="width: 12.5%;">Delete</th>
 		          </tr>
 		        </thead>
 		    </table>
@@ -67,11 +67,12 @@
 </body>
 </html>
 <script type="text/javascript">
+var id = '';
 var option = {
-	url : "<?php echo base_url('adminstand/getDiskon');?>",
+	url : "<?php echo base_url('adminstand/getNamaBahanJadi');?>",
 	getValue: function(element) {
 		console.log(element);
-		return element.nama_diskon;
+		return element.nama_bahan_jadi;
 	},
 	list :{
 		maxNumberOfElements: 10,
@@ -89,7 +90,7 @@ var option = {
 			enabled: true
 		},
 		onClickEvent: function() {
-			var bahan = $('#namabahanjadi').getSelectedItemData().nama_diskon;
+			var bahan = $('#namabahanjadi').getSelectedItemData().nama_bahan_jadi;
 
 			$('#namabahanjadi').val(bahan).trigger("change");
 		}  
@@ -98,147 +99,211 @@ var option = {
 
 $('#namabahanjadi').change(function(){	
 	var data = $('#namabahanjadi').val();
-	$.ajax({
-          type:"post",
-          url: "<?php echo base_url('adminstand/getDiskon')?>/",
-          dataType:"json",
-          success:function(list)
-          {
-          	console.log(list);
-            for(var i=0;i< list.length; i++){
-                var status = 0;
-				list.forEach(function(item){
-					if (data==item.nama_diskon) {
-						status=1;
+	var found = false;
+	if (data == '') {
+		$('#namabahanjadi').removeClass("is-invalid");
+	}else{
+		$.ajax({
+	          type:"post",
+	          url: "<?php echo base_url('adminstand/getNamaBahanJadi')?>/",
+	          dataType:"json",
+	          success:function(list)
+	          {
+	          	// console.log(list);
+	          	
+	          	for (var i = list.length - 1; i >= 0; i--) {
+	          		if (data==list[i].nama_bahan_jadi) {
+						found = true;
+						id = list[i].id_bahan_jadi;
+						$('#namabahanjadi').removeClass("is-invalid");
+
 					}
-					if(data!=""){
-						$('#namabahanjadi').removeClass("error");
-						status=1;
-					}
-					if (status==1) {
-						if(data!=""&&data==item.nama_diskon){
-							if ($('#namabahanjadi').has("error")) {
-								$('#namabahanjadi').removeClass("error");
-							}
-						}
-					}else{
-						$('#namabahanjadi').addClass("error");
-					}
-				});
-            }
-          },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
-      }
-    );
+	          	}
+
+	          	if (!found) {
+					id = 'unidentified';
+					$('#namabahanjadi').addClass("is-invalid");
+				}
+
+				// if (found) {
+				// 	alert('ketemu');
+				// }else{
+				// 	alert('ga ketemu');
+				// }
+	          },
+	          error: function (jqXHR, textStatus, errorThrown)
+	          {
+	            alert(errorThrown);
+	          }
+	      }
+	    );
+	}
+	
+});
+
+$('.numeric').on('input', function (event) { 
+    this.value = this.value.replace(/[^0-9]/g, '');
 });
 
 $("#namabahanjadi").easyAutocomplete(option);
 
-// jQuery( document ).ready(function( $ ) {
-//     $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings)
-//     {
-//       return {
-//         "iStart": oSettings._iDisplayStart,
-//         "iEnd": oSettings.fnDisplayEnd(),
-//         "iLength": oSettings._iDisplayLength,
-//         "iTotal": oSettings.fnRecordsTotal(),
-//         "iFilteredTotal": oSettings.fnRecordsDisplay(),
-//         "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
-//         "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
-//       };
-//     };
-//     tabeldata = $("#mytable").dataTable({
-//       initComplete: function() {
-//         var api = this.api();
-//         $('#mytable_filter input')
-//         .on('.DT')
-//         .on('keyup.DT', function(e) {
-//           if (e.keyCode == 13) {
-//             api.search(this.value).draw();
-//           }
-//         });
-//       },
-//       oLanguage: {
-//         sProcessing: "loading..."
-//       },
-//       responsive: true,
-//       serverSide: true,
-//       ajax: {
-//     "type"   : "POST",
-//     "url"    : "<?php echo base_url('adminstand/stok_masuk');?>",
-//     "dataSrc": function (json) {
-//       var date = new Date();
-//       var return_data = new Array();
-//       for(var i=0;i< json.data.length; i++){
-//         return_data.push({
-//           'id_bahan_jadi': i+1,
-//           'nama_bahan'  : "Produk "+parseInt(i+1),
-//           'tgl' : date,
-//           'edit' : '<button onclick="" class="btn btn-warning" style="color:white;">Edit</button> ',
-//           'hapus' : '<button onclick="" class="btn btn-danger" style="color:white;">Delete</button>'
-//         })
-//       }
-//       return return_data;
-//     }
-//   },
-//    dom: 'Bfrtlip',
-//         buttons: [
-//             {
-//                 extend: 'copyHtml5',
-//                 text: 'Copy',
-//                 filename: 'Produk Data',
-//                 exportOptions: {
-//                   columns:[0,1,2,3]
-//                 }
-//             },{
-//                 extend: 'excelHtml5',
-//                 text: 'Excel',
-//                 className: 'exportExcel',
-//                 filename: 'Produk Data',
-//                 exportOptions: {
-//                   columns:[0,1,2,3]
-//                 }
-//             },{
-//                 extend: 'csvHtml5',
-//                 filename: 'Produk Data',
-//                 exportOptions: {
-//                   columns:[0,1,2,3]
-//                 }
-//             },{
-//                 extend: 'pdfHtml5',
-//                 filename: 'Produk Data',
-//                 exportOptions: {
-//                   columns:[0,1,2,3]
-//                 }
-//             },{
-//                 extend: 'print',
-//                 filename: 'Produk Data',
-//                 exportOptions: {
-//                   columns:[0,1,2,3]
-//                 }
-//             }
-//         ],
-//         "lengthChange": true,
-//   columns: [
-//     {'data': 'id_bahan_jadi'},
-//     {'data': 'nama_bahan'},
-//     {'data': 'tgl'},
-//     {'data': 'edit','orderable':false,'searchable':false},
-//     {'data': 'hapus','orderable':false,'searchable':false}
-//   ],
-//       rowCallback: function(row, data, iDisplayIndex) {
-//         var info = this.fnPagingInfo();
-//         var page = info.iPage;
-//         var length = info.iLength;
-//         var index = page * length + (iDisplayIndex + 1);
-//         // $('td:eq(0)', row).html(index);
-//       }
-//     });
-// });
-// function reload_table(){
-//   tabeldata.api().ajax.reload(null,false);
-// }
+function tambahstokbahan() {
+	var id_bahan = id;
+	var nama = $('#namabahanjadi').val();
+	var stokkeluar = $('#stokkeluar').val();
+
+	if (id_bahan == 'unidentified') {
+		$('#namabahanjadi').addClass("is-invalid");
+	}
+
+	if ($('#stokkeluar').val() == '') {
+		$('#stokkeluar').addClass("is-invalid");
+	}
+
+	if (id_bahan != 'unidentified' && $('#stokkeluar').val() != '') {
+		$.ajax(
+            {
+                type:"post",
+                url: "<?php echo base_url('adminstand/tambah_stok_keluar')?>/",
+                data:{ id:id_bahan,nama:nama,stokkeluar:stokkeluar},
+                success:function(response)
+                {
+                	$("#namabahanjadi").val('');
+                    $("#stokkeluar").val('');
+                    reload_table();
+
+                  if(response == 'Berhasil Diatur'){
+                    
+                    
+                    if($('#namabahanjadi').has("is-invalid")){
+                      $('#namabahanjadi').removeClass("is-invalid");
+                    }
+
+                    if($('#stokkeluar').has("is-invalid")){
+                      $('#stokkeluar').removeClass("is-invalid");
+                    }
+
+                    $("#namabahanjadi").focus();
+
+                    alert(response);
+                  }else if(response =='Data telah di update!.'){
+                    
+                    alert(response);
+                  }else{
+                    alert('unknown error is happen! try again.');
+                  }
+                  
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+                  alert(errorThrown);
+                }
+            }
+        );
+	}
+}
+
+jQuery( document ).ready(function( $ ) {
+    $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings)
+    {
+      return {
+        "iStart": oSettings._iDisplayStart,
+        "iEnd": oSettings.fnDisplayEnd(),
+        "iLength": oSettings._iDisplayLength,
+        "iTotal": oSettings.fnRecordsTotal(),
+        "iFilteredTotal": oSettings.fnRecordsDisplay(),
+        "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+        "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+      };
+    };
+    tabeldata = $("#mytable").dataTable({
+      initComplete: function() {
+        var api = this.api();
+        $('#mytable_filter input')
+        .on('.DT')
+        .on('keyup.DT', function(e) {
+          if (e.keyCode == 13) {
+            api.search(this.value).draw();
+          }
+        });
+      },
+      oLanguage: {
+        sProcessing: "loading..."
+      },
+      responsive: true,
+      serverSide: true,
+      ajax: {
+    "type"   : "POST",
+    "url"    : "<?php echo base_url('adminstand/dataStokKeluar');?>",
+    "dataSrc": function (json) {
+      var return_data = new Array();
+      for(var i=0;i< json.data.length; i++){
+        return_data.push({
+          'id_bahan_jadi': json.data[i].id_bahan_jadi,
+          'nama_bahan'  : json.data[i].nama_bahan_jadi,
+          'stok_keluar' : json.data[i].stok_keluar,
+          'tgl' : json.data[i].tanggal,
+          'edit' : '<button onclick="editSK()" class="btn btn-warning" style="color:white;">Edit</button> '
+        })
+      }
+      return return_data;
+    }
+  },
+   dom: 'Bfrtlip',
+        buttons: [
+            {
+                extend: 'copyHtml5',
+                text: 'Copy',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3]
+                }
+            },{
+                extend: 'excelHtml5',
+                text: 'Excel',
+                className: 'exportExcel',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3]
+                }
+            },{
+                extend: 'csvHtml5',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3]
+                }
+            },{
+                extend: 'pdfHtml5',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3]
+                }
+            },{
+                extend: 'print',
+                filename: 'Produk Data',
+                exportOptions: {
+                  columns:[0,1,2,3]
+                }
+            }
+        ],
+        "lengthChange": true,
+  columns: [
+    {'data': 'id_bahan_jadi'},
+    {'data': 'nama_bahan'},
+    {'data': 'stok_keluar'},
+    {'data': 'tgl'},
+    {'data': 'edit','orderable':false,'searchable':false}
+  ],
+      rowCallback: function(row, data, iDisplayIndex) {
+        var info = this.fnPagingInfo();
+        var page = info.iPage;
+        var length = info.iLength;
+        var index = page * length + (iDisplayIndex + 1);
+        // $('td:eq(0)', row).html(index);
+      }
+    });
+});
+function reload_table(){
+  tabeldata.api().ajax.reload(null,false);
+}
 </script>

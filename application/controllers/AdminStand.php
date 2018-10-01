@@ -297,7 +297,7 @@ class AdminStand extends CI_Controller {
 						}
 
 						foreach ($localdatabahanjadi as $perbahanjadi) {
-							if (!in_array($perbahanjadi->id_bahan_jadi, $onlinedataproduk)) {
+							if (!in_array($perbahanjadi->id_bahan_jadi, $onlinedatabahanjadi)) {
 								$this->ModelKasir->delete('bahan_jadi',$perbahanjadi->id_bahan_jadi);
 							}
 						}
@@ -708,21 +708,180 @@ class AdminStand extends CI_Controller {
 		$nama = $this->input->post('nama');
 		$stokmasuk = $this->input->post('stokmasuk');
 
-		$where = array('id_bahan_jadi' => $id, 'tanggal' => 'test');
-		$count = $this->Produk->getRowCount('produk',$where);
+		$datenow = date("Y-m-d");
+
+		$where = array('id_bahan_jadi' => $id, 'tanggal' => $datenow);
+		$count = $this->ModelKasir->getRowCount('stok_bahan_jadi',$where);
+
+		$whereLastItem = array('id_bahan_jadi' => $id);
+		$countThatItem = $this->ModelKasir->getRowCount('stok_bahan_jadi',$whereLastItem);
+
+		if ($countThatItem>0) {
+			$dataLast = $this->ModelKasir->getDataWhereDesc('stok_bahan_jadi',$whereLastItem,'tanggal');
+			$stoksisa = $dataLast[0]->stok_sisa;
+		}else{
+			$stoksisa = 0;
+		}
 
 		if ($count>0) {
-			echo "ID Data Sudah ada di dalam database";
-		}else{
+			$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+			$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa - $dataBeforeUpdate[0]->stok_masuk;
 			$data = array(
-	        'id_produk' => $this->input->post('id'),
-	        'nama_produk' => $this->input->post('nama'),
-	        'kategori' => $this->input->post('kategori'),
-	        'harga_jual' => $this->input->post('harga')
+		        'stok_masuk' => $stokmasuk,
+		        'stok_sisa' => $stoksisabefore+$stokmasuk,
+		        'status_upload' => 'not_upload'
 	         );
 
-			$this->Produk->insert('produk',$data);
+			$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
+			$this->sinkronstokbahan();
+			echo "Data telah di update!.";
+		}else{
+			$data = array(
+		        'id_bahan_jadi' => $id,
+		        'nama_bahan_jadi' => $nama,
+		        'stok_masuk' => $stokmasuk,
+		        'stok_keluar' => 0,
+		        'stok_sisa' => $stoksisa+$stokmasuk,
+		        'tanggal' => $datenow,
+		        'status_upload' => 'not_upload'
+	         );
+
+			$this->ModelKasir->insert('stok_bahan_jadi',$data);
+			$this->sinkronstokbahan();
 			echo "Berhasil Ditambahkan";
+		}
+
+		
+	}
+
+	public function dataStokKeluar()
+	{
+		$this->load->library('datatables');
+		$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_keluar,tanggal');
+		$this->datatables->from('stok_bahan_jadi');
+		echo $this->datatables->generate();
+	}
+
+	public function tambah_stok_keluar()
+	{
+		$id = $this->input->post('id');
+		$nama = $this->input->post('nama');
+		$stokkeluar = $this->input->post('stokkeluar');
+
+		$datenow = date("Y-m-d");
+
+		$where = array('id_bahan_jadi' => $id, 'tanggal' => $datenow);
+		$count = $this->ModelKasir->getRowCount('stok_bahan_jadi',$where);
+
+		$whereLastItem = array('id_bahan_jadi' => $id);
+		$countThatItem = $this->ModelKasir->getRowCount('stok_bahan_jadi',$whereLastItem);
+
+		if ($countThatItem>0) {
+			$dataLast = $this->ModelKasir->getDataWhereDesc('stok_bahan_jadi',$whereLastItem,'tanggal');
+			$stoksisa = $dataLast[0]->stok_sisa;
+		}else{
+			$stoksisa = 0;
+		}
+
+		if ($count>0) {
+			$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+			$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa + $dataBeforeUpdate[0]->stok_keluar;
+			$data = array(
+		        'stok_keluar' => $stokkeluar,
+		        'stok_sisa' => $stoksisabefore-$stokkeluar,
+		        'status_upload' => 'not_upload'
+	         );
+
+			$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
+			$this->sinkronstokbahan();
+			echo "Data telah di update!.";
+		}else{
+			$data = array(
+		        'id_bahan_jadi' => $id,
+		        'nama_bahan_jadi' => $nama,
+		        'stok_masuk' => 0,
+		        'stok_keluar' => $stokkeluar,
+		        'stok_sisa' => $stoksisa-$stokkeluar,
+		        'tanggal' => $datenow,
+		        'status_upload' => 'not_upload'
+	         );
+
+			$this->ModelKasir->insert('stok_bahan_jadi',$data);
+			$this->sinkronstokbahan();
+			echo "Berhasil Diatur";
+		}
+	}
+
+	public function sinkronstokbahan()
+	{
+		$whereforsinkron = array('status_upload' => 'not_upload');
+
+		if ($this->ModelKasir->getRowCount('stok_bahan_jadi',$whereforsinkron) <1) {
+			echo "SUCCESSSAVE";
+		}else{
+			$liststokbelumupload = $this->ModelKasir->getData($whereforsinkron,'stok_bahan_jadi');
+
+			$postdata = http_build_query(
+			    array(
+			        'allstok' => json_encode($liststokbelumupload),
+			        'id_stan' => $this->session->userdata('id_stan')
+			    )
+			);
+
+			$opts = array('http' =>
+			    array(
+			        'method'  => 'POST',
+			        'header'  => 'Content-type: application/x-www-form-urlencoded',
+			        'content' => $postdata
+			    )
+			);
+
+			$context  = stream_context_create($opts);
+			//DATA NOTA
+			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
+			$send = @file_get_contents('http://localhost/teabreak/insertDataStok', false, $context);
+			if($send === FALSE){
+				echo 'CANTCONNECT';
+			}else{
+				if ($send == 'true') {
+					// var_dump($send);
+					$update = array('status_upload' => 'upload');
+					$this->ModelKasir->update('stok_bahan_jadi',$update,1);
+					echo "SUCCESSSAVE";
+				}else{
+					echo "PENYIMPANANGAGAL";
+				}
+			}
+		}
+	}
+
+	public function dataSisaStok()
+	{
+		$tanggal = $this->input->post('tanggal');
+
+		if ($tanggal == '') {
+			$where = array('tanggal' => '');
+			$this->load->library('datatables');
+			$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_masuk,stok_keluar,stok_sisa');
+			$this->datatables->from('stok_bahan_jadi');
+			$this->datatables->where($where);
+			
+			echo $this->datatables->generate();
+		}else{
+			$tanggal = strtotime($tanggal);
+			$tanggal = date('Y-m-d',$tanggal);
+
+			$where = array('tanggal' => $tanggal);
+			// $alldata = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+
+			// return json_encode($alldata);
+
+			$this->load->library('datatables');
+			$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_masuk,stok_keluar,stok_sisa');
+			$this->datatables->from('stok_bahan_jadi');
+			$this->datatables->where($where);
+			
+			echo $this->datatables->generate();
 		}
 	}
 }

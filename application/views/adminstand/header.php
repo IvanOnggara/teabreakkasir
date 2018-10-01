@@ -115,7 +115,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a style="pointer-events: none; color: red !important" href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">STOK <i class="fa fa-caret-down"></i></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">STOK <i class="fa fa-caret-down"></i></a>
                     <div class="dropdown-menu">
                         <a class="nav-link" href=<?php echo base_url("sisastok")?>>Sisa Stok</a>
                         <a class="nav-link" href=<?php echo base_url("stokmasuk")?>>Stok Masuk</a>
