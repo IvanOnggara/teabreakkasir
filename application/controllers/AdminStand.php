@@ -817,7 +817,7 @@ class AdminStand extends CI_Controller {
 		$whereforsinkron = array('status_upload' => 'not_upload');
 
 		if ($this->ModelKasir->getRowCount('stok_bahan_jadi',$whereforsinkron) <1) {
-			echo "SUCCESSSAVE";
+			// echo "SUCCESSSAVE";
 		}else{
 			$liststokbelumupload = $this->ModelKasir->getData($whereforsinkron,'stok_bahan_jadi');
 
@@ -841,15 +841,16 @@ class AdminStand extends CI_Controller {
 			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
 			$send = @file_get_contents('http://localhost/teabreak/insertDataStok', false, $context);
 			if($send === FALSE){
-				echo 'CANTCONNECT';
+				// echo 'CANTCONNECT';
 			}else{
 				if ($send == 'true') {
 					// var_dump($send);
 					$update = array('status_upload' => 'upload');
-					$this->ModelKasir->update('stok_bahan_jadi',$update,1);
-					echo "SUCCESSSAVE";
+					$wherenot = array('status_upload' => 'not_upload');
+					$this->ModelKasir->update('stok_bvahan_jadi',$update,$wherenot);
+					// echo "SUCCESSSAVE";
 				}else{
-					echo "PENYIMPANANGAGAL";
+					// echo "PENYIMPANANGAGAL";
 				}
 			}
 		}
