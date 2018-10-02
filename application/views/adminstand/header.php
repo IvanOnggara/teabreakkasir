@@ -97,6 +97,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $.ajax({
               type:"post",
               url: "<?php echo base_url('adminstand/sinkronstokbahan')?>/",
+              data:{ sst:"sinkron"},
               dataType:"text",
               success:function(response)
               {

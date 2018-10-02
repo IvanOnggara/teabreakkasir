@@ -817,9 +817,13 @@ class AdminStand extends CI_Controller {
 		$whereforsinkron = array('status_upload' => 'not_upload');
 
 		if ($this->ModelKasir->getRowCount('stok_bahan_jadi',$whereforsinkron) <1) {
+			if ($this->input->post('sst') == 'sinkron') {
+				echo "SUCCESSSAVE";
+			}
 			// echo "SUCCESSSAVE";
 		}else{
 			$liststokbelumupload = $this->ModelKasir->getData($whereforsinkron,'stok_bahan_jadi');
+			// var_dump($liststokbelumupload);
 
 			$postdata = http_build_query(
 			    array(
@@ -841,18 +845,28 @@ class AdminStand extends CI_Controller {
 			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
 			$send = @file_get_contents('http://localhost/teabreak/insertDataStok', false, $context);
 			if($send === FALSE){
+				if ($this->input->post('sst') == 'sinkron') {
+					echo "CANTCONNECT";
+				}
 				// echo 'CANTCONNECT';
 			}else{
 				if ($send == 'true') {
 					// var_dump($send);
 					$update = array('status_upload' => 'upload');
 					$wherenot = array('status_upload' => 'not_upload');
-					$this->ModelKasir->update('stok_bvahan_jadi',$update,$wherenot);
+					$this->ModelKasir->update('stok_bahan_jadi',$update,$wherenot);
+					if ($this->input->post('sst') == 'sinkron') {
+						echo "SUCCESSSAVE";
+					}
 					// echo "SUCCESSSAVE";
 				}else{
+					if ($this->input->post('sst') == 'sinkron') {
+						echo "PENYIMPANANGAGAL";
+					}
 					// echo "PENYIMPANANGAGAL";
 				}
 			}
+			// var_dump($send);
 		}
 	}
 
