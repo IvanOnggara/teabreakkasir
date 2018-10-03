@@ -72,7 +72,41 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $('#labelsinkron').html('KONEKSI ERROR!');
                     $('#labelsinkron').addClass('red');
                 }else if (response == 'SUCCESSSAVE') {
-                    $('#labelsinkron').html('SINKRONISASI SUKSES!');
+                    $('#labelsinkron').html('SINKRONISASI NOTA SUKSES!');
+                    $('#labelsinkron').addClass('green');
+                }else{
+                    $('#labelsinkron').html('PENYIMPANAN GAGAL!');
+                    $('#labelsinkron').addClass('red');
+                }
+              },
+              error: function (jqXHR, textStatus, errorThrown)
+              {
+                alert(errorThrown);
+              }
+          }
+    );
+    }
+
+    function sinkronstok() {
+        alert('sinkron');
+        $('#labelsinkron').removeClass('red');
+        $('#labelsinkron').removeClass('green');
+
+        $('#labelsinkron').html('LOADING...');
+        $('#labelsinkron').addClass('orange');
+        $.ajax({
+              type:"post",
+              url: "<?php echo base_url('adminstand/sinkronstokbahan')?>/",
+              data:{ sst:"sinkron"},
+              dataType:"text",
+              success:function(response)
+              {
+                $('#labelsinkron').removeClass('orange');
+                if (response == 'CANTCONNECT') {
+                    $('#labelsinkron').html('KONEKSI ERROR!');
+                    $('#labelsinkron').addClass('red');
+                }else if (response == 'SUCCESSSAVE') {
+                    $('#labelsinkron').html('SINKRONISASI STOK SUKSES!');
                     $('#labelsinkron').addClass('green');
                 }else{
                     $('#labelsinkron').html('PENYIMPANAN GAGAL!');
@@ -146,6 +180,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
                 <button onclick="sinkronnota()" class="dropdown float-right active">
                     <a style="color: white;"><i class="fa fa-refresh"></i> SINKRONISASI NOTA</a>
+                </button>
+                <button onclick="sinkronstok()" class="dropdown float-right active">
+                    <a style="color: white;"><i class="fa fa-refresh"></i> SINKRONISASI STOK</a>
                 </button>
                 <p class="center float-right" id="labelsinkron"></p>
             </div>

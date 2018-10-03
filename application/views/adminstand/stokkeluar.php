@@ -267,9 +267,9 @@ jQuery( document ).ready(function( $ ) {
       for(var i=0;i< json.data.length; i++){
         return_data.push({
           'id_bahan_jadi': json.data[i].id_bahan_jadi,
-          'nama_bahan'  : json.data[i].nama_bahan_jadi,
+          'nama_bahan_jadi'  : json.data[i].nama_bahan_jadi,
           'stok_keluar' : json.data[i].stok_keluar,
-          'tgl' : json.data[i].tanggal,
+          'tanggal' : json.data[i].tanggal,
           // 'edit' : '<button onclick="editSK(\''+json.data[i].id_bahan_jadi.split(' ').join('+')+'\',\''+json.data[i].stok_keluar+'\',\''+json.data[i].tanggal+'\')" class="btn btn-warning" style="color:white;">Edit</button> '
         })
       }
@@ -316,9 +316,9 @@ jQuery( document ).ready(function( $ ) {
         "lengthChange": true,
   columns: [
     {'data': 'id_bahan_jadi'},
-    {'data': 'nama_bahan'},
+    {'data': 'nama_bahan_jadi'},
     {'data': 'stok_keluar'},
-    {'data': 'tgl'},
+    {'data': 'tanggal'},
     // {'data': 'edit','orderable':false,'searchable':false}
   ],
       rowCallback: function(row, data, iDisplayIndex) {

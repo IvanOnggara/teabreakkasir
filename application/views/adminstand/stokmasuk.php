@@ -153,11 +153,11 @@ $('#namabahanjadi').change(function(){
 					}
 	          	}
 
-				if (found) {
-					alert('ketemu');
-				}else{
-					alert('ga ketemu');
-				}
+				// if (found) {
+				// 	alert('ketemu');
+				// }else{
+				// 	alert('ga ketemu');
+				// }
 	          },
 	          error: function (jqXHR, textStatus, errorThrown)
 	          {
@@ -268,9 +268,9 @@ jQuery( document ).ready(function( $ ) {
       for(var i=0;i< json.data.length; i++){
         return_data.push({
           'id_bahan_jadi': json.data[i].id_bahan_jadi,
-          'nama_bahan'  : json.data[i].nama_bahan_jadi,
+          'nama_bahan_jadi'  : json.data[i].nama_bahan_jadi,
           'stok_masuk' : json.data[i].stok_masuk,
-          'tgl' : json.data[i].tanggal,
+          'tanggal' : json.data[i].tanggal,
           // 'edit' : '<button onclick="editSM(\''+json.data[i].id_bahan_jadi.split(' ').join('+')+'\',\''+json.data[i].stok_masuk+'\',\''+json.data[i].tanggal+'\')" class="btn btn-warning" style="color:white;">Edit</button> '
         })
       }
@@ -317,9 +317,9 @@ jQuery( document ).ready(function( $ ) {
         "lengthChange": true,
   columns: [
     {'data': 'id_bahan_jadi'},
-    {'data': 'nama_bahan'},
+    {'data': 'nama_bahan_jadi'},
     {'data': 'stok_masuk'},
-    {'data': 'tgl'},
+    {'data': 'tanggal'},
     // {'data': 'edit','orderable':false,'searchable':false}
   ],
       rowCallback: function(row, data, iDisplayIndex) {
