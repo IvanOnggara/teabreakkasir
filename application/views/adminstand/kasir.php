@@ -247,6 +247,17 @@ var x = document.getElementById("myTopnav");
 }
 
 function pembayaran(){
+    var ttl_display = parseInt($("#total_harus_byr").html().substring(3).split('.').join(""));
+     $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/setTotal')?>/",
+          data:{ttl_display:ttl_display},
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      }
+    );
     $("#modal_bayar").modal({
         backdrop: 'static',
         keyboard: false
@@ -326,7 +337,7 @@ function tambah_item(){
         $("#qty"+order[count].id_order).text(order[count].qty);
         $("#totalharga"+order[count].id_order).text("Rp "+currency(order[count].total));
         $("#modal_topping").modal('hide');
-        
+        qty = order[count].qty;
     }else{
         var row = table.insertRow(1);
         row.id = count_id_order;
@@ -358,6 +369,22 @@ function tambah_item(){
     }
     count_id_order++;
     hitungDiskon();
+
+    harga_produk = parseInt(harga_produk)+parseInt(harga_topping);
+
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/setItem')?>/",
+          data:{topping:topping,nama_produk:nama_produk,harga_produk,harga_produk},
+          success: function (response){
+            alert(response);
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      }
+    );
 
     nama_produk="";
     topping = [];
@@ -620,6 +647,8 @@ function countTotal(){
             subtotal = parseInt(subtotal)+parseInt(order[i].total);
             diskon = parseInt(diskon)+parseInt(order[i].diskon);
         }
+    }else{
+        resetDisplay();
     }
     
     
@@ -771,7 +800,20 @@ function reset_menu(){
 
 jQuery( document ).ready(function( $ ) {
     reset_menu();
+    resetDisplay();
 });
+
+function resetDisplay(){
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/resetDisplay')?>/",
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      }
+    );
+}
 
 
 function kalkulatorkasir(number) {
