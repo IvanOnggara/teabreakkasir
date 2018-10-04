@@ -227,6 +227,7 @@ var id_itemdisc2 = new Array();
 var totalsemuaproduk1 = 0;
 var totalsemuaproduk2 = 0;
 var total_harus_byr=0;
+var count_id_order = 0;
 var diskon = 0;
 var diskonp=0;
 var subtotal = 0;
@@ -321,7 +322,7 @@ function tambah_item(){
     if (status_topping) {
         roworder = count;
         order[count].qty++;
-        order[count].total = parseInt(order[count].qty)*(parseInt(order[count].harga_produk)+parseInt(order[count].harga_topping));
+        order[count].total = ((parseInt(order[count].qty)-parseInt(order[count].qtydisc))*(parseInt(order[count].harga_produk)))+(parseInt(order[count].qty)*parseInt(order[count].harga_topping));
         $("#qty"+order[count].id_order).text(order[count].qty);
         $("#totalharga"+order[count].id_order).text("Rp "+currency(order[count].total));
         $("#modal_topping").modal('hide');
@@ -334,14 +335,7 @@ function tambah_item(){
         var cell3 = row.insertCell(2);
         var cell4 = row.insertCell(3);
         var cell5 = row.insertCell(4);
-        cell1.innerHTML = '<p id="#nama_produk'+table.rows.length+'">'+nama_produk+'</p>';
-        cell2.innerHTML = '<p id="topping'+table.rows.length+'">'+topping.toString()+'</p>';
-        cell3.innerHTML = '<button class="btn center btn-default btnmin btnqty" onclick="minus(\''+table.rows.length+'\',this)">-</button><p id="qty'+table.rows.length+'" class="qtyitem btnqty">1</p><button class="btn center btn-default btnplus btnqty" onclick="plus(\''+table.rows.length+'\',this)">+</button>';
-        cell4.innerHTML = '<p id="satuan'+table.rows.length+'">Rp '+currency(parseInt(harga_produk)+parseInt(harga_topping))+'</p>';
-        cell5.innerHTML = '<div class="row"><p class="col-lg-9" id="totalharga'+table.rows.length+'">Rp '+currency(qty*harga_produk)+'</p><button class="col-lg-3 btn btn-danger btnremove" onclick="removeBtn(this);">X</button></div>';
-        $("#modal_topping").modal('hide');
         var item = new Array();
-        roworder = table.rows.length;
         item.id_order = table.rows.length;
         item.list_idtopping = list_idtopping;
         item.nama_produk = nama_produk;
@@ -353,8 +347,14 @@ function tambah_item(){
         item.qtydisc = 0;
         item.harga_produk = harga_produk;
         item.harga_topping = harga_topping;
-        item.total = parseInt(qty)*(parseInt(harga_produk)+parseInt(harga_topping));
+        item.total = parseInt(qty)*parseInt(item.subtotal);
         order.push(item);
+        cell1.innerHTML = '<p id="#nama_produk'+count_id_order+'">'+nama_produk+'</p>';
+        cell2.innerHTML = '<p id="topping'+count_id_order+'">'+topping.toString()+'</p>';
+        cell3.innerHTML = '<button class="btn center btn-default btnmin btnqty" onclick="minus(\''+count_id_order+'\',this)">-</button><p id="qty'+count_id_order+'" class="qtyitem btnqty">1</p><button class="btn center btn-default btnplus btnqty" onclick="plus(\''+count_id_order+'\',this)">+</button>';
+        cell4.innerHTML = '<p id="satuan'+count_id_order+'">Rp '+currency(parseInt(harga_produk)+parseInt(harga_topping))+'</p>';
+        cell5.innerHTML = '<div class="row"><p class="col-lg-9" id="totalharga'+count_id_order+'">Rp '+currency(item.total)+'</p><button class="col-lg-3 btn btn-danger btnremove" onclick="removeBtn(this);">X</button></div>';
+        $("#modal_topping").modal('hide');
     }
 
     hitungDiskon();
@@ -577,13 +577,6 @@ function removeBtn(rowid){
         }
     }
 
-    var count = 0;
-    for (var i = 1; i < table.rows.length-1; i++) {
-        table.rows[i].id = i;
-        order[count].id_order = i;
-        count++;
-    }
-
     hitungDiskon();
 }
 
@@ -610,12 +603,6 @@ function minus(id,rowid){
         }
         var a = rowid.parentNode.parentNode.rowIndex;
         document.getElementById("billtable").deleteRow(a);
-        var count=0;
-        for (var i = 1; i < table.rows.length-1; i++) {
-            table.rows[i].id = i;
-            order[count].id_order = i;
-            count++;
-        }
     }
     hitungDiskon();
 }
