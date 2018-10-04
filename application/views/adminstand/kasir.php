@@ -329,14 +329,14 @@ function tambah_item(){
         
     }else{
         var row = table.insertRow(1);
-        row.id = table.rows.length;
+        row.id = count_id_order;
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
         var cell4 = row.insertCell(3);
         var cell5 = row.insertCell(4);
         var item = new Array();
-        item.id_order = table.rows.length;
+        item.id_order = count_id_order;
         item.list_idtopping = list_idtopping;
         item.nama_produk = nama_produk;
         item.id_produk = id_produk;
@@ -356,7 +356,7 @@ function tambah_item(){
         cell5.innerHTML = '<div class="row"><p class="col-lg-9" id="totalharga'+count_id_order+'">Rp '+currency(item.total)+'</p><button class="col-lg-3 btn btn-danger btnremove" onclick="removeBtn(this);">X</button></div>';
         $("#modal_topping").modal('hide');
     }
-
+    count_id_order++;
     hitungDiskon();
 
     nama_produk="";
@@ -615,10 +615,13 @@ function countTotal(){
     diskon = 0;
 
     //MENDAPATKAN NILAI TOTAL PEMBAYARAN DAN TOTAL DISKON DARI LIST ORDER
-    for (var i = 0;i < order.length; i++){
-        subtotal = parseInt(subtotal)+parseInt(order[i].total);
-        diskon = parseInt(diskon)+parseInt(order[i].diskon);
+    if (order.length>0) {
+        for (var i = 0;i < order.length; i++){
+            subtotal = parseInt(subtotal)+parseInt(order[i].total);
+            diskon = parseInt(diskon)+parseInt(order[i].diskon);
+        }
     }
+    
     
     total_harus_byr = parseInt(subtotal)-parseInt(diskon);
     $("#diskon").text("Rp "+currency(diskon));
