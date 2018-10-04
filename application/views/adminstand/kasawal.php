@@ -2,83 +2,26 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div style="padding: 0px;" class="menujudul">
-	            PENGELUARAN LAIN
+	            KAS AWAL HARIAN
 	        </div>
 		</div>
 	</div>
 	<br>
 	<div class="row">
-		<div class="col-md-5 col-sm-12">
+		<div class="col-md-6 col-sm-12">
 			<div class="form-group">
-			  	<label>Keterangan</label>
-			  	<input type="text" class="form-control" id="keteranganpengeluaran" placeholder="Keterangan">
+			  	<label>Kas Hari Ini</label>
+			  	<input type="text" class="form-control numeric" id="kasawal" placeholder="Kas">
+          
 			</div>
 		</div>
-		<div class="col-md-5 col-sm-12">
-			<div class="form-group">
-			  	<label>Pengeluaran</label>
-			  	<input type="text" class="form-control numeric" id="jumlahpengeluaran" placeholder="Jumlah Pengeluaran">
-			</div>
-		</div>
-		<div class="col-md-2 col-sm-12">
-			<label for="usr">Action</label>
-			<button class="btn btn-success" id="buttontambahpengeluaran" onclick="tambahpengeluaran()">Tambah Pengeluaran</button>
-		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-12 col-sm-12">
-			<table id="mytable" class="table table-striped table-bordered">
-		        <thead class="thead-dark">
-		          <tr>
-		            <th style="width: 15%;">Tanggal</th>
-		            <th style="width: 40%;">Keterangan</th>
-		            <th style="width: 25%;">Pengeluaran</th>
-                <th style="width: 10%;">Edit</th>
-                <th style="width: 10%;">Delete</th>
-		            <!-- <th style="width: 12.5%;">Edit</th> -->
-		          </tr>
-		        </thead>
-		    </table>
-		</div>
-		
-	</div>
-</div>
-
-<div class="modal fade" id="modal_edit" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="header modal-header">
-                <h4 class="modal-title">Edit</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="editid" class=" form-control-label">Keterangan</label>
-                            <textarea class="form-control" rows="5" id="editket" placeholder="Keterangan"></textarea>
-                            <input type="hidden" name="id_lama" id="id_lama">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="editid" class=" form-control-label">Pengeluaran</label>
-                            <input type="text" id="editpeng" placeholder="Masukkan Pengeluaran" class="form-control numeric">
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-            <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn btn-default">Batal</button>
-                <button type="button" onclick="simpanedit()" class="btn add_field_button btn-info">Simpan</button>
-            </div>
-        </div>
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+      <button class="btn btn-success" onclick="simpankas()"><span class="fa fa-save"></span> Simpan</button>
     </div>
+  </div>
 </div>
-
 
 
 
@@ -112,59 +55,46 @@ $('.numeric').on('input', function (event) {
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 
-function tambahpengeluaran() {
-	var keterangan = $('#keteranganpengeluaran').val();
-	var jumlahpengeluaran = $('#jumlahpengeluaran').val();
+$.ajax(
+  {
+      type:"post",
+      url: "<?php echo base_url('adminstand/cekDataKas')?>/",
+      // data:{ keterangan:keterangan,jumlahpengeluaran:jumlahpengeluaran},
+      success:function(response)
+      {
+         $("#kasawal").val(response);
+      },
+      error: function (jqXHR, textStatus, errorThrown)
+      {
+        alert(errorThrown);
+      }
+  }
+);
 
-	if ($('#keteranganpengeluaran').val() == '') {
-		$('#keteranganpengeluaran').addClass("is-invalid");
-	}
+function simpankas() {
+	var kas = $('#kasawal').val();
 
-	if ($('#jumlahpengeluaran').val() == '') {
-		$('#jumlahpengeluaran').addClass("is-invalid");
-	}
-
-	if ($('#keteranganpengeluaran').val() != '' && $('#stokmasuk').val() != '') {
-		$.ajax(
+	if (kas == '') {
+		$('#kasawal').addClass("is-invalid");
+	}else{
+    $('#kasawal').removeClass("is-invalid");
+    $.ajax(
+        {
+            type:"post",
+            url: "<?php echo base_url('adminstand/simpankas')?>/",
+            data:{ kas:kas},
+            success:function(response)
             {
-                type:"post",
-                url: "<?php echo base_url('adminstand/tambah_pengeluaran_lain')?>/",
-                data:{ keterangan:keterangan,jumlahpengeluaran:jumlahpengeluaran},
-                success:function(response)
-                {
-                	 $("#keteranganpengeluaran").val('');
-                    $("#jumlahpengeluaran").val('');
-                    reload_table();
-
-                  if(response == 'Berhasil Ditambahkan'){
-                    
-                    
-                    if($('#keteranganpengeluaran').has("is-invalid")){
-                      $('#keteranganpengeluaran').removeClass("is-invalid");
-                    }
-
-                    if($('#jumlahpengeluaran').has("is-invalid")){
-                      $('#jumlahpengeluaran').removeClass("is-invalid");
-                    }
-
-                    $("#keteranganpengeluaran").focus();
-
-                    alert(response);
-                  }else if(response =='Data telah di update!.'){
-                    
-                    alert(response);
-                  }else{
-                    alert('unknown error is happen! try again.');
-                  }
-                  
-                },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                  alert(errorThrown);
-                }
+               alert('sukses update data!');
+              
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+              alert(errorThrown);
             }
-        );
-	}
+        }
+    );
+  }
 }
 
 jQuery( document ).ready(function( $ ) {
@@ -279,22 +209,7 @@ function editpengeluaran(id,keterangan,pengeluaran) {
 }
 
 function deletepengeluaran(id) {
-  if(confirm('Apakah anda yakin ingin menghapus data ini??')){
-    $.ajax({
-            type:"post",
-            url: "<?php echo base_url('adminstand/delete_pengeluaran')?>/",
-            data:{ id:id},
-            success:function(response)
-            {
-                 reload_table();
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-              alert(errorThrown);
-            }
-        }
-    );
-  }
+  // body...
 }
 
 function simpanedit() {
@@ -354,47 +269,4 @@ function simpanedit() {
   }
 
 }
-
-// var idedit = '';
-// var stokmasukedit = '';
-// var tanggaledit = '';
-
-// function editSM(id,stokmasuk,tanggal) {
-// 	$('#modal_edit').modal('toggle');
-// 	$('#editsm').val(stokmasuk);
-// 	idedit = id;
-// 	stokmasukedit = stokmasuk;
-// 	tanggaledit = tanggal;
-// }
-
-// function simpanedit() {
-// 	stokmasukedit = $('#editsm').val();
-
-// 	if (stokmasukedit == '') {
-// 		$('#editsm').addClass('is-invalid');
-// 	}else{
-// 		$('#editsm').removeClass('is-invalid');
-// 		$.ajax({
-// 	          type:"post",
-// 	          url: "<?php echo base_url('adminstand/edit_stok_masuk_keluar')?>/",
-// 	          data:{ id:idedit,stokmasuk:stokmasukedit,stokkeluar:'',tanggal:tanggaledit},
-// 	          success:function(response)
-// 	          {
-// 	            if(response == 'Berhasil Diupdate'){
-// 	              $("#modal_edit").modal('toggle');
-// 	              reload_table();
-// 	              alert(response);
-// 	            }else{
-// 	              alert('unknown error is happen! try again.');
-// 	            }
-	            
-// 	          },
-// 	          error: function (jqXHR, textStatus, errorThrown)
-// 	          {
-// 	            alert(errorThrown);
-// 	          }
-// 	    });
-// 	}
-
-// }
 </script>

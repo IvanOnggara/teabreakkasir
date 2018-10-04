@@ -900,6 +900,232 @@ class AdminStand extends CI_Controller {
 		}
 	}
 
+	public function dataPengeluaranLain()
+	{
+		$this->load->library('datatables');
+		$this->datatables->select('id_pengeluaran,tanggal,keterangan,pengeluaran');
+		$this->datatables->from('pengeluaran_lain');
+		echo $this->datatables->generate();
+	}
+
+	public function tambah_pengeluaran_lain()
+	{
+		$keterangan = $this->input->post('keterangan');
+		$jumlahpengeluaran = $this->input->post('jumlahpengeluaran');
+
+		$datenow = date("Y-m-d");
+		
+		$data = array(
+			'tanggal' => $datenow,
+	        'keterangan' => $keterangan,
+	        'pengeluaran' => $jumlahpengeluaran,
+	        'status_upload' => 'not_upload'
+         );
+
+		$this->ModelKasir->insert('pengeluaran_lain',$data);
+		$this->sinkronpengeluaran();
+		echo "Berhasil Ditambahkan";
+		
+	}
+
+	public function edit_pengeluaran_lain()
+	{
+		$keteranganbaru = $this->input->post('keteranganbaru');
+		$pengeluaranbaru = $this->input->post('pengeluaranbaru');
+		$id_pengeluaran = $this->input->post('id_pengeluaran');
+
+		$where = array('id_pengeluaran' => $id_pengeluaran);
+
+		$data = array(
+			'keterangan' => $keteranganbaru,
+	        'pengeluaran' => $pengeluaranbaru,
+	        'status_upload' => 'not_upload'
+         );
+
+		$realdata = $this->ModelKasir->getData($where,'pengeluaran_lain');
+
+		if ($realdata[0]->keterangan != $keteranganbaru || $realdata[0]->pengeluaran != $pengeluaranbaru) {
+			$cek = $this->ModelKasir->Update('pengeluaran_lain',$data,$where);
+		}else{
+			$cek = true;
+		}
+
+		if ($cek) {
+			echo "Berhasil Diupdate";
+		}else{
+			echo "gagal";
+		}
+		$this->sinkronpengeluaran();
+		
+	}
+
+	public function delete_pengeluaran()
+	{
+		$id_pengeluaran = $this->input->post('id');
+		$this->Produk->Delete('pengeluaran_lain',$id_pengeluaran);
+		// $this->sinkronpengeluaran();
+		//perlu perbaikan disini
+	}
+
+	public function kasawal()
+	{
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/kasawal');
+        }
+
+	}
+
+	public function cekDataKas()
+	{
+		$datenow = date("Y-m-d");
+		$where = array('tanggal' => $datenow);
+		if ($this->ModelKasir->getRowCount('kas',$where) > 0) {
+			
+		}else{
+			$array = array(
+				'tanggal' => $datenow,
+				'kas_awal' => 0,
+				'status_upload' => 'not_upload'
+			);
+
+			$this->ModelKasir->insert('kas',$array);
+		}
+
+		$data = $this->ModelKasir->getData($where,'kas');
+		echo $data[0]->kas_awal;
+		$this->sinkronkas();
+	}
+
+	public function simpankas()
+	{
+		$kasbaru = $this->input->post('kas');
+		$datenow = date("Y-m-d");
+		$where = array('tanggal' => $datenow);
+		$data = array('kas_awal' => $kasbaru, 'status_upload' => 'not_upload');
+		$this->ModelKasir->Update('kas',$data,$where);
+		echo "sukses";
+		$this->sinkronkas();
+	}
+
+	public function sinkronpengeluaran()
+	{
+		$whereforsinkron = array('status_upload' => 'not_upload');
+
+		if ($this->ModelKasir->getRowCount('pengeluaran_lain',$whereforsinkron) <1) {
+			if ($this->input->post('sst') == 'sinkron') {
+				echo "SUCCESSSAVE";
+			}
+			// echo "SUCCESSSAVE";
+		}else{
+			$listpengeluaranbelumupload = $this->ModelKasir->getData($whereforsinkron,'pengeluaran_lain');
+			// var_dump($liststokbelumupload);
+
+			$postdata = http_build_query(
+			    array(
+			        'allpengeluaran' => json_encode($listpengeluaranbelumupload),
+			        'id_stan' => $this->session->userdata('id_stan')
+			    )
+			);
+
+			$opts = array('http' =>
+			    array(
+			        'method'  => 'POST',
+			        'header'  => 'Content-type: application/x-www-form-urlencoded',
+			        'content' => $postdata
+			    )
+			);
+
+			$context  = stream_context_create($opts);
+			//DATA NOTA
+			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
+			$send = @file_get_contents('http://localhost/teabreak/insertDataPengeluaran', false, $context);
+			if($send === FALSE){
+				if ($this->input->post('sst') == 'sinkron') {
+					echo "CANTCONNECT";
+				}
+				// echo 'CANTCONNECT';
+			}else{
+				if ($send == 'true') {
+					// var_dump($send);
+					$update = array('status_upload' => 'upload');
+					$wherenot = array('status_upload' => 'not_upload');
+					$this->ModelKasir->update('pengeluaran_lain',$update,$wherenot);
+					if ($this->input->post('sst') == 'sinkron') {
+						echo "SUCCESSSAVE";
+					}
+					// echo "SUCCESSSAVE";
+				}else{
+					if ($this->input->post('sst') == 'sinkron') {
+						echo "PENYIMPANANGAGAL";
+					}
+					// echo "PENYIMPANANGAGAL";
+				}
+			}
+			// var_dump($send);
+		}
+	}
+
+	public function sinkronkas()
+	{
+		$whereforsinkron = array('status_upload' => 'not_upload');
+
+		if ($this->ModelKasir->getRowCount('kas',$whereforsinkron) <1) {
+			if ($this->input->post('sst') == 'sinkron') {
+				echo "SUCCESSSAVE";
+			}
+			// echo "SUCCESSSAVE";
+		}else{
+			$listkasbelumupload = $this->ModelKasir->getData($whereforsinkron,'kas');
+
+			$postdata = http_build_query(
+			    array(
+			        'allkas' => json_encode($listkasbelumupload),
+			        'id_stan' => $this->session->userdata('id_stan')
+			    )
+			);
+
+			$opts = array('http' =>
+			    array(
+			        'method'  => 'POST',
+			        'header'  => 'Content-type: application/x-www-form-urlencoded',
+			        'content' => $postdata
+			    )
+			);
+
+			$context  = stream_context_create($opts);
+			//DATA NOTA
+			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
+			$send = @file_get_contents('http://localhost/teabreak/insertDataKas', false, $context);
+			if($send === FALSE){
+				if ($this->input->post('sst') == 'sinkron') {
+					echo "CANTCONNECT";
+				}
+				// echo 'CANTCONNECT';
+			}else{
+				if ($send == 'true') {
+					// var_dump($send);
+					$update = array('status_upload' => 'upload');
+					$wherenot = array('status_upload' => 'not_upload');
+					$this->ModelKasir->update('kas',$update,$wherenot);
+					if ($this->input->post('sst') == 'sinkron') {
+						echo "SUCCESSSAVE";
+					}
+					// echo "SUCCESSSAVE";
+				}else{
+					if ($this->input->post('sst') == 'sinkron') {
+						echo "PENYIMPANANGAGAL";
+					}
+					// echo "PENYIMPANANGAGAL";
+				}
+			}
+			// var_dump($send);
+		}
+	}
+
 	// public function edit_stok_masuk_keluar()
 	// {
 	// 	# code...id:idedit,stokmasuk:stokmasukedit,stokkeluar:'',tanggal:tanggaledit
