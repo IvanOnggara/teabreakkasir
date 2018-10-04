@@ -32,9 +32,9 @@
 		          <tr>
 		            <th style="width: 15%;">Tanggal</th>
 		            <th style="width: 40%;">Keterangan</th>
-		            <th style="width: 10%;">Pengeluaran</th>
-                <th style="width: 17.5%;">Edit</th>
-                <th style="width: 17.5%;">Delete</th>
+		            <th style="width: 25%;">Pengeluaran</th>
+                <th style="width: 10%;">Edit</th>
+                <th style="width: 10%;">Delete</th>
 		            <!-- <th style="width: 12.5%;">Edit</th> -->
 		          </tr>
 		        </thead>
@@ -53,10 +53,10 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label for="editid" class=" form-control-label">Keterangan</label>
-                            <input type="text" id="editket" placeholder="Keterangan" class="form-control">
+                            <textarea class="form-control" rows="5" id="editket" placeholder="Keterangan"></textarea>
                             <input type="hidden" name="id_lama" id="id_lama">
                         </div>
                     </div>
@@ -102,127 +102,52 @@
 <script src=<?php echo base_url("assets/vendors/pdfmake-master/build/pdfmake.min.js")?>></script>
 <script src=<?php echo base_url("assets/vendors/pdfmake-master/build/vfs_fonts.js")?>></script>
 <script src=<?php echo base_url("assets/js/jquery.easy-autocomplete.js")?>></script>
+<script src=<?php echo base_url("assets/js/teabreak.js"); ?>></script>
 </body>
 </html>
 <script type="text/javascript">
 var id = '';
-var option = {
-	url : "<?php echo base_url('adminstand/getNamaBahanJadi');?>",
-	getValue: function(element) {
-		console.log(element);
-		return element.nama_bahan_jadi;
-	},
-	list :{
-		maxNumberOfElements: 10,
-		showAnimation:{
-			type:"fade",
-			time:400,
-			callback:function(){}
-		},
-		hideAnimation:{
-			type:"slide",
-			time:400,
-			callback:function(){}
-		},
-		match: {
-			enabled: true
-		},
-		onClickEvent: function() {
-			var bahan = $('#namabahanjadi').getSelectedItemData().nama_bahan_jadi;
-
-			$('#namabahanjadi').val(bahan).trigger("change");
-		}  
-	}
-}
-
-$('#namabahanjadi').change(function(){	
-	var data = $('#namabahanjadi').val();
-	if (data == '') {
-		$('#namabahanjadi').removeClass("is-invalid");
-	}else{
-		$.ajax({
-	          type:"post",
-	          url: "<?php echo base_url('adminstand/getNamaBahanJadi')?>/",
-	          dataType:"json",
-	          success:function(list)
-	          {
-	          	// console.log(list);
-	          	var found = false;
-	          	for (var i = list.length - 1; i >= 0; i--) {
-	          		if (data==list[i].nama_bahan_jadi) {
-						found = true;
-						id = list[i].id_bahan_jadi;
-
-						if ($('#namabahanjadi').has("is-invalid")) {
-							$('#namabahanjadi').removeClass("is-invalid");
-						}
-					}
-
-					if (!found) {
-						id = 'unidentified';
-						$('#namabahanjadi').addClass("is-invalid");
-					}
-	          	}
-
-				// if (found) {
-				// 	alert('ketemu');
-				// }else{
-				// 	alert('ga ketemu');
-				// }
-	          },
-	          error: function (jqXHR, textStatus, errorThrown)
-	          {
-	            alert(errorThrown);
-	          }
-	      }
-	    );
-	}
-	
-});
 
 $('.numeric').on('input', function (event) { 
     this.value = this.value.replace(/[^0-9]/g, '');
 });
 
-$("#namabahanjadi").easyAutocomplete(option);
+function tambahpengeluaran() {
+	var keterangan = $('#keteranganpengeluaran').val();
+	var jumlahpengeluaran = $('#jumlahpengeluaran').val();
 
-function tambahstokbahan() {
-	var id_bahan = id;
-	var nama = $('#namabahanjadi').val();
-	var stokmasuk = $('#stokmasuk').val();
-
-	if (id_bahan == 'unidentified') {
-		$('#namabahanjadi').addClass("is-invalid");
+	if ($('#keteranganpengeluaran').val() == '') {
+		$('#keteranganpengeluaran').addClass("is-invalid");
 	}
 
-	if ($('#stokmasuk').val() == '') {
-		$('#stokmasuk').addClass("is-invalid");
+	if ($('#jumlahpengeluaran').val() == '') {
+		$('#jumlahpengeluaran').addClass("is-invalid");
 	}
 
-	if (id_bahan != 'unidentified' && $('#stokmasuk').val() != '') {
+	if ($('#keteranganpengeluaran').val() != '' && $('#stokmasuk').val() != '') {
 		$.ajax(
             {
                 type:"post",
-                url: "<?php echo base_url('adminstand/tambah_stok_masuk')?>/",
-                data:{ id:id_bahan,nama:nama,stokmasuk:stokmasuk},
+                url: "<?php echo base_url('adminstand/tambah_pengeluaran_lain')?>/",
+                data:{ keterangan:keterangan,jumlahpengeluaran:jumlahpengeluaran},
                 success:function(response)
                 {
-                	$("#namabahanjadi").val('');
-                    $("#stokmasuk").val('');
+                	 $("#keteranganpengeluaran").val('');
+                    $("#jumlahpengeluaran").val('');
                     reload_table();
 
                   if(response == 'Berhasil Ditambahkan'){
                     
                     
-                    if($('#namabahanjadi').has("is-invalid")){
-                      $('#namabahanjadi').removeClass("is-invalid");
+                    if($('#keteranganpengeluaran').has("is-invalid")){
+                      $('#keteranganpengeluaran').removeClass("is-invalid");
                     }
 
-                    if($('#stokmasuk').has("is-invalid")){
-                      $('#stokmasuk').removeClass("is-invalid");
+                    if($('#jumlahpengeluaran').has("is-invalid")){
+                      $('#jumlahpengeluaran').removeClass("is-invalid");
                     }
 
-                    $("#namabahanjadi").focus();
+                    $("#keteranganpengeluaran").focus();
 
                     alert(response);
                   }else if(response =='Data telah di update!.'){
@@ -273,16 +198,16 @@ jQuery( document ).ready(function( $ ) {
       serverSide: true,
       ajax: {
     "type"   : "POST",
-    "url"    : "<?php echo base_url('adminstand/dataStokMasuk');?>",
+    "url"    : "<?php echo base_url('adminstand/dataPengeluaranLain');?>",
     "dataSrc": function (json) {
       var return_data = new Array();
       for(var i=0;i< json.data.length; i++){
         return_data.push({
-          'id_bahan_jadi': json.data[i].id_bahan_jadi,
-          'nama_bahan_jadi'  : json.data[i].nama_bahan_jadi,
-          'stok_masuk' : json.data[i].stok_masuk,
-          'tanggal' : json.data[i].tanggal,
-          // 'edit' : '<button onclick="editSM(\''+json.data[i].id_bahan_jadi.split(' ').join('+')+'\',\''+json.data[i].stok_masuk+'\',\''+json.data[i].tanggal+'\')" class="btn btn-warning" style="color:white;">Edit</button> '
+          'tanggal': uidate(json.data[i].tanggal),
+          'keterangan': json.data[i].keterangan.split('-').join(' - '),
+          'pengeluaran'  : "Rp. "+currency(json.data[i].pengeluaran)+",-",
+          'edit' : '<button onclick="editpengeluaran(\''+json.data[i].id_pengeluaran+'\',\''+json.data[i].keterangan+'\',\''+json.data[i].pengeluaran+'\')" class="btn btn-warning" >Edit</button> ',
+          'delete' : '<button onclick="deletepengeluaran(\''+json.data[i].id_pengeluaran.split(' ').join('+')+'\')" class="btn btn-danger">Delete</button> '
         })
       }
       return return_data;
@@ -295,7 +220,7 @@ jQuery( document ).ready(function( $ ) {
                 text: 'Copy',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1,2,3]
+                  columns:[0,1]
                 }
             },{
                 extend: 'excelHtml5',
@@ -303,35 +228,35 @@ jQuery( document ).ready(function( $ ) {
                 className: 'exportExcel',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1,2,3]
+                  columns:[0,1]
                 }
             },{
                 extend: 'csvHtml5',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1,2,3]
+                  columns:[0,1]
                 }
             },{
                 extend: 'pdfHtml5',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1,2,3]
+                  columns:[0,1]
                 }
             },{
                 extend: 'print',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1,2,3]
+                  columns:[0,1]
                 }
             }
         ],
         "lengthChange": true,
   columns: [
-    {'data': 'id_bahan_jadi'},
-    {'data': 'nama_bahan_jadi'},
-    {'data': 'stok_masuk'},
     {'data': 'tanggal'},
-    // {'data': 'edit','orderable':false,'searchable':false}
+    {'data': 'keterangan'},
+    {'data': 'pengeluaran'},
+    {'data': 'edit','orderable':false,'searchable':false},
+    {'data': 'delete','orderable':false,'searchable':false}
   ],
       rowCallback: function(row, data, iDisplayIndex) {
         var info = this.fnPagingInfo();
@@ -344,6 +269,75 @@ jQuery( document ).ready(function( $ ) {
 });
 function reload_table(){
   tabeldata.api().ajax.reload(null,false);
+}
+
+function editpengeluaran(id,keterangan,pengeluaran) {
+  $('#modal_edit').modal('toggle');
+  $('#editket').val(keterangan.split('-').join('\n'));
+  $('#editpeng').val(pengeluaran);
+  $('#id_lama').val(id);
+}
+
+function deletepengeluaran(id) {
+  // body...
+}
+
+function simpanedit() {
+
+
+  
+  var keteranganbaru = $('#editket').val().split('\n').join('-');
+  var pengeluaranbaru = $('#editpeng').val();
+  var id_pengeluaran = $('#id_lama').val();
+
+  if (keteranganbaru == '' || pengeluaranbaru == '') {
+    if (keteranganbaru == '') {
+      $('#editket').addClass('is-invalid');
+    }
+
+    if (pengeluaranbaru == '') {
+      $('#editpeng').addClass('is-invalid');
+    }
+
+    alert('Periksa Kembali inputan anda');
+  }else{
+    console.log(id_pengeluaran);
+    $.ajax(
+        {
+            type:"post",
+            url: "<?php echo base_url('adminstand/edit_pengeluaran_lain')?>/",
+            data:{ keteranganbaru:keteranganbaru,pengeluaranbaru:pengeluaranbaru,id_pengeluaran:id_pengeluaran},
+            success:function(response)
+            {
+              reload_table();
+
+              if(response == 'Berhasil Diupdate'){
+                
+                
+                if($('#editket').has("is-invalid")){
+                  $('#editket').removeClass("is-invalid");
+                }
+
+                if($('#editpeng').has("is-invalid")){
+                  $('#editpeng').removeClass("is-invalid");
+                }
+
+                $('#modal_edit').modal('toggle');
+
+                alert(response);
+              }else{
+                alert('unknown error is happen! try again.');
+              }
+              
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+              alert(errorThrown);
+            }
+        }
+    );
+  }
+
 }
 
 // var idedit = '';

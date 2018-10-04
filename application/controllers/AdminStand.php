@@ -900,6 +900,63 @@ class AdminStand extends CI_Controller {
 		}
 	}
 
+	public function dataPengeluaranLain()
+	{
+		$this->load->library('datatables');
+		$this->datatables->select('id_pengeluaran,tanggal,keterangan,pengeluaran');
+		$this->datatables->from('pengeluaran_lain');
+		echo $this->datatables->generate();
+	}
+
+	public function tambah_pengeluaran_lain()
+	{
+		$keterangan = $this->input->post('keterangan');
+		$jumlahpengeluaran = $this->input->post('jumlahpengeluaran');
+
+		$datenow = date("Y-m-d");
+		
+		$data = array(
+			'tanggal' => $datenow,
+	        'keterangan' => $keterangan,
+	        'pengeluaran' => $jumlahpengeluaran,
+	        'status_upload' => 'not_upload'
+         );
+
+		$this->ModelKasir->insert('pengeluaran_lain',$data);
+		// $this->sinkronstokbahan();
+		echo "Berhasil Ditambahkan";
+		
+	}
+
+	public function edit_pengeluaran_lain()
+	{
+		$keteranganbaru = $this->input->post('keteranganbaru');
+		$pengeluaranbaru = $this->input->post('pengeluaranbaru');
+		$id_pengeluaran = $this->input->post('id_pengeluaran');
+
+		$where = array('id_pengeluaran' => $id_pengeluaran);
+
+		$data = array(
+			'keterangan' => $keteranganbaru,
+	        'pengeluaran' => $pengeluaranbaru,
+         );
+
+		$realdata = $this->ModelKasir->getData($where,'pengeluaran_lain');
+
+		if ($realdata[0]->keterangan != $keteranganbaru || $realdata[0]->pengeluaran != $pengeluaranbaru) {
+			$cek = $this->ModelKasir->Update('pengeluaran_lain',$data,$where);
+		}else{
+			$cek = true;
+		}
+
+		if ($cek) {
+			echo "Berhasil Diupdate";
+		}else{
+			echo "gagal";
+		}
+		
+	}
+
 	// public function edit_stok_masuk_keluar()
 	// {
 	// 	# code...id:idedit,stokmasuk:stokmasukedit,stokkeluar:'',tanggal:tanggaledit
