@@ -64,6 +64,7 @@ $route['laporanstok'] = 'adminstand/laporanstok';
 $route['pengeluaranlain'] = 'adminstand/pengeluaranlain';
 $route['orderproduk'] = 'adminstand/orderproduk';
 $route['sisastok'] = 'adminstand/sisastok';
+$route['kasawal'] = 'adminstand/kasawal';
 
 
 $route['json'] = 'adminstand/json';
