@@ -962,6 +962,7 @@ class AdminStand extends CI_Controller {
 	public function delete_pengeluaran()
 	{
 		$id_pengeluaran = $this->input->post('id');
+		
 		$this->Produk->Delete('pengeluaran_lain',$id_pengeluaran);
 		// $this->sinkronpengeluaran();
 		//perlu perbaikan disini
@@ -1124,6 +1125,48 @@ class AdminStand extends CI_Controller {
 			}
 			// var_dump($send);
 		}
+	}
+
+	public function printnota()
+	{
+
+		// try {
+		$pelanggan = $this->input->post('pelanggan');
+		$alamat = $this->session->userdata('alamat_stan');
+		$order = json_decode($this->input->post('order'));
+		$subtotal = $this->input->post('subtotal');
+		$diskon = $this->input->post('diskon');
+		$totalakhir = $this->input->post('pembayaran');
+		$kembalian = $this->input->post('kembalian');
+		// var_dump($order);
+
+		  $this->load->library('ReceiptPrint');
+		  $this->receiptprint->connect('MINIPOS');
+		  $this->receiptprint->print_test_receipt($order,$pelanggan,$alamat,$subtotal,$diskon,$totalakhir,$kembalian);
+		// } catch (Exception $e) {
+		//   log_message("error", "Error: Could not print. Message ".$e->getMessage());
+		//   echo "error";
+		//   $this->receiptprint->close_after_exception();
+		// }
+
+		// require_once __DIR__ . 'assets/vendor/mike42/escpos-php/autoload.php';
+		// use Mike42\Escpos\Printer;
+		// use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+		// try {
+		//     // Enter the share name for your USB printer here
+		//     $connector = new WindowsPrintConnector("MINIPOS"); //MINIPOS adalah nama shared printernya
+		//     /* Print a "Hello world" receipt" */
+		//     $printer = new Printer($connector);
+		//     $printer -> text("Teh Matcha super nikmat terbuat dari daun asli\n");
+		//     $printer -> text("Rp 10.000\n");
+		//     $printer -> text("aaaaa\n");
+		//     $printer -> cut();
+		    
+		//     /* Close printer */
+		//     $printer -> close();
+		// } catch (Exception $e) {
+		//     echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
+		// }
 	}
 
 	// public function edit_stok_masuk_keluar()
