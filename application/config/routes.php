@@ -66,6 +66,8 @@ $route['orderproduk'] = 'adminstand/orderproduk';
 $route['sisastok'] = 'adminstand/sisastok';
 $route['kasawal'] = 'adminstand/kasawal';
 
+$route['cobaprint'] = 'adminstand/printjajal';
+
 
 $route['json'] = 'adminstand/json';
 $route['translate_uri_dashes'] = FALSE;
