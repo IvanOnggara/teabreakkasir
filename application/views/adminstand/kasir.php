@@ -272,7 +272,20 @@ function resetbyr(){
         $("#modal_bayar").modal('hide');
         $("#total_bayar").text('0');
     }else{
-        location.reload();
+        $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/setThanks')?>/",
+          success: function (response){
+            setTimeout(function () {
+                location.reload();
+            } , 1000);
+            
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+        });
     }
     
 }
@@ -375,9 +388,8 @@ function tambah_item(){
     $.ajax({
           type:"post",
           url: "<?php echo base_url('controllerdisplay/setItem')?>/",
-          data:{topping:topping,nama_produk:nama_produk,harga_produk,harga_produk},
+          data:{topping:topping,nama_produk:nama_produk,harga_produk:harga_produk},
           success: function (response){
-            alert(response);
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
@@ -579,6 +591,8 @@ function diskon_termurah(totalproduk,arrId){
 
 function plus(id,rowid){
     var value = $("#qty"+id).text();
+    var topping_display;
+    var nama_produk_display;
     value = parseInt(value)+1;
     satuan = parseInt($("#satuan"+id).text().substring(3).replace('.',''));
     $("#qty"+id).text(value);
@@ -586,9 +600,22 @@ function plus(id,rowid){
     for (var i = 0; i < order.length; i++) {
         if (order[i].id_order==row) {
             order[i].qty = value;
+            topping_display = order[i].topping;
+            nama_produk_display = order[i].nama_produk;
         }
     }
     hitungDiskon();
+    $.ajax({
+      type:"post",
+      url: "<?php echo base_url('controllerdisplay/setItem')?>/",
+      data:{topping:topping_display,nama_produk:nama_produk_display,harga_produk:satuan},
+      success: function (response){
+      },
+      error: function (jqXHR, textStatus, errorThrown)
+      {
+        alert(errorThrown);
+      }
+    });
 }
 
 //MENGHILANGKAN ITEM DARI LIST ORDER
@@ -901,6 +928,19 @@ function cetakNota() {
             //BELUM SELESAI
             // alert(response);
           },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      }
+    );
+
+    var kembalian_display = parseInt($("#kembalian").html().substring(3).replace('.',''));
+
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/setKembalian')?>/",
+          data:{kembalian_display:kembalian_display},
           error: function (jqXHR, textStatus, errorThrown)
           {
             alert(errorThrown);
