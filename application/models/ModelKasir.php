@@ -65,6 +65,12 @@ class ModelKasir extends CI_Model{
         $this->db->delete($table);
     }
 
+    public function deleteWhere($table,$where)
+    {
+        $this->db->where($where);
+        $this->db->delete($table);
+    }
+
     public function deleteWithCustomWhere($table, $where){
         $this->db->where($where);
         $this->db->delete($table);
