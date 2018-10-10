@@ -249,6 +249,17 @@ var x = document.getElementById("myTopnav");
 }
 
 function pembayaran(){
+    var ttl_display = parseInt($("#total_harus_byr").html().substring(3).split('.').join(""));
+     $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/setTotal')?>/",
+          data:{ttl_display:ttl_display},
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      }
+    );
     $("#modal_bayar").modal({
         backdrop: 'static',
         keyboard: false
@@ -263,7 +274,20 @@ function resetbyr(){
         $("#modal_bayar").modal('hide');
         $("#total_bayar").text('0');
     }else{
-        location.reload();
+        $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/setThanks')?>/",
+          success: function (response){
+            setTimeout(function () {
+                location.reload();
+            } , 1000);
+            
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+        });
     }
     
 }
@@ -328,7 +352,7 @@ function tambah_item(){
         $("#qty"+order[count].id_order).text(order[count].qty);
         $("#totalharga"+order[count].id_order).text("Rp "+currency(order[count].total));
         $("#modal_topping").modal('hide');
-        
+        qty = order[count].qty;
     }else{
         var row = table.insertRow(1);
         row.id = count_id_order;
@@ -360,6 +384,21 @@ function tambah_item(){
     }
     count_id_order++;
     hitungDiskon();
+
+    harga_produk = parseInt(harga_produk)+parseInt(harga_topping);
+
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/setItem')?>/",
+          data:{topping:topping,nama_produk:nama_produk,harga_produk:harga_produk},
+          success: function (response){
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      }
+    );
 
     nama_produk="";
     topping = [];
@@ -554,6 +593,8 @@ function diskon_termurah(totalproduk,arrId){
 
 function plus(id,rowid){
     var value = $("#qty"+id).text();
+    var topping_display;
+    var nama_produk_display;
     value = parseInt(value)+1;
     satuan = parseInt($("#satuan"+id).text().substring(3).replace('.',''));
     $("#qty"+id).text(value);
@@ -561,9 +602,22 @@ function plus(id,rowid){
     for (var i = 0; i < order.length; i++) {
         if (order[i].id_order==row) {
             order[i].qty = value;
+            topping_display = order[i].topping;
+            nama_produk_display = order[i].nama_produk;
         }
     }
     hitungDiskon();
+    $.ajax({
+      type:"post",
+      url: "<?php echo base_url('controllerdisplay/setItem')?>/",
+      data:{topping:topping_display,nama_produk:nama_produk_display,harga_produk:satuan},
+      success: function (response){
+      },
+      error: function (jqXHR, textStatus, errorThrown)
+      {
+        alert(errorThrown);
+      }
+    });
 }
 
 //MENGHILANGKAN ITEM DARI LIST ORDER
@@ -622,6 +676,8 @@ function countTotal(){
             subtotal = parseInt(subtotal)+parseInt(order[i].total);
             diskon = parseInt(diskon)+parseInt(order[i].diskon);
         }
+    }else{
+        resetDisplay();
     }
     
     
@@ -773,7 +829,20 @@ function reset_menu(){
 
 jQuery( document ).ready(function( $ ) {
     reset_menu();
+    resetDisplay();
 });
+
+function resetDisplay(){
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/resetDisplay')?>/",
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      }
+    );
+}
 
 
 function kalkulatorkasir(number) {
@@ -883,6 +952,14 @@ function cetakNota() {
       }
     );
 
+<<<<<<< HEAD
+    var kembalian_display = parseInt($("#kembalian").html().substring(3).replace('.',''));
+
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/setKembalian')?>/",
+          data:{kembalian_display:kembalian_display},
+=======
     $.ajax({
           type:"post",
           url: "<?php echo base_url('adminstand/printnota')?>/",
@@ -892,12 +969,63 @@ function cetakNota() {
           {
             alert('printed');
           },
+>>>>>>> 5cdb102438625863bfe8c13239fed5cc96589daf
           error: function (jqXHR, textStatus, errorThrown)
           {
             alert(errorThrown);
           }
       }
     );
+<<<<<<< HEAD
+
+    var d = new Date();
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var hour = d.getHours();
+    var minutes = d.getMinutes();
+    var clock = hour+":"+minutes;
+    var output = (day<10 ? '0' : '') + day+ '/' +(month<10 ? '0' : '') + month+ '/' +d.getFullYear();
+
+    var pembatas1 = 33;
+    var pembatas2 = pembatas1+5;
+    var pembatas2help = pembatas2;
+    for(var i=0;i< order.length; i++){
+
+            pembatas2 = pembatas2+11;
+            // SETIAP ADA 1 ORDER JARAK PEMBATAS 2 AKAN BERTAMBAH SEBANYAK +11 (DITAMBAH SETELAH MENULISKAN TEXT PDF)
+
+    }
+    // var pembatas2 = pembatas1+24;
+    var pembatas3 = pembatas2+21;
+    var doc = new jsPDF('p', 'mm', [pembatas3+15, 58]);
+
+    doc.setFontSize(6);
+    doc.addImage(imgData, 'JPEG', 29-15.5, 0, 31, 11);
+    var alamat='<?php echo $_SESSION['alamat_stan'];?>';
+    doc.text(alamat, 29, 13, 'center');
+    doc.text('Telp : 087842220111', 29, 16, 'center');
+    doc.text('Email : teabreakindo@gmail.com', 29, 19, 'center');
+    doc.setFontSize(8);
+    doc.text(output+'   '+clock, 29, 25, 'center');
+    doc.setFontSize(6);
+    doc.text('Pelanggan : '+$('#nama_pelanggan').val(), 2, 30);
+    // doc.text('Kasir : Bejo', 56, 30, 'right');
+
+    doc.text('============================================', 2, pembatas1);
+    var totalitem = 0;
+
+    for(var i=0;i< order.length; i++){
+        var hargatotsatuan = parseInt(order[i]['harga_topping'])+parseInt(order[i]['harga_produk']);
+        doc.text(order[i]['qty']+'x '+order[i]['nama_produk']+'', 2, pembatas2help);
+        doc.text('topping : '+order[i]['topping'].toString(), 2, pembatas2help+3);
+        doc.text('@ Rp.'+currency(hargatotsatuan)+',-', 2, pembatas2help+6);
+        doc.text(currency(order[i]['total'])+',-', 56, pembatas2help+3,'right');
+
+        pembatas2help = pembatas2help+11;
+        totalitem += parseInt(order[i]['qty']);
+        // SETIAP ADA 1 ORDER JARAK PEMBATAS 2 AKAN BERTAMBAH SEBANYAK +11 (DITAMBAH SETELAH MENULISKAN TEXT PDF)
+=======
+>>>>>>> 5cdb102438625863bfe8c13239fed5cc96589daf
 
 
 //     var d = new Date();
