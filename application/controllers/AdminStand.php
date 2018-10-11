@@ -968,8 +968,49 @@ class AdminStand extends CI_Controller {
 	public function delete_pengeluaran()
 	{
 		$id_pengeluaran = $this->input->post('id');
+
+		$postdata = http_build_query(
+		    array(
+		        'id_pengeluaran' => $id_pengeluaran,
+		        'id_stan' => $this->session->userdata('id_stan')
+		    )
+		);
+
+		$opts = array('http' =>
+		    array(
+		        'method'  => 'POST',
+		        'header'  => 'Content-type: application/x-www-form-urlencoded',
+		        'content' => $postdata
+		    )
+		);
+
+		$context  = stream_context_create($opts);
+		//DATA NOTA
+		// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
+		$send = @file_get_contents('http://localhost/teabreak/deleteDataPengeluaran', false, $context);
+		if($send === FALSE){
+			if ($this->input->post('sst') == 'sinkron') {
+				echo "CANTCONNECT";
+			}
+			// echo 'CANTCONNECT';
+		}else{
+			if ($send == 'true') {
+				// var_dump($send);
+				$wheredel = array('id_pengeluaran' => $id_pengeluaran);
+				$this->ModelKasir->deleteWhere('pengeluaran_lain',$wheredel);
+				if ($this->input->post('sst') == 'sinkron') {
+					echo "SUCCESSSAVE";
+				}
+				// echo "SUCCESSSAVE";
+			}else{
+				if ($this->input->post('sst') == 'sinkron') {
+					echo "PENYIMPANANGAGAL";
+				}
+				// echo "PENYIMPANANGAGAL";
+			}
+		}
 		
-		$this->Produk->Delete('pengeluaran_lain',$id_pengeluaran);
+		
 		// $this->sinkronpengeluaran();
 		//perlu perbaikan disini
 	}

@@ -283,10 +283,17 @@ function deletepengeluaran(id) {
     $.ajax({
             type:"post",
             url: "<?php echo base_url('adminstand/delete_pengeluaran')?>/",
-            data:{ id:id},
+            data:{ id:id,sst:'sinkron'},
             success:function(response)
             {
-                 reload_table();
+                if (response == 'CANTCONNECT') {
+                  alert('Pastikan anda terhubung dengan internet!');
+                }else if (response == 'SUCCESSSAVE') {
+                  alert('Data Berhasil Dihapus!');
+                  reload_table();
+                }else{
+                  alert('Error! Coba lagi nanti!');
+                }
             },
             error: function (jqXHR, textStatus, errorThrown)
             {
