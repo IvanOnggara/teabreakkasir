@@ -1,76 +1,40 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <div style="padding: 0px;" class="menujudul">
-              STOCK MASUK
-          </div>
+<div class="section">
+
+    <div class="col-lg-4 col-md-12 col-sm-12 section2">
+        <div class="col-md-11 offset-md-1 judul">
+            LIST BAHAN JADI
+        </div>
+        <div id="menusection">
+        </div>
     </div>
-  </div>
-  <br>
-  <div class="row">
-    <div class="col-md-5 col-sm-12">
-      <div class="form-group">
-          <label>Nama Barang</label>
-          <input type="text" class="form-control" id="namabarang" placeholder="Nama Barang">
-      </div>
-    </div>
-    <div class="col-md-5 col-sm-12">
-      <div class="form-group">
-          <label>Jumlah Order</label>
-          <input type="text" class="form-control numeric" id="jumlahorder" placeholder="Jumlah Order">
-      </div>
-    </div>
-    <div class="col-md-2 col-sm-12">
-      <label for="usr">Action</label>
-      <button class="btn btn-success" id="buttontambahstok" onclick="tambahorder()">Tambah Order</button>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12 col-sm-12">
-      <table id="mytable" class="table table-striped table-bordered">
-            <thead class="thead-dark">
-              <tr>
-                <th style="width: 15%;">ID Produk</th>
-                <th style="width: 25%;">Nama Produk</th>
-                <th style="width: 15%;">Jumlah Order</th>
-                <th style="width: 15%;">Tanggal</th>
-                <th style="width: 15%">Status</th>
-                <th style="width: 15%">Batal</th>
-                <!-- <th style="width: 12.5%;">Edit</th> -->
-              </tr>
-            </thead>
-        </table>
-    </div>
-    
-  </div>
-</div>
-<!-- 
-<div class="modal fade" id="modal_edit" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="header modal-header">
-                <h4 class="modal-title">Edit</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+    <div class="col-lg-8 col-md-12 col-sm-12 section3">
+        <div class="judul">
+            BILL
+        </div>
+        <div class="billsection">
+            <div class="divbill table-responsive">
+                <table id="billtable" class="table" width="100%">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Nama</th>
+                            <th style="width: 20%;">Qty</th>
+                            <th style="width: 20%;">Tgl Order</th>
+                            <th style="width: 20%;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="editid" class=" form-control-label">Stok Masuk</label>
-                            <input type="text" id="editsm" placeholder="Masukkan Stok Masuk" class="form-control numeric">
-                            <input type="hidden" name="id_lama" id="id_lama">
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-            <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn btn-default">Batal</button>
-                <button type="button" onclick="simpanedit()" class="btn add_field_button btn-info">Simpan</button>
+        </div>
+        <div class="paysection">
+            <div class="row">
+                <button id="btnorder" class="btn btn-info col-lg-3 offset-lg-8 btnpay" disabled="" onclick="orderprocess()">ORDER</button>
             </div>
         </div>
     </div>
-</div> -->
+</div>
 
 
 <script src=<?php echo base_url("assets/js/jquery.min.js")?>></script>
@@ -96,247 +60,143 @@
 </body>
 </html>
 <script type="text/javascript">
-var id = '';
-var option = {
-  url : "<?php echo base_url('adminstand/getnamabarang');?>",
-  getValue: function(element) {
-    console.log(element);
-    return element.nama_bahan_jadi;
-  },
-  list :{
-    maxNumberOfElements: 10,
-    showAnimation:{
-      type:"fade",
-      time:400,
-      callback:function(){}
-    },
-    hideAnimation:{
-      type:"slide",
-      time:400,
-      callback:function(){}
-    },
-    match: {
-      enabled: true
-    },
-    onClickEvent: function() {
-      var bahan = $('#namabarang').getSelectedItemData().nama_bahan_jadi;
 
-      $('#namabarang').val(bahan).trigger("change");
-    }  
+  var listOrder = new Array();
+  count_id_order = 0;
+  loadMenu();
+
+  function loadMenu(){
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('adminstand/getNamaBahanJadi')?>/",
+          dataType:"json",
+          success:function(response)
+          {
+            document.getElementById("menusection").innerHTML = "";
+            for(var i=0;i< response.length; i++){
+                var div = document.createElement('div');
+                div.className = "menu col-lg-5 offset-lg-1 col-md-5 offset-md-1";
+                div.setAttribute("onclick", "tambah_item('"+response[i].id_bahan_jadi+"','"+response[i].nama_bahan_jadi+"')");
+                div.innerHTML = response[i].nama_bahan_jadi;
+                document.getElementById('menusection').appendChild(div);
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      }
+    );
   }
+
+  function tambah_item(id_bahan_jadi,nama_bahan_jadi){
+    var count=-1;
+    var table = document.getElementById("billtable");
+    var date = new Date();
+    var tgl_order = date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear();
+
+    if (table.rows.length>1) {
+      for(var i = 0;i<listOrder.length;i++){
+        if (listOrder[i].id_bahan_jadi==id_bahan_jadi){
+          count = i;
+        }
+      }
+    }
+
+    //JIKA MEMILIKI ID DAN TOPPING YANG SAMA MAKA DILAKUKAN PENAMBAHAN QTY SAJA PADA PRODUK, JIKA TIDAK DITAMBAH ROW BARU
+
+    if (count!=-1) {
+        listOrder[count].qty++;
+        $("#qty"+listOrder[count].id_order).text(listOrder[count].qty);
+    }else{
+        var row = table.insertRow(1);
+        row.id = count_id_order;
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        var item = new Array();
+        item.id_order = count_id_order;
+        item.nama_bahan_jadi = nama_bahan_jadi;
+        item.id_bahan_jadi = id_bahan_jadi;
+        item.qty = 1;
+        item.tgl_order = tgl_order;
+        listOrder.push(item);
+        cell1.innerHTML = '<p id="namabjadi'+count_id_order+'">'+nama_bahan_jadi+'</p>';
+        cell2.innerHTML = '<button class="btn center btn-default btnmin btnqty" onclick="minus(\''+count_id_order+'\',this)">-</button><p id="qty'+count_id_order+'" class="qtyitem btnqty">1</p><button class="btn center btn-default btnplus btnqty" onclick="plus(\''+count_id_order+'\',this)">+</button>';
+        cell3.innerHTML = '<p id="tgl_order'+count_id_order+'">'+tgl_order+'</p>';
+        cell4.innerHTML = '<div class="row"><button class="col-lg-4 offset-lg-8 btn btn-danger btnremove" onclick="removeBtn(this);">X</button>';
+
+        count_id_order++;
+    }
+    checkBtnOrder();
 }
 
-$('#namabarang').change(function(){  
-  var data = $('#namabarang').val();
-  if (data == '') {
-    $('#namabarang').removeClass("is-invalid");
-  }else{
-    $.ajax({
-            type:"post",
-            url: "<?php echo base_url('adminstand/getnamabarang')?>/",
-            dataType:"json",
-            success:function(list)
-            {
-              // console.log(list);
-              var found = false;
-              for (var i = list.length - 1; i >= 0; i--) {
-                if (data==list[i].nama_bahan_jadi) {
-                  found = true;
-                  id = list[i].id_bahan_jadi;
+  function plus(id,rowid){
+    checkBtnOrder();
+    var value = $("#qty"+id).text();
+    value = parseInt(value)+1;
+    satuan = parseInt($("#satuan"+id).text().substring(3).replace('.',''));
+    $("#qty"+id).text(value);
+    row = rowid.parentNode.parentNode.id;
+    for (var i = 0; i < listOrder.length; i++) {
+        if (listOrder[i].id_order==row) {
+            listOrder[i].qty = value;
+        }
+    }
+}
 
-                  if ($('#namabarang').has("is-invalid")) {
-                    $('#namabarang').removeClass("is-invalid");
-                  }
-                }
+//MENGHILANGKAN ITEM DARI LIST ORDER
 
-                if (!found) {
-                  id = 'unidentified';
-                  $('#namabarang').addClass("is-invalid");
-                }
-              }
+function removeBtn(rowid){
+  checkBtnOrder();
+    var a = rowid.parentNode.parentNode.parentNode.rowIndex;
+    document.getElementById("billtable").deleteRow(a);
+    var table = document.getElementById("billtable");
+    row = rowid.parentNode.parentNode.parentNode.id;
+    for (var i = 0; i < listOrder.length; i++) {
+        if (listOrder[i].id_order==row) {
+            listOrder.splice(i, 1);
+        }
+    }
+}
 
-        // if (found) {
-        //  alert('ketemu');
-        // }else{
-        //  alert('ga ketemu');
-        // }
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-              alert(errorThrown);
+//MENGURANGI JUMLAH PADA ORDER, JIKA <1 MAKA DIHILANGKAN DARI LIST
+
+function minus(id,rowid){
+  checkBtnOrder();
+    var value = $("#qty"+id).text();
+    row = rowid.parentNode.parentNode.id;
+    var table = document.getElementById("billtable");
+    if (parseInt(value)>1) {
+        value = parseInt(value)-1;
+        for (var i = 0; i < listOrder.length; i++) {
+            if (listOrder[i].id_order==row) {
+                listOrder[i].qty = value;
             }
         }
-      );
-  }
-  
-});
-
-$('.numeric').on('input', function (event) { 
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-$("#namabarang").easyAutocomplete(option);
-
-function tambahorder() {
-  var id_bahan = id;
-  var nama = $('#namabarang').val();
-  var jumlahorder = $('#jumlahorder').val();
-
-  if (id_bahan == 'unidentified') {
-    $('#namabarang').addClass("is-invalid");
-  }
-
-  if ($('#jumlahorder').val() == '') {
-    $('#jumlahorder').addClass("is-invalid");
-  }
-
-  if (id_bahan != 'unidentified' && $('#jumlahorder').val() != '') {
-    $.ajax(
-            {
-                type:"post",
-                url: "<?php echo base_url('adminstand/tambah_stok_masuk')?>/",
-                data:{ id:id_bahan,nama:nama,jumlahorder:jumlahorder},
-                success:function(response)
-                {
-                  $("#namabarang").val('');
-                    $("#jumlahorder").val('');
-                    reload_table();
-
-                  if(response == 'Berhasil Ditambahkan'){
-                    
-                    
-                    if($('#namabarang').has("is-invalid")){
-                      $('#namabarang').removeClass("is-invalid");
-                    }
-
-                    if($('#jumlahorder').has("is-invalid")){
-                      $('#jumlahorder').removeClass("is-invalid");
-                    }
-
-                    $("#namabarang").focus();
-
-                    alert(response);
-                  }else if(response =='Data telah di update!.'){
-                    
-                    alert(response);
-                  }else{
-                    alert('unknown error is happen! try again.');
-                  }
-                  
-                },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                  alert(errorThrown);
-                }
+        $("#qty"+id).text(value);
+    }else{
+        for (var i = 0; i < listOrder.length; i++) {
+            if (listOrder[i].id_order==row) {
+                listOrder.splice(i, 1);
             }
-        );
-  }
+        }
+        var a = rowid.parentNode.parentNode.rowIndex;
+        document.getElementById("billtable").deleteRow(a);
+    }
 }
 
-jQuery( document ).ready(function( $ ) {
-    $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings)
-    {
-      return {
-        "iStart": oSettings._iDisplayStart,
-        "iEnd": oSettings.fnDisplayEnd(),
-        "iLength": oSettings._iDisplayLength,
-        "iTotal": oSettings.fnRecordsTotal(),
-        "iFilteredTotal": oSettings.fnRecordsDisplay(),
-        "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
-        "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
-      };
-    };
-    tabeldata = $("#mytable").dataTable({
-      initComplete: function() {
-        var api = this.api();
-        $('#mytable_filter input')
-        .on('.DT')
-        .on('keyup.DT', function(e) {
-          if (e.keyCode == 13) {
-            api.search(this.value).draw();
-          }
-        });
-      },
-      oLanguage: {
-        sProcessing: "loading..."
-      },
-      responsive: true,
-      serverSide: true,
-      ajax: {
-    "type"   : "POST",
-    "url"    : "<?php echo base_url('adminstand/datajumlahorder');?>",
-    "dataSrc": function (json) {
-      var return_data = new Array();
-      for(var i=0;i< json.data.length; i++){
-        return_data.push({
-          // 'id_bahan_jadi': json.data[i].id_bahan_jadi,
-          // 'nama_bahan_jadi'  : json.data[i].nama_bahan_jadi,
-          // 'stok_masuk' : json.data[i].stok_masuk,
-          // 'tanggal' : json.data[i].tanggal,
-          // 'edit' : '<button onclick="editSM(\''+json.data[i].id_bahan_jadi.split(' ').join('+')+'\',\''+json.data[i].stok_masuk+'\',\''+json.data[i].tanggal+'\')" class="btn btn-warning" style="color:white;">Edit</button> '
-        })
-      }
-      return return_data;
+function checkBtnOrder(){
+  if (listOrder.length>0) {
+        $('#btnorder').prop("disabled", false);
+    }else{
+        $('#btnorder').prop("disabled", true);
     }
-  },
-   dom: 'Bfrtlip',
-        buttons: [
-            {
-                extend: 'copyHtml5',
-                text: 'Copy',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            },{
-                extend: 'excelHtml5',
-                text: 'Excel',
-                className: 'exportExcel',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            },{
-                extend: 'csvHtml5',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            },{
-                extend: 'pdfHtml5',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            },{
-                extend: 'print',
-                filename: 'Produk Data',
-                exportOptions: {
-                  columns:[0,1,2,3]
-                }
-            }
-        ],
-        "lengthChange": true,
-  columns: [
-    {'data': 'id_barang'},
-    {'data': 'nama_barang'},
-    {'data': 'jumlah_order'},
-    {'data': 'tanggal'},
-    {'data': 'status'},
-    {'data': 'batal'},
-    // {'data': 'edit','orderable':false,'searchable':false}
-  ],
-      rowCallback: function(row, data, iDisplayIndex) {
-        var info = this.fnPagingInfo();
-        var page = info.iPage;
-        var length = info.iLength;
-        var index = page * length + (iDisplayIndex + 1);
-        // $('td:eq(0)', row).html(index);
-      }
-    });
-});
-function reload_table(){
-  tabeldata.api().ajax.reload(null,false);
+}
+
+function orderprocess(){
+  console.log(listOrder);
 }
 
 </script>
