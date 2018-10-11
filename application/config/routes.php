@@ -65,6 +65,7 @@ $route['pengeluaranlain'] = 'adminstand/pengeluaranlain';
 $route['orderproduk'] = 'adminstand/orderproduk';
 $route['sisastok'] = 'adminstand/sisastok';
 $route['kasawal'] = 'adminstand/kasawal';
+$route['order'] = 'adminstand/order';
 
 $route['cobaprint'] = 'adminstand/printjajal';
 
