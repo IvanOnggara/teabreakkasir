@@ -267,8 +267,8 @@ class AdminStand extends CI_Controller {
 
 
 				//GET DATA BAHAN JADI TERBARU
-				// $json = @file_get_contents('http://teabreak.bekkostudio.com/getDataBahanJadi', false, $context);
-				$json = @file_get_contents('http://localhost/teabreak/getDataBahanJadi', false, $context);
+				$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataBahanJadi', false, $context);
+				// $json = @file_get_contents('http://localhost/teabreak/getDataBahanJadi', false, $context);
 				if($json === FALSE){
 					
 					$status = 'false';
@@ -848,8 +848,8 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
-			$send = @file_get_contents('http://localhost/teabreak/insertDataStok', false, $context);
+			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
+			// $send = @file_get_contents('http://localhost/teabreak/insertDataStok', false, $context);
 			if($send === FALSE){
 				if ($this->input->post('sst') == 'sinkron') {
 					echo "CANTCONNECT";
@@ -873,6 +873,245 @@ class AdminStand extends CI_Controller {
 				}
 			}
 			// var_dump($send);
+		}
+	}
+
+	public function webservice($port,$url,$parameter){
+		$curl = curl_init();
+		set_time_limit(0);
+		curl_setopt_array($curl, array(
+			CURLOPT_PORT => $port,
+			CURLOPT_URL => "http://".$url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => "",
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => "POST",
+			CURLOPT_POSTFIELDS => $parameter,
+			CURLOPT_HTTPHEADER => array(
+				"cache-control: no-cache",
+				"content-type: application/x-www-form-urlencoded"
+				),
+			)
+		);
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+		curl_close($curl);
+		if ($err) {
+			$response = ("Error #:" . $err);
+		}
+		else
+		{
+			$response;
+		}
+		return $response;
+	}
+
+	public function sinkronpresensi()
+	{
+		$getdata = $this->ModelKasir->getDataLimit('device_finger',1);
+		$parameter = "sn=".$getdata[0]->sn."&limit=100";
+		$port = $getdata[0]->port;
+
+		if ($this->ModelKasir->getCountAllData('presensi_karyawan') > 0) {
+			$urlscan = $getdata[0]->ip."/scanlog/new";
+			// $alluserdatabase = $this->ModelKasir->getAllData('presensi_karyawan');
+		}else{
+			$urlscan1 = $getdata[0]->ip."/scanlog/new";
+			$a = $this->webservice($port,$urlscan1,$parameter);
+
+			$urlscan = $getdata[0]->ip."/scanlog/all/paging";
+				
+		}
+
+		$server_output_scan = $this->webservice($port,$urlscan,$parameter);		
+		$content_allnewscan = json_decode($server_output_scan);
+
+		if ($content_allnewscan == NULL) {
+			echo "CANTCONNECT";
+		}else{
+			if ($content_allnewscan->Result == false) {
+				echo "string";
+			}else{
+				foreach ($content_allnewscan->Data as $scan) {
+					$data = array(
+						'scan_date'=>$scan->ScanDate,
+						'pin' => $scan->PIN,
+						'verify_mode' => $scan->VerifyMode,
+						'io_mode' => $scan->IOMode,
+						'work_code' => $scan->WorkCode,
+						'status_upload' =>'not_upload'
+					);
+
+					$this->ModelKasir->insert('presensi_karyawan',$data);
+				}
+				echo "SUCCESSSAVE";
+			}
+		}
+
+		
+		
+	}
+
+	public function sinkronuser()
+	{
+		$statkosong = true;
+		$getdata = $this->ModelKasir->getDataLimit('device_finger',1);
+		$parameter = "sn=".$getdata[0]->sn."&limit=100";
+		$port = $getdata[0]->port;
+			
+		$url = $getdata[0]->ip."/user/all/paging";
+		$server_output = $this->webservice($port,$url,$parameter);		
+		$content_alluser = json_decode($server_output);
+
+		$alluserdatabase = $this->ModelKasir->getAllData('karyawan_fingerspot');
+
+		if ($this->ModelKasir->getCountAllData('karyawan_fingerspot') > 0) {
+			$statkosong = false;
+		}
+
+		if ($content_alluser == NULL) {
+			echo "CANTCONNECT";
+		}else{
+			if ($content_alluser->Result == false) {
+				echo "NONEWDATA";
+			}else{
+				if ($statkosong) {
+					foreach ($content_alluser->Data as $user) {
+						$data = array(
+							'pin' => $user->PIN,
+							'nama' => $user->Name,
+							'status_upload' => 'not_upload'
+						);
+
+						$this->ModelKasir->insert('karyawan_fingerspot',$data);
+					}
+				}else{
+					$listdata_user_finger = array();
+					$adauser = false;
+					foreach ($content_alluser->Data as $user) {
+						foreach ($alluserdatabase as $peruserdatabase) {
+							if ($user->PIN == $peruserdatabase->pin) {
+								if ($user->Name != $peruserdatabase->nama) {
+									$where = array('pin' => $peruserdatabase->pin);
+									$data = array(
+										'nama' => $user->Name,
+										'status_upload' => 'not_upload'
+									);
+									$this->ModelKasir->update('karyawan_fingerspot', $data, $where);
+								}
+								$adauser = true;
+							}
+						}
+
+						if (!$adauser) {
+							$data = array(
+								'pin' => $user->PIN,
+								'nama' => $user->Name,
+								'status_upload' => 'not_upload'
+							);
+
+							$this->ModelKasir->insert('karyawan_fingerspot',$data);
+						}
+						array_push($listdata_user_finger,$user->PIN);
+					}
+
+					foreach ($alluserdatabase as $peruserdatabase) {
+						if (!in_array($peruserdatabase->pin, $listdata_user_finger)) {
+							$where = array('pin' => $peruserdatabase->pin);
+							$this->ModelKasir->deleteWhere('karyawan_fingerspot',$where);
+						}
+					}
+				}
+				echo "SUCCESSSAVE";
+			}
+		}
+	}
+
+	public function sinkronpresensionline()
+	{
+		$whereforsinkron = array('status_upload' => 'not_upload');
+
+		if ($this->ModelKasir->getRowCount('presensi_karyawan',$whereforsinkron) <1) {
+			echo "SUCCESSSAVE";
+		}else{
+			$listpresensibelumupload = $this->ModelKasir->getData($whereforsinkron,'presensi_karyawan');
+
+			$postdata = http_build_query(
+			    array(
+			        'allpresensi' => json_encode($listpresensibelumupload),
+			        'id_stan' => $this->session->userdata('id_stan')
+			    )
+			);
+
+			$opts = array('http' =>
+			    array(
+			        'method'  => 'POST',
+			        'header'  => 'Content-type: application/x-www-form-urlencoded',
+			        'content' => $postdata
+			    )
+			);
+
+			$context  = stream_context_create($opts);
+			//DATA NOTA
+			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataPresensiKaryawan', false, $context);
+			// $send = @file_get_contents('http://localhost/teabreak/insertDataPresensiKaryawan', false, $context);
+			if($send === FALSE){
+				echo 'CANTCONNECT';
+			}else{
+				if ($send == 'true') {
+					$update = array('status_upload' => 'upload');
+					$wherenot = array('status_upload' => 'not_upload');
+					$this->ModelKasir->update('presensi_karyawan',$update,$wherenot);
+					echo "SUCCESSSAVE";
+				}else{
+					echo "PENYIMPANANGAGAL";
+				}
+			}
+		}
+	}
+
+	public function sinkronuseronline()
+	{
+		$whereforsinkron = array('status_upload' => 'not_upload');
+
+		if ($this->ModelKasir->getRowCount('karyawan_fingerspot',$whereforsinkron) <1) {
+			echo "SUCCESSSAVE";
+		}else{
+			$listkaryawanbelumupload = $this->ModelKasir->getData($whereforsinkron,'karyawan_fingerspot');
+
+			$postdata = http_build_query(
+			    array(
+			        'allkaryawan' => json_encode($listkaryawanbelumupload),
+			        'id_stan' => $this->session->userdata('id_stan')
+			    )
+			);
+
+			$opts = array('http' =>
+			    array(
+			        'method'  => 'POST',
+			        'header'  => 'Content-type: application/x-www-form-urlencoded',
+			        'content' => $postdata
+			    )
+			);
+
+			$context  = stream_context_create($opts);
+			//DATA NOTA
+			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataKaryawanFingerspot', false, $context);
+			// $send = @file_get_contents('http://localhost/teabreak/insertDataKaryawanFingerspot', false, $context);
+			if($send === FALSE){
+				echo 'CANTCONNECT';
+			}else{
+				if ($send == 'true') {
+					$update = array('status_upload' => 'upload');
+					$wherenot = array('status_upload' => 'not_upload');
+					$this->ModelKasir->update('karyawan_fingerspot',$update,$wherenot);
+					echo "SUCCESSSAVE";
+				}else{
+					echo "PENYIMPANANGAGAL";
+				}
+			}
 		}
 	}
 
@@ -986,8 +1225,8 @@ class AdminStand extends CI_Controller {
 
 		$context  = stream_context_create($opts);
 		//DATA NOTA
-		// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
-		$send = @file_get_contents('http://localhost/teabreak/deleteDataPengeluaran', false, $context);
+		$send = @file_get_contents('http://teabreak.bekkostudio.com/deleteDataPengeluaran', false, $context);
+		// $send = @file_get_contents('http://localhost/teabreak/deleteDataPengeluaran', false, $context);
 		if($send === FALSE){
 			if ($this->input->post('sst') == 'sinkron') {
 				echo "CANTCONNECT";
@@ -1089,8 +1328,8 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
-			$send = @file_get_contents('http://localhost/teabreak/insertDataPengeluaran', false, $context);
+			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataPengeluaran', false, $context);
+			// $send = @file_get_contents('http://localhost/teabreak/insertDataPengeluaran', false, $context);
 			if($send === FALSE){
 				if ($this->input->post('sst') == 'sinkron') {
 					echo "CANTCONNECT";
@@ -1146,8 +1385,8 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
-			$send = @file_get_contents('http://localhost/teabreak/insertDataKas', false, $context);
+			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataKas', false, $context);
+			// $send = @file_get_contents('http://localhost/teabreak/insertDataKas', false, $context);
 			if($send === FALSE){
 				if ($this->input->post('sst') == 'sinkron') {
 					echo "CANTCONNECT";
@@ -1214,6 +1453,12 @@ class AdminStand extends CI_Controller {
 		// } catch (Exception $e) {
 		//     echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
 		// }
+	}
+
+	public function presensi()
+	{
+		$this->load->view('adminstand/header');
+        $this->load->view('adminstand/presensi');
 	}
 
 	// public function edit_stok_masuk_keluar()
