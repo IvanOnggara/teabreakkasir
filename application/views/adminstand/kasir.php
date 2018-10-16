@@ -375,14 +375,14 @@ function tambah_item(){
         item.harga_topping = harga_topping;
         item.total = parseInt(qty)*parseInt(item.subtotal);
         order.push(item);
-        cell1.innerHTML = '<p id="#nama_produk'+count_id_order+'">'+nama_produk+'</p>';
+        cell1.innerHTML = '<p id="nama_produk'+count_id_order+'">'+nama_produk+'</p>';
         cell2.innerHTML = '<p id="topping'+count_id_order+'">'+topping.toString()+'</p>';
         cell3.innerHTML = '<button class="btn center btn-default btnmin btnqty" onclick="minus(\''+count_id_order+'\',this)">-</button><p id="qty'+count_id_order+'" class="qtyitem btnqty">1</p><button class="btn center btn-default btnplus btnqty" onclick="plus(\''+count_id_order+'\',this)">+</button>';
         cell4.innerHTML = '<p id="satuan'+count_id_order+'">Rp '+currency(parseInt(harga_produk)+parseInt(harga_topping))+'</p>';
         cell5.innerHTML = '<div class="row"><p class="col-lg-9" id="totalharga'+count_id_order+'">Rp '+currency(item.total)+'</p><button class="col-lg-3 btn btn-danger btnremove" onclick="removeBtn(this);">X</button></div>';
         $("#modal_topping").modal('hide');
+        count_id_order++;
     }
-    count_id_order++;
     hitungDiskon();
 
     harga_produk = parseInt(harga_produk)+parseInt(harga_topping);

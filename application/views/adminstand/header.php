@@ -163,7 +163,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <a class="nav-link" href=<?php echo base_url("pengeluaranlain")?>>Pengeluaran Lain</a>
                     </div>
                 </div>
-
+                <div class="dropdown">
+                    <a class="dropdown-toggle" href=<?php echo base_url("order") ?>>ORDER</a>
+                </div>
                 
             </div>
         </div>

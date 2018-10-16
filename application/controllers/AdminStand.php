@@ -323,6 +323,12 @@ class AdminStand extends CI_Controller {
 		
 	}
 
+	public function order()
+	{
+		$this->load->view('adminstand/header');
+        $this->load->view('adminstand/order');
+	}
+
 	public function getAllKategori()//GET KATEGORI
 	{
 		$where = array('kategori !=' => 'topping' );
