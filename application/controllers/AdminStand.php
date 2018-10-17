@@ -1600,4 +1600,50 @@ class AdminStand extends CI_Controller {
 			}
 		}
 	}
+
+	public function listorder()
+	{
+		// $json = @file_get_contents('http://teabreak.bekkostudio.com/getDataOrder');
+		$json = @file_get_contents('http://localhost/teabreak/getDataOrder');
+		if($json === FALSE){
+			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
+		}else{
+			// $datas = json_decode($json);
+			// $localdatastan = $this->ModelKasir->getSpecificColumn('stan','id_stan');
+			// $onlinedatastan = array();
+			// // var_dump($localdatastan);
+
+			// foreach ($datas as $data) {
+			// 	$exist = $this->ModelKasir->checkExist('stan',$data->id_stan);
+			// 	$array = array(
+			//         'id_stan' => $data->id_stan,
+			//         'nama_stan' => $data->nama_stan,
+			//         'alamat' => $data->alamat,
+			//         'password' => $data->password
+			//     );
+
+			// 	if ($exist) {
+			// 		$where = array(
+			// 	        'id_stan' => $data->id_stan
+			// 	    );
+			// 		$this->ModelKasir->update('stan', $array, $where);
+			// 	}else{
+			// 		$this->ModelKasir->insert('stan',$array);
+			// 	}
+			// 	array_push($onlinedatastan,$data->id_stan);
+			// }
+
+			// foreach ($localdatastan as $perstan) {
+			// 	if (!in_array($perstan->id_stan, $onlinedatastan)) {
+			// 		$this->ModelKasir->delete('stan',$perstan->id_stan);
+			// 	}
+			// }
+
+
+			echo "<p class='green'>(success) data order terupdate</p>";
+		}
+
+		$this->load->view('adminstand/header');
+        $this->load->view('adminstand/listorder');
+	}
 }
