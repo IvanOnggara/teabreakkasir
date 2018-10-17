@@ -24,3 +24,11 @@
         $id = "DN-".$date;
         return $id;
       }
+
+      function IDOrderGenerator($idstan)
+      {
+        date_default_timezone_set("Asia/Bangkok");
+        $date = date("ymdHis");
+        $id = "OR-".$date.$idstan;
+        return $id;
+      }
