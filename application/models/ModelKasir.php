@@ -8,6 +8,11 @@ class ModelKasir extends CI_Model{
         return $res->result();
     }
 
+    public function getCountAllData($table){
+        $res=$this->db->get($table);
+        return $res->num_rows();
+    }
+
     public function getRowCount($table,$where){
         $res = $this->db->get_where($table,$where);
         return $res->num_rows();

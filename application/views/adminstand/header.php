@@ -56,6 +56,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script type="text/javascript">
     function sinkronnota() {
         alert('sinkron');
+        $('#sinkronnota').addClass('fa-spin');
         $('#labelsinkron').removeClass('red');
         $('#labelsinkron').removeClass('green');
 
@@ -82,6 +83,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
               error: function (jqXHR, textStatus, errorThrown)
               {
                 alert(errorThrown);
+              },
+              complete: function(){
+                $('#sinkronnota').removeClass('fa-spin');
               }
           }
     );
@@ -89,6 +93,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     function sinkronstok() {
         alert('sinkron');
+        $('#sinkronstok').addClass('fa-spin');
         $('#labelsinkron').removeClass('red');
         $('#labelsinkron').removeClass('green');
 
@@ -116,10 +121,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
               error: function (jqXHR, textStatus, errorThrown)
               {
                 alert(errorThrown);
+              },
+              complete: function(){
+                $('#sinkronstok').removeClass('fa-spin');
               }
           }
     );
     }
+
+    
 </script>
 <style type="text/css">
 .red{
@@ -138,7 +148,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </style>
 <body>
     <div class="header" id="header">
-        <div class="col-md-7 col-sm-12">
+        <div class="col-md-5 col-sm-12">
             <div class="header-left" >
                 <img class="navbar-brand" align="left" src=<?php echo base_url("images/logo.png")?>>
                 <div class="dropdown active">
@@ -169,23 +179,30 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 
             </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-7">
             <div class="header-right">
 
                 <div class="dropdown float-right">
-                    <a class="dropdown-toggle" href="logout"><i class="fa fa-power-off"></i> Logout</a>
+                    <a class="" href="logout"><i class="fa fa-power-off"></i> Logout</a>
                     <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Rio Christian</i></a>
                     <div class="dropdown-menu">
                         <a class="nav-link" href="#"><i class="fa fa-cog"></i> Ganti Password</a>
                         <a class="nav-link" href="logout"><i class="fa fa-power-off"></i> Logout</a>
                     </div> -->
                 </div>
-                <button onclick="sinkronnota()" class="dropdown float-right active">
-                    <a style="color: white;"><i class="fa fa-refresh"></i> SINKRONISASI NOTA</a>
+                <div class="dropdown float-right">
+                    <a class="" href="presensi"><i class="fa fa-address-card"></i> Presensi</a>
+                </div>
+                <button onclick="sinkronnota()" class="dropdown float-right active btn btn-lg">
+                    <a style="color: white;"><i class="fa fa-refresh" id="sinkronnota"></i> SINKRON NOTA</a>
                 </button>
-                <button onclick="sinkronstok()" class="dropdown float-right active">
-                    <a style="color: white;"><i class="fa fa-refresh"></i> SINKRONISASI STOK</a>
+                <button onclick="sinkronstok()" class="dropdown float-right active btn btn-lg">
+                    <a style="color: white;"><i class="fa fa-refresh" id="sinkronstok"></i> SINKRON STOK</a>
                 </button>
+
+                <!-- <button onclick="sinkronpresensi()" class="dropdown float-right active btn btn-lg">
+                    <a style="color: white;"><i class="fa fa-refresh" id="sinkronpresensi"></i> SINKRON PRESENSI</a>
+                </button> -->
                 <p class="center float-right" id="labelsinkron"></p>
             </div>
         </div>

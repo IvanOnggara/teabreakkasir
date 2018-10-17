@@ -1128,6 +1128,12 @@ function cetakNota() {
 
 function cetakNotaHelp() {
 
+    var arrorder = new Array();
+
+    for (var i = order.length - 1; i >= 0; i--) {
+        arrorder.push(Object.assign({}, order[i]));
+    }
+
     $.ajax({
           type:"post",
           url: "<?php echo base_url('adminstand/printnota')?>/",
