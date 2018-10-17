@@ -8,7 +8,7 @@
         </div>
     </div>
 
-    <div class="col-lg-8 col-md-12 col-sm-12 section3">
+    <div class="col-lg-6 offset-lg-1 col-md-12 col-sm-12 section3">
         <div class="judul">
             BILL
         </div>
@@ -19,7 +19,6 @@
                         <tr>
                             <th style="width: 40%;">Nama</th>
                             <th style="width: 20%;">Qty</th>
-                            <th style="width: 20%;">Tgl Order</th>
                             <th style="width: 20%;"></th>
                         </tr>
                     </thead>
