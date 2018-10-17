@@ -196,7 +196,29 @@ function checkBtnOrder(){
 }
 
 function orderprocess(){
-  console.log(listOrder);
+
+    var arrorder = new Array();
+
+    for (var i = listOrder.length - 1; i >= 0; i--) {
+        arrorder.push(Object.assign({}, listOrder[i]));
+    }
+
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('adminstand/saveOrder')?>/",
+          dataType:"text",
+          data:{ order:JSON.stringify(arrorder)},
+          success:function(response)
+          {
+            alert('Saved');
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      }
+    );
+    // console.log(JSON.stringify(arrorder));
 }
 
 </script>

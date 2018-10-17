@@ -325,6 +325,46 @@ class AdminStand extends CI_Controller {
 
 	public function order()
 	{
+		// $json = @file_get_contents('http://teabreak.bekkostudio.com/getDataOrder');
+		$json = @file_get_contents('http://localhost/teabreak/getDataOrder');
+		if($json === FALSE){
+			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
+		}else{
+			// $datas = json_decode($json);
+			// $localdatastan = $this->ModelKasir->getSpecificColumn('stan','id_stan');
+			// $onlinedatastan = array();
+			// // var_dump($localdatastan);
+
+			// foreach ($datas as $data) {
+			// 	$exist = $this->ModelKasir->checkExist('stan',$data->id_stan);
+			// 	$array = array(
+			//         'id_stan' => $data->id_stan,
+			//         'nama_stan' => $data->nama_stan,
+			//         'alamat' => $data->alamat,
+			//         'password' => $data->password
+			//     );
+
+			// 	if ($exist) {
+			// 		$where = array(
+			// 	        'id_stan' => $data->id_stan
+			// 	    );
+			// 		$this->ModelKasir->update('stan', $array, $where);
+			// 	}else{
+			// 		$this->ModelKasir->insert('stan',$array);
+			// 	}
+			// 	array_push($onlinedatastan,$data->id_stan);
+			// }
+
+			// foreach ($localdatastan as $perstan) {
+			// 	if (!in_array($perstan->id_stan, $onlinedatastan)) {
+			// 		$this->ModelKasir->delete('stan',$perstan->id_stan);
+			// 	}
+			// }
+
+
+			echo "<p class='green'>(success) data order terupdate</p>";
+		}
+
 		$this->load->view('adminstand/header');
         $this->load->view('adminstand/order');
 	}
@@ -1461,41 +1501,103 @@ class AdminStand extends CI_Controller {
         $this->load->view('adminstand/presensi');
 	}
 
-	// public function edit_stok_masuk_keluar()
-	// {
-	// 	# code...id:idedit,stokmasuk:stokmasukedit,stokkeluar:'',tanggal:tanggaledit
+	public function saveOrder()
+	{
+		$dataorder = json_decode($this->input->post('order'));
 
-	// 	$id_bahan_jadi = $this->input->post('id');
-	// 	$stok_masuk = $this->input->post('stokmasuk');
-	// 	$stok_keluar = $this->input->post('stokkeluar');
-	// 	$tanggal = $this->input->post('tanggal');
-	// 	$where
+		$idorder = IDOrderGenerator($this->session->userdata('id_stan'));
 
-	// 	if ($stok_masuk == '') {
-	// 		$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
-	// 		$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa + $dataBeforeUpdate[0]->stok_keluar;
-	// 		$data = array(
-	// 	        'stok_keluar' => $stokkeluar,
-	// 	        'stok_sisa' => $stoksisabefore-$stokkeluar,
-	// 	        'status_upload' => 'not_upload'
-	//          );
+		date_default_timezone_set("Asia/Bangkok");
+		$datenow = date("Y-m-d");
 
-	// 		$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
-	// 		$this->sinkronstokbahan();
-	// 		echo "Data telah di update!.";
-	// 	}else if ($stok_keluar == '') {
-	// 		$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
-	// 		$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa + $dataBeforeUpdate[0]->stok_keluar;
-	// 		$data = array(
-	// 	        'stok_keluar' => $stokkeluar,
-	// 	        'stok_sisa' => $stoksisabefore-$stokkeluar,
-	// 	        'status_upload' => 'not_upload'
-	//          );
+		$data = array(
+			'id_order' => $idorder, 
+			'tanggal_order' => $datenow,
+			'status' => 'not_done',
+			'status_upload' => 'not_upload'
+		);
+		$this->ModelKasir->insert('order_bahan_jadi_stan',$data);
+		$num = 0;
 
-	// 		$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
-	// 		$this->sinkronstokbahan();
-	// 		echo "Data telah di update!.";
-	// 	}
+		foreach ($dataorder as $peritem) {
+			$datadetail = array(
+				'id_detail_order' => $idorder.'_'.$num,
+				'id_order' => $idorder,
+				'nama_bahan_jadi' => $peritem->nama_bahan_jadi,
+				'jumlah' => $peritem->qty
+			);
+			$num++;
 
-	// }
+			$this->ModelKasir->insert('detail_order_bahan_jadi_stan',$datadetail);
+		}
+
+		
+		//sinkron order
+		$this->sinkronorder();
+		var_dump($dataorder);
+	}
+
+	public function sinkronorder()
+	{
+		$whereforsinkron = array('status_upload' => 'not_upload');
+
+		if ($this->ModelKasir->getRowCount('order_bahan_jadi_stan',$whereforsinkron) <1) {
+			echo "SUCCESSSAVE";
+		}else{
+			$listorderbelumupload = $this->ModelKasir->getData($whereforsinkron,'order_bahan_jadi_stan');
+			$listnotarray = array();
+
+			foreach ($listorderbelumupload as $perorder) {
+				array_push($listnotarray, $perorder->id_order);
+			}
+			$listalldetailorder = $this->ModelKasir->getDataInTable('detail_order_bahan_jadi_stan',$listnotarray,'id_order');
+			
+
+			$postdata = http_build_query(
+			    array(
+			        'allorder' => json_encode($listorderbelumupload),
+			        'detailorder' => json_encode($listalldetailorder),
+			        'id_stan' => $this->session->userdata('id_stan')
+			    )
+			);
+
+			$opts = array('http' =>
+			    array(
+			        'method'  => 'POST',
+			        'header'  => 'Content-type: application/x-www-form-urlencoded',
+			        'content' => $postdata
+			    )
+			);
+
+			$context  = stream_context_create($opts);
+			//DATA NOTA
+			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataNota', false, $context);
+			$send = @file_get_contents('http://localhost/teabreak/insertDataOrder', false, $context);
+			if($send === FALSE){
+				if ($this->input->post('sst') == 'sinkron') {
+					echo "CANTCONNECT";
+				}
+			}else{
+				if ($send == 'true') {
+					// var_dump($send);
+					foreach ($listorderbelumupload as $order) {
+						$where = array('id_order' => $order->id_order );
+						$update = array('status_upload' => 'upload' );
+						$this->ModelKasir->update('order_bahan_jadi_stan',$update,$where);
+						
+					}
+
+					if ($this->input->post('sst') == 'sinkron') {
+						echo "SUCCESSSAVE";
+					}
+					
+				}else{
+					if ($this->input->post('sst') == 'sinkron') {
+						echo "PENYIMPANANGAGAL";
+					}
+					
+				}
+			}
+		}
+	}
 }
