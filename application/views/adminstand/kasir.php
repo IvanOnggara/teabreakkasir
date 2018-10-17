@@ -955,10 +955,19 @@ function cetakNota() {
 // <<<<<<< HEAD
     var kembalian_display = parseInt($("#kembalian").html().substring(3).replace('.',''));
 
-//     $.ajax({
-//           type:"post",
-//           url: "<?php echo base_url('controllerdisplay/setKembalian')?>/",
-//           data:{kembalian_display:kembalian_display},
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('controllerdisplay/setKembalian')?>/",
+          data:{kembalian_display:kembalian_display},
+          success:function(response)
+          {
+
+          },
+           error: function (jqXHR, textStatus, errorThrown)
+          {
+            alert(errorThrown);
+          }
+      });
 // =======
     $.ajax({
           type:"post",
