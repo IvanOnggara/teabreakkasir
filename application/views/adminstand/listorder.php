@@ -34,6 +34,7 @@
                                     <th>Stan</th>
                                     <th>Tanggal Order</th>
                                     <th>Detail</th>
+                                    <th>Status</th>
                                   </tr>
                                 </thead>
                               </table>
@@ -149,9 +150,9 @@
                     var setdone = "";
 
                     if (json.data[i].status != 'not_done') {
-                        setdone = '<div style="color:green">SELESAI</div>'
+                        setdone = '<div style="color:green">SELESAI</div>';
                     }else{
-                        setdone = '<div style="color:red">BELUM SELESAI</div>'
+                        setdone = '<div style="color:red">BELUM SELESAI</div>';
                     }
 
                     return_data.push({
@@ -203,12 +204,12 @@
                     }
                 ],
                 "lengthChange": true,
-                  columns: [
+                   columns: [
                     {'data': 'id_order'},
                     {'data': 'id_stan'},
                     {'data': 'tanggal_order'},
-                    {'data': 'status'},
-                    {'data': 'detail'}
+                    {'data': 'detail'},
+                    {'data': 'set_done'}
                   ],
             });
 
