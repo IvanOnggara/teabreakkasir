@@ -182,5 +182,13 @@ class ModelKasir extends CI_Model{
         $this->db->where_in($id_table, $list);
         return $this->db->get()->result();
     }
+
+    public function getDataInTableAndSpecificWhere($table,$list,$id_table,$where)
+    {
+        $this->db->from($table);
+        $this->db->where($where);
+        $this->db->where_in($id_table, $list);
+        return $this->db->get()->result();
+    }
 }
 ?>
