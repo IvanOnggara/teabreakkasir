@@ -18,7 +18,7 @@
                     <thead>
                         <tr>
                             <th style="width: 40%;">Nama</th>
-                            <th style="width: 20%;">Qty</th>
+                            <th style="width: 40%;">Qty</th>
                             <th style="width: 20%;"></th>
                         </tr>
                     </thead>
@@ -91,8 +91,8 @@
   function tambah_item(id_bahan_jadi,nama_bahan_jadi){
     var count=-1;
     var table = document.getElementById("billtable");
-    var date = new Date();
-    var tgl_order = date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear();
+    // var date = new Date();
+    // var tgl_order = date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear();
 
     if (table.rows.length>1) {
       for(var i = 0;i<listOrder.length;i++){
@@ -119,11 +119,11 @@
         item.nama_bahan_jadi = nama_bahan_jadi;
         item.id_bahan_jadi = id_bahan_jadi;
         item.qty = 1;
-        item.tgl_order = tgl_order;
+        // item.tgl_order = tgl_order;
         listOrder.push(item);
         cell1.innerHTML = '<p id="namabjadi'+count_id_order+'">'+nama_bahan_jadi+'</p>';
         cell2.innerHTML = '<button class="btn center btn-default btnmin btnqty" onclick="minus(\''+count_id_order+'\',this)">-</button><p id="qty'+count_id_order+'" class="qtyitem btnqty">1</p><button class="btn center btn-default btnplus btnqty" onclick="plus(\''+count_id_order+'\',this)">+</button>';
-        cell3.innerHTML = '<p id="tgl_order'+count_id_order+'">'+tgl_order+'</p>';
+        // cell3.innerHTML = '<p id="tgl_order'+count_id_order+'">'+tgl_order+'</p>';
         cell4.innerHTML = '<div class="row"><button class="col-lg-4 offset-lg-8 btn btn-danger btnremove" onclick="removeBtn(this);">X</button>';
 
         count_id_order++;

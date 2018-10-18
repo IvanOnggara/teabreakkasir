@@ -151,7 +151,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="col-md-5 col-sm-12">
             <div class="header-left" >
                 <img class="navbar-brand" align="left" src=<?php echo base_url("images/logo.png")?>>
-                <div class="dropdown active">
+                <div class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">KASIR <i class="fa fa-caret-down"></i></a>
                     <div class="dropdown-menu">
                         <a class="nav-link" href=<?php echo base_url("kasir")?>>Kasir</a>
@@ -174,7 +174,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a class="dropdown-toggle" href=<?php echo base_url("order") ?>>ORDER</a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">ORDER <i class="fa fa-caret-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a class="nav-link" href=<?php echo base_url("order")?>>Buat Order Baru</a>
+                        <a class="nav-link" href=<?php echo base_url("listorder")?>>List Order</a>
+                    </div>
                 </div>
                 
             </div>
