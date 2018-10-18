@@ -325,45 +325,7 @@ class AdminStand extends CI_Controller {
 
 	public function order()
 	{
-		// $json = @file_get_contents('http://teabreak.bekkostudio.com/getDataOrder');
-		$json = @file_get_contents('http://localhost/teabreak/getDataOrder');
-		if($json === FALSE){
-			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
-		}else{
-			// $datas = json_decode($json);
-			// $localdatastan = $this->ModelKasir->getSpecificColumn('stan','id_stan');
-			// $onlinedatastan = array();
-			// // var_dump($localdatastan);
-
-			// foreach ($datas as $data) {
-			// 	$exist = $this->ModelKasir->checkExist('stan',$data->id_stan);
-			// 	$array = array(
-			//         'id_stan' => $data->id_stan,
-			//         'nama_stan' => $data->nama_stan,
-			//         'alamat' => $data->alamat,
-			//         'password' => $data->password
-			//     );
-
-			// 	if ($exist) {
-			// 		$where = array(
-			// 	        'id_stan' => $data->id_stan
-			// 	    );
-			// 		$this->ModelKasir->update('stan', $array, $where);
-			// 	}else{
-			// 		$this->ModelKasir->insert('stan',$array);
-			// 	}
-			// 	array_push($onlinedatastan,$data->id_stan);
-			// }
-
-			// foreach ($localdatastan as $perstan) {
-			// 	if (!in_array($perstan->id_stan, $onlinedatastan)) {
-			// 		$this->ModelKasir->delete('stan',$perstan->id_stan);
-			// 	}
-			// }
-
-
-			echo "<p class='green'>(success) data order terupdate</p>";
-		}
+		$this->sinkronDoneOrder();
 
 		$this->load->view('adminstand/header');
         $this->load->view('adminstand/order');
@@ -1603,6 +1565,34 @@ class AdminStand extends CI_Controller {
 
 	public function listorder()
 	{
+		$this->sinkronDoneOrder();
+
+		$this->load->view('adminstand/header');
+        $this->load->view('adminstand/listorder');
+	}
+
+	public function getAllOrder()
+	{
+		$this->load->library('datatables');
+		$this->datatables->select('id_order,tanggal_order,status');
+		$this->datatables->from('order_bahan_jadi_stan');
+		echo $this->datatables->generate();
+	}
+
+	public function getSpecificOrderDetail()
+	{
+		$id_order = $this->input->post('id_order');
+	    $where = array('id_order' => $id_order);
+
+	    $this->load->library('datatables');
+	    $this->datatables->select('nama_bahan_jadi,jumlah');
+	    $this->datatables->from('detail_order_bahan_jadi_stan');
+	    $this->datatables->where($where);
+	    echo $this->datatables->generate();
+	}
+
+	public function sinkronDoneOrder()
+	{
 		$wherenotupdate = array('status' => 'not_done');
 		$dataNotUpdate = $this->ModelKasir->getData($wherenotupdate,'order_bahan_jadi_stan');
 		$arrayIdNotDone = array();
@@ -1633,56 +1623,18 @@ class AdminStand extends CI_Controller {
 		if($send === FALSE){
 			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
 		}else{
-			// echo "<p class='green'>(success) data order terupdate</p>";
-			var_dump($send);
-			// if ($send == 'true') {
-			// 	// var_dump($send);
-			// 	foreach ($listorderbelumupload as $order) {
-			// 		$where = array('id_order' => $order->id_order );
-			// 		$update = array('status_upload' => 'upload' );
-			// 		$this->ModelKasir->update('order_bahan_jadi_stan',$update,$where);
-					
-			// 	}
+			// var_dump($send);
+			if ($send != '') {
+				$ids = explode(",",$send);
 
-				
+				foreach ($ids as $peridorder) {
+					$where = array('id_order' => $peridorder);
+					$array = array('status' => 'done');
+					$this->ModelKasir->update('order_bahan_jadi_stan', $array, $where);
+				}
+			}
 
-			// 	if ($this->input->post('sst') == 'sinkron') {
-			// 		if ($allstat != "CANTCONNECT") {
-			// 			$allstat = "SUCCESSSAVE";
-			// 		}
-			// 	}
-				
-			// }else{
-			// 	if ($this->input->post('sst') == 'sinkron') {
-			// 		if ($allstat != "CANTCONNECT") {
-			// 			$allstat = "PENYIMPANANGAGAL";
-			// 		}
-			// 	}
-				
-			// }
+			echo "<p class='green'>(success) data order terupdate</p>";
 		}
-
-		$this->load->view('adminstand/header');
-        $this->load->view('adminstand/listorder');
-	}
-
-	public function getAllOrder()
-	{
-		$this->load->library('datatables');
-		$this->datatables->select('id_order,tanggal_order,status');
-		$this->datatables->from('order_bahan_jadi_stan');
-		echo $this->datatables->generate();
-	}
-
-	public function getSpecificOrderDetail()
-	{
-		$id_order = $this->input->post('id_order');
-	    $where = array('id_order' => $id_order);
-
-	    $this->load->library('datatables');
-	    $this->datatables->select('nama_bahan_jadi,jumlah');
-	    $this->datatables->from('detail_order_bahan_jadi_stan');
-	    $this->datatables->where($where);
-	    echo $this->datatables->generate();
 	}
 }
