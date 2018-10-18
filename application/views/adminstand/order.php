@@ -113,7 +113,6 @@
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
-        var cell4 = row.insertCell(3);
         var item = new Array();
         item.id_order = count_id_order;
         item.nama_bahan_jadi = nama_bahan_jadi;
@@ -124,7 +123,7 @@
         cell1.innerHTML = '<p id="namabjadi'+count_id_order+'">'+nama_bahan_jadi+'</p>';
         cell2.innerHTML = '<button class="btn center btn-default btnmin btnqty" onclick="minus(\''+count_id_order+'\',this)">-</button><p id="qty'+count_id_order+'" class="qtyitem btnqty">1</p><button class="btn center btn-default btnplus btnqty" onclick="plus(\''+count_id_order+'\',this)">+</button>';
         // cell3.innerHTML = '<p id="tgl_order'+count_id_order+'">'+tgl_order+'</p>';
-        cell4.innerHTML = '<div class="row"><button class="col-lg-4 offset-lg-8 btn btn-danger btnremove" onclick="removeBtn(this);">X</button>';
+        cell3.innerHTML = '<div class="row"><button class="col-lg-4 offset-lg-8 btn btn-danger btnremove" onclick="removeBtn(this);">X</button>';
 
         count_id_order++;
     }
