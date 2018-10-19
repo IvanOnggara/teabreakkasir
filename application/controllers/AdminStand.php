@@ -1533,8 +1533,8 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataNota', false, $context);
-			$send = @file_get_contents('http://localhost/teabreak/insertDataOrder', false, $context);
+			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataNota', false, $context);
+			// $send = @file_get_contents('http://localhost/teabreak/insertDataOrder', false, $context);
 			if($send === FALSE){
 				if ($this->input->post('sst') == 'sinkron') {
 					echo "CANTCONNECT";
@@ -1618,8 +1618,8 @@ class AdminStand extends CI_Controller {
 		);
 
 		$context  = stream_context_create($opts);
-		// $send = @file_get_contents('http://teabreak.bekkostudio.com/getUpdateOrder', false, $context);
-		$send = @file_get_contents('http://localhost/teabreak/getUpdateOrder', false, $context);
+		$send = @file_get_contents('http://teabreak.bekkostudio.com/getUpdateOrder', false, $context);
+		// $send = @file_get_contents('http://localhost/teabreak/getUpdateOrder', false, $context);
 		if($send === FALSE){
 			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
 		}else{
