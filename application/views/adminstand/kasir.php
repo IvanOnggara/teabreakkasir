@@ -12,6 +12,13 @@
             MENU
         </div>
         <div id="menusection">
+            <div class="col-md-6 col-lg-6" id="menusectionleft">
+                
+            </div>
+
+            <div class="col-md-6 col-lg-6" id="menusectionright">
+                
+            </div>
         </div>
     </div>
 
@@ -159,7 +166,10 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="offset-md-7 col-md-5">
+                        <div class="offset-md-4 col-md-3 text-right">
+                            <p id="loadingprint" style="color: green" ><i class="fa fa-spin fa-refresh"></i></p>
+                        </div>
+                        <div class="col-md-5">
                             <button id="cetaknotaulang" class="btn btn-sm btn-info"  disabled="" onclick="cetakNotaHelp()">cetak ulang nota</button>
                         </div>
                     </div>
@@ -718,13 +728,22 @@ function pilih_kategori(kategori){
           dataType:"json",
           success:function(response)
           {
-            document.getElementById("menusection").innerHTML = "";
+            var kirikanan = 1;
+            document.getElementById("menusectionleft").innerHTML = "";
+            document.getElementById("menusectionright").innerHTML = "";
             for(var i=0;i< response.length; i++){
                 var div = document.createElement('div');
-                div.className = "menu col-lg-5 offset-lg-1 col-md-5 offset-md-1";
+                div.className = "menu col-lg-12 offset-lg-1 col-md-12 offset-md-1";
                 div.setAttribute("onclick", "pilih_topping('"+response[i].nama_produk+"','"+response[i].harga_jual+"','"+response[i].id_produk+"')");
                 div.innerHTML = response[i].nama_produk;
-                document.getElementById('menusection').appendChild(div);
+                if (kirikanan%2 == 0) {
+                    document.getElementById('menusectionright').appendChild(div);
+                }else{
+                    
+                    document.getElementById('menusectionleft').appendChild(div);
+                }
+                kirikanan++;
+                
             }
           },
           error: function (jqXHR, textStatus, errorThrown)
@@ -899,8 +918,10 @@ function convertURIToImageData(URI) {
   });
 }
 
-
+var done = [false,false,false];
+$('#loadingprint').hide();
 function cetakNota() {
+    $('#loadingprint').show();
     var harga_akhir = parseInt($("#harus_bayar").html().replace('Rp ','').split('.').join(""));
     var tipe_pembayaran = $('input[name=tipe_bayar]:checked').val();
     var keterangan = $("#keterangan").val();
@@ -948,6 +969,10 @@ function cetakNota() {
           error: function (jqXHR, textStatus, errorThrown)
           {
             alert(errorThrown);
+          },
+          complete: function (argument) {
+            done[0]=true;
+              stoploading();
           }
       }
     );
@@ -966,6 +991,10 @@ function cetakNota() {
            error: function (jqXHR, textStatus, errorThrown)
           {
             alert(errorThrown);
+          },
+          complete: function (argument) {
+            done[1]=true;
+              stoploading();
           }
       });
 // =======
@@ -982,9 +1011,15 @@ function cetakNota() {
           error: function (jqXHR, textStatus, errorThrown)
           {
             alert(errorThrown);
+          },
+          complete: function (argument) {
+            done[2]=true;
+              stoploading();
           }
       }
     );
+
+    
 // <<<<<<< HEAD
 
 //     var d = new Date();
@@ -1135,6 +1170,13 @@ function cetakNota() {
 //     // pdfMake.createPdf(docDefinition).print({}, window);
 }
 
+function stoploading() {
+    if (done[0] && done[1] && done[2]) {
+        $('#loadingprint').hide();
+        alert('PROSES SELESAI');
+    }
+}
+
 function cetakNotaHelp() {
 
     var arrorder = new Array();
@@ -1150,7 +1192,7 @@ function cetakNotaHelp() {
           data:{ order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
           success:function(response)
           {
-            alert('printed');
+            // alert('printed');
           },
           error: function (jqXHR, textStatus, errorThrown)
           {

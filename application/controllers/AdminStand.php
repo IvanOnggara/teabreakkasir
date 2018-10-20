@@ -177,8 +177,8 @@ class AdminStand extends CI_Controller {
 
 				//DATA DISKON
 				
-				$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataDiskon', false, $context);
-				// $json = @file_get_contents('http://localhost/teabreak/getDataDiskon', false, $context);
+				// $json = @file_get_contents('http://teabreak.bekkostudio.com/getDataDiskon', false, $context);
+				$json = @file_get_contents('http://localhost/teabreak/getDataDiskon', false, $context);
 				if($json === FALSE){
 					
 					$status = 'false';
@@ -228,8 +228,8 @@ class AdminStand extends CI_Controller {
 
 				//DATA DETAIL DISKON (BARANG)
 				
-				$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataDetailDiskonProduk', false, $context);
-				// $json = @file_get_contents('http://localhost/teabreak/getDataDetailDiskonProduk', false, $context);
+				// $json = @file_get_contents('http://teabreak.bekkostudio.com/getDataDetailDiskonProduk', false, $context);
+				$json = @file_get_contents('http://localhost/teabreak/getDataDetailDiskonProduk', false, $context);
 				if($json === FALSE){
 					
 					$status = 'false';
