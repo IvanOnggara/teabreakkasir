@@ -1565,10 +1565,16 @@ class AdminStand extends CI_Controller {
 
 	public function listorder()
 	{
-		$this->sinkronDoneOrder();
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->sinkronDoneOrder();
 
-		$this->load->view('adminstand/header');
-        $this->load->view('adminstand/listorder');
+			$this->load->view('adminstand/header');
+	        $this->load->view('adminstand/listorder');
+        }
+		
 	}
 
 	public function getAllOrder()
@@ -1636,5 +1642,77 @@ class AdminStand extends CI_Controller {
 
 			echo "<p class='green'>(success) data order terupdate</p>";
 		}
+	}
+
+	public function rekapdata()
+	{
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+	        $this->load->view('adminstand/rekapdata');
+        }
+	}
+
+	public function getrekapdata()
+	{
+	    date_default_timezone_set("Asia/Bangkok");
+		$datenow = date("Y-m-d");
+		$where = array('tanggal' => $datenow);
+		$wherenota = array('tanggal_nota' => $datenow);
+
+		$datapengeluaran = $this->ModelKasir->getData($where,'pengeluaran_lain');
+		$datakas = $this->ModelKasir->getData($where,'kas');
+		$datapenjualan = $this->ModelKasir->getData($wherenota,'nota');
+
+		if (empty($datakas)) {
+			$kasawal = 0;
+		}else{
+			$kasawal = $datakas[0]->kas_awal;
+		}
+
+		if (empty($datapengeluaran)) {
+			$pengeluaran = 0;
+		}else{
+			$pengeluaran = 0;
+			foreach ($datapengeluaran as $perpengeluaran) {
+				$pengeluaran+=$perpengeluaran->pengeluaran;
+			}
+		}
+
+		$hasilcash = 0;
+		$cashdetail = 0;
+		$ovodetail = 0;
+		$debitdetail = 0;
+		$totalkasir = 0;
+		if (!empty($datapenjualan)) {
+			foreach ($datapenjualan as $perpenjualan) {
+				if ($perpenjualan->pembayaran == 'cash') {
+					$hasilcash += $perpenjualan->total_harga;
+				}else if ($perpenjualan->pembayaran == 'debit') {
+					$debitdetail += $perpenjualan->total_harga;
+				}else if ($perpenjualan->pembayaran == 'ovo') {
+					$ovodetail += $perpenjualan->total_harga;
+				}
+			}
+
+			$cashdetail = $hasilcash;
+		}
+
+		$totalkasir = $kasawal+$cashdetail-$pengeluaran;
+
+		$lastarraysend = array(
+			'kasawal' => $kasawal,
+			'pengeluaran' => $pengeluaran,
+			'hasilcash' => $hasilcash,
+			'cashdetail' => $cashdetail,
+			'ovodetail' => $ovodetail,
+			'debitdetail' => $debitdetail,
+			'totalkasir' => $totalkasir
+		);
+
+		echo json_encode($lastarraysend);
+
 	}
 }
