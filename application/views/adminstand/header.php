@@ -148,7 +148,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </style>
 <body>
     <div class="header" id="header">
-        <div class="col-md-5 col-sm-12">
+        <div class="col-md-6 col-sm-12">
             <div class="header-left" >
                 <img class="navbar-brand" align="left" src=<?php echo base_url("images/logo.png")?>>
                 <div class="dropdown">
@@ -180,10 +180,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <a class="nav-link" href=<?php echo base_url("listorder")?>>List Order</a>
                     </div>
                 </div>
+                <div class="dropdown">
+                    <a class="dropdown-toggle" href="rekapdata">REKAP DATA HARI INI</a>
+                </div>
                 
             </div>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-6">
             <div class="header-right">
 
                 <div class="dropdown float-right">

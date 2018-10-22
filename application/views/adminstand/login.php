@@ -10,8 +10,8 @@
     <meta name="description" content="Sufee Admin - HTML5 Admin Template">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="apple-touch-icon" href="apple-icon.png">
-    <link rel="shortcut icon" href="favicon.ico">
+    <!-- <link rel="apple-touch-icon" href="apple-icon.png"> -->
+    <link rel="shortcut icon" href=<?php echo base_url("assets/logo.ico")?>>
 
     <link rel="stylesheet" href=<?php echo base_url("assets/css/normalize.css")?>>
     <link rel="stylesheet" href=<?php echo base_url("assets/vendors/bootstrap-4.1.3-dist/css/bootstrap.min.css")?>>
@@ -57,7 +57,7 @@
                             <input id="password" type="password" class="form-control" placeholder="Password">
                         </div>
                         <p class="green text-center" id="error"></p>
-                        <button onclick="proses_login()" class="btn btn-success btn-flat m-b-30 m-t-30">Sign in</button>
+                        <button id="buttonlogin" onclick="proses_login()" class="btn btn-success btn-flat m-b-30 m-t-30">Sign in</button>
                 </div>
             </div>
         </div>
@@ -70,6 +70,7 @@
     <script src="assets/js/main.js"></script> -->
     <script type="text/javascript">
         function proses_login() {
+            $('#buttonlogin').prop('disabled', true);
             if ($('#username').val() == '') {
                 $('#username').addClass('is-invalid');
                 $('#labelusername').addClass('red');
@@ -108,6 +109,7 @@
                         $('#error').addClass('red');
                         $('#error').removeClass('green');
                         $('#error').html('Username atau Password Salah !');
+                        $('#buttonlogin').prop('disabled', false);
                       }
                     },
                     error: function (jqXHR, textStatus, errorThrown)

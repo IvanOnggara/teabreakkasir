@@ -187,7 +187,6 @@ class AdminStand extends CI_Controller {
 					$datas = json_decode($json);
 					$localdatadiskon = $this->ModelKasir->getSpecificColumn('diskon','id_diskon');
 					$onlinedatadiskon = array();
-					// var_dump($localdataproduk);
 
 					if (!empty($datas)) {
 						foreach ($datas as $data) {
@@ -325,45 +324,7 @@ class AdminStand extends CI_Controller {
 
 	public function order()
 	{
-		// $json = @file_get_contents('http://teabreak.bekkostudio.com/getDataOrder');
-		$json = @file_get_contents('http://localhost/teabreak/getDataOrder');
-		if($json === FALSE){
-			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
-		}else{
-			// $datas = json_decode($json);
-			// $localdatastan = $this->ModelKasir->getSpecificColumn('stan','id_stan');
-			// $onlinedatastan = array();
-			// // var_dump($localdatastan);
-
-			// foreach ($datas as $data) {
-			// 	$exist = $this->ModelKasir->checkExist('stan',$data->id_stan);
-			// 	$array = array(
-			//         'id_stan' => $data->id_stan,
-			//         'nama_stan' => $data->nama_stan,
-			//         'alamat' => $data->alamat,
-			//         'password' => $data->password
-			//     );
-
-			// 	if ($exist) {
-			// 		$where = array(
-			// 	        'id_stan' => $data->id_stan
-			// 	    );
-			// 		$this->ModelKasir->update('stan', $array, $where);
-			// 	}else{
-			// 		$this->ModelKasir->insert('stan',$array);
-			// 	}
-			// 	array_push($onlinedatastan,$data->id_stan);
-			// }
-
-			// foreach ($localdatastan as $perstan) {
-			// 	if (!in_array($perstan->id_stan, $onlinedatastan)) {
-			// 		$this->ModelKasir->delete('stan',$perstan->id_stan);
-			// 	}
-			// }
-
-
-			echo "<p class='green'>(success) data order terupdate</p>";
-		}
+		$this->sinkronDoneOrder();
 
 		$this->load->view('adminstand/header');
         $this->load->view('adminstand/order');
@@ -1571,8 +1532,8 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			// $send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataNota', false, $context);
-			$send = @file_get_contents('http://localhost/teabreak/insertDataOrder', false, $context);
+			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataNota', false, $context);
+			// $send = @file_get_contents('http://localhost/teabreak/insertDataOrder', false, $context);
 			if($send === FALSE){
 				if ($this->input->post('sst') == 'sinkron') {
 					echo "CANTCONNECT";
@@ -1603,6 +1564,40 @@ class AdminStand extends CI_Controller {
 
 	public function listorder()
 	{
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->sinkronDoneOrder();
+
+			$this->load->view('adminstand/header');
+	        $this->load->view('adminstand/listorder');
+        }
+		
+	}
+
+	public function getAllOrder()
+	{
+		$this->load->library('datatables');
+		$this->datatables->select('id_order,tanggal_order,status');
+		$this->datatables->from('order_bahan_jadi_stan');
+		echo $this->datatables->generate();
+	}
+
+	public function getSpecificOrderDetail()
+	{
+		$id_order = $this->input->post('id_order');
+	    $where = array('id_order' => $id_order);
+
+	    $this->load->library('datatables');
+	    $this->datatables->select('nama_bahan_jadi,jumlah');
+	    $this->datatables->from('detail_order_bahan_jadi_stan');
+	    $this->datatables->where($where);
+	    echo $this->datatables->generate();
+	}
+
+	public function sinkronDoneOrder()
+	{
 		$wherenotupdate = array('status' => 'not_done');
 		$dataNotUpdate = $this->ModelKasir->getData($wherenotupdate,'order_bahan_jadi_stan');
 		$arrayIdNotDone = array();
@@ -1628,61 +1623,109 @@ class AdminStand extends CI_Controller {
 		);
 
 		$context  = stream_context_create($opts);
-		// $send = @file_get_contents('http://teabreak.bekkostudio.com/getUpdateOrder', false, $context);
-		$send = @file_get_contents('http://localhost/teabreak/getUpdateOrder', false, $context);
+		$send = @file_get_contents('http://teabreak.bekkostudio.com/getUpdateOrder', false, $context);
+		// $send = @file_get_contents('http://localhost/teabreak/getUpdateOrder', false, $context);
 		if($send === FALSE){
 			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
 		}else{
-			// echo "<p class='green'>(success) data order terupdate</p>";
-			var_dump($send);
-			// if ($send == 'true') {
-			// 	// var_dump($send);
-			// 	foreach ($listorderbelumupload as $order) {
-			// 		$where = array('id_order' => $order->id_order );
-			// 		$update = array('status_upload' => 'upload' );
-			// 		$this->ModelKasir->update('order_bahan_jadi_stan',$update,$where);
-					
-			// 	}
+			// var_dump($send);
+			if ($send != '') {
+				$ids = explode(",",$send);
 
-				
+				foreach ($ids as $peridorder) {
+					$where = array('id_order' => $peridorder);
+					$array = array('status' => 'done');
+					$this->ModelKasir->update('order_bahan_jadi_stan', $array, $where);
+				}
+			}
 
-			// 	if ($this->input->post('sst') == 'sinkron') {
-			// 		if ($allstat != "CANTCONNECT") {
-			// 			$allstat = "SUCCESSSAVE";
-			// 		}
-			// 	}
-				
-			// }else{
-			// 	if ($this->input->post('sst') == 'sinkron') {
-			// 		if ($allstat != "CANTCONNECT") {
-			// 			$allstat = "PENYIMPANANGAGAL";
-			// 		}
-			// 	}
-				
-			// }
+			echo "<p class='green'>(success) data order terupdate</p>";
+		}
+	}
+
+	public function rekapdata()
+	{
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+	        $this->load->view('adminstand/rekapdata');
+        }
+	}
+
+	public function getrekapdata()
+	{
+	    date_default_timezone_set("Asia/Bangkok");
+		$datenow = date("Y-m-d");
+		$where = array('tanggal' => $datenow);
+		$wherenota = array('tanggal_nota' => $datenow);
+
+		$datapengeluaran = $this->ModelKasir->getData($where,'pengeluaran_lain');
+		$datakas = $this->ModelKasir->getData($where,'kas');
+		$datapenjualan = $this->ModelKasir->getData($wherenota,'nota');
+
+		if (empty($datakas)) {
+			$kasawal = 0;
+		}else{
+			$kasawal = $datakas[0]->kas_awal;
 		}
 
-		$this->load->view('adminstand/header');
-        $this->load->view('adminstand/listorder');
+		if (empty($datapengeluaran)) {
+			$pengeluaran = 0;
+		}else{
+			$pengeluaran = 0;
+			foreach ($datapengeluaran as $perpengeluaran) {
+				$pengeluaran+=$perpengeluaran->pengeluaran;
+			}
+		}
+
+		$hasilcash = 0;
+		$cashdetail = 0;
+		$ovodetail = 0;
+		$debitdetail = 0;
+		$totalkasir = 0;
+		if (!empty($datapenjualan)) {
+			foreach ($datapenjualan as $perpenjualan) {
+				if ($perpenjualan->pembayaran == 'cash') {
+					$hasilcash += $perpenjualan->total_harga;
+				}else if ($perpenjualan->pembayaran == 'debit') {
+					$debitdetail += $perpenjualan->total_harga;
+				}else if ($perpenjualan->pembayaran == 'ovo') {
+					$ovodetail += $perpenjualan->total_harga;
+				}
+			}
+
+			$cashdetail = $hasilcash;
+		}
+
+		$totalkasir = $kasawal+$cashdetail-$pengeluaran;
+		$totalallpemasukan = $kasawal+$cashdetail+$ovodetail+$debitdetail-$pengeluaran;
+
+		$lastarraysend = array(
+			'kasawal' => $kasawal,
+			'pengeluaran' => $pengeluaran,
+			'hasilcash' => $hasilcash,
+			'cashdetail' => $cashdetail,
+			'ovodetail' => $ovodetail,
+			'debitdetail' => $debitdetail,
+			'totalkasir' => $totalkasir
+		);
+
+		echo json_encode($lastarraysend);
+
 	}
 
-	public function getAllOrder()
-	{
-		$this->load->library('datatables');
-		$this->datatables->select('id_order,tanggal_order,status');
-		$this->datatables->from('order_bahan_jadi_stan');
-		echo $this->datatables->generate();
-	}
+	public function printrekap()
+  {
+  	$dataprint = json_decode($this->input->post('datarekapharian'));
 
-	public function getSpecificOrderDetail()
-	{
-		$id_order = $this->input->post('id_order');
-	    $where = array('id_order' => $id_order);
+  	$totalpemasukan = $dataprint->cashdetail+$dataprint->ovodetail+$dataprint->debitdetail;
+  	$sisauang = $totalpemasukan+$dataprint->kasawal-$dataprint->pengeluaran;
 
-	    $this->load->library('datatables');
-	    $this->datatables->select('nama_bahan_jadi,jumlah');
-	    $this->datatables->from('detail_order_bahan_jadi_stan');
-	    $this->datatables->where($where);
-	    echo $this->datatables->generate();
-	}
+  	// var_dump($dataprint->kasawal);
+      $this->load->library('ReceiptPrint');
+      $this->receiptprint->connect('MINIPOS');
+      $this->receiptprint->printrekap($dataprint->kasawal,$totalpemasukan,$dataprint->cashdetail ,$dataprint->debitdetail,$dataprint->ovodetail,$dataprint->pengeluaran,$sisauang,$dataprint->totalkasir);
+  }
 }

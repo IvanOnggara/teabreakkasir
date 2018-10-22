@@ -12,6 +12,13 @@
             MENU
         </div>
         <div id="menusection">
+            <div class="col-md-6 col-lg-6" id="menusectionleft">
+                
+            </div>
+
+            <div class="col-md-6 col-lg-6" id="menusectionright">
+                
+            </div>
         </div>
     </div>
 
@@ -159,7 +166,10 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="offset-md-7 col-md-5">
+                        <div class="offset-md-4 col-md-3 text-right">
+                            <p id="loadingprint" style="color: green" ><i class="fa fa-spin fa-refresh"></i></p>
+                        </div>
+                        <div class="col-md-5">
                             <button id="cetaknotaulang" class="btn btn-sm btn-info"  disabled="" onclick="cetakNotaHelp()">cetak ulang nota</button>
                         </div>
                     </div>
@@ -274,20 +284,8 @@ function resetbyr(){
         $("#modal_bayar").modal('hide');
         $("#total_bayar").text('0');
     }else{
-        $.ajax({
-          type:"post",
-          url: "<?php echo base_url('controllerdisplay/setThanks')?>/",
-          success: function (response){
-            setTimeout(function () {
-                location.reload();
-            } , 1000);
-            
-          },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
-        });
+        clearAll();
+        $("#modal_bayar").modal('hide');
     }
     
 }
@@ -718,13 +716,22 @@ function pilih_kategori(kategori){
           dataType:"json",
           success:function(response)
           {
-            document.getElementById("menusection").innerHTML = "";
+            var kirikanan = 1;
+            document.getElementById("menusectionleft").innerHTML = "";
+            document.getElementById("menusectionright").innerHTML = "";
             for(var i=0;i< response.length; i++){
                 var div = document.createElement('div');
-                div.className = "menu col-lg-5 offset-lg-1 col-md-5 offset-md-1";
+                div.className = "menu col-lg-12 offset-lg-1 col-md-12 offset-md-1";
                 div.setAttribute("onclick", "pilih_topping('"+response[i].nama_produk+"','"+response[i].harga_jual+"','"+response[i].id_produk+"')");
                 div.innerHTML = response[i].nama_produk;
-                document.getElementById('menusection').appendChild(div);
+                if (kirikanan%2 == 0) {
+                    document.getElementById('menusectionright').appendChild(div);
+                }else{
+                    
+                    document.getElementById('menusectionleft').appendChild(div);
+                }
+                kirikanan++;
+                
             }
           },
           error: function (jqXHR, textStatus, errorThrown)
@@ -899,8 +906,10 @@ function convertURIToImageData(URI) {
   });
 }
 
-
+var done = [false,false,false];
+$('#loadingprint').hide();
 function cetakNota() {
+    $('#loadingprint').show();
     var harga_akhir = parseInt($("#harus_bayar").html().replace('Rp ','').split('.').join(""));
     var tipe_pembayaran = $('input[name=tipe_bayar]:checked').val();
     var keterangan = $("#keterangan").val();
@@ -948,6 +957,10 @@ function cetakNota() {
           error: function (jqXHR, textStatus, errorThrown)
           {
             alert(errorThrown);
+          },
+          complete: function (argument) {
+            done[0]=true;
+              stoploading();
           }
       }
     );
@@ -966,6 +979,10 @@ function cetakNota() {
            error: function (jqXHR, textStatus, errorThrown)
           {
             alert(errorThrown);
+          },
+          complete: function (argument) {
+            done[1]=true;
+              stoploading();
           }
       });
 // =======
@@ -982,9 +999,15 @@ function cetakNota() {
           error: function (jqXHR, textStatus, errorThrown)
           {
             alert(errorThrown);
+          },
+          complete: function (argument) {
+            done[2]=true;
+              stoploading();
           }
       }
     );
+
+    
 // <<<<<<< HEAD
 
 //     var d = new Date();
@@ -1135,6 +1158,62 @@ function cetakNota() {
 //     // pdfMake.createPdf(docDefinition).print({}, window);
 }
 
+function stoploading() {
+    if (done[0] && done[1] && done[2]) {
+        $('#loadingprint').hide();
+        alert('PROSES SELESAI');
+    }
+}
+
+function clearAll(){
+ nama_produk="";
+ harga_produk=0;
+ harga_topping=0;
+ qty=0;
+ id_produk="";
+ topping = new Array();
+ order = new Array();
+ order_diskon = new Array();
+ list_diskon = new Array();
+ id_itemdisc1 = new Array();
+ id_itemdisc2 = new Array();
+ totalsemuaproduk1 = 0;
+ totalsemuaproduk2 = 0;
+ total_harus_byr=0;
+ count_id_order = 0;
+ diskon = 0;
+ diskonp=0;
+ subtotal = 0;
+ totalygdibayar=0;
+$("#billtable").find("tr:gt(0)").remove();
+$("#subtotal").text("Rp 0");
+$("#diskon").text("Rp 0");
+$("#subtotal").text("Rp 0");
+$("#total_harus_byr").text("Rp 0");
+$("#harus_bayar").text("Rp 0");
+$('#buttonbayar').prop("disabled", true);
+$('#buttonkembali').removeClass('btn-success');
+$('#buttonkembali').html("Kembali");
+$('#buttoncetaknota').prop("disabled", true);
+$('#buttonauto').prop("disabled", false);
+$('#angka1').prop("disabled", false);
+$('#angka2').prop("disabled", false);
+$('#angka3').prop("disabled", false);
+$('#angka4').prop("disabled", false);
+$('#angka5').prop("disabled", false);
+$('#angka6').prop("disabled", false);
+$('#angka7').prop("disabled", false);
+$('#angka8').prop("disabled", false);
+$('#angka9').prop("disabled", false);
+$('#angka0').prop("disabled", false);
+$('#angka00').prop("disabled", false);
+$('#angkadel').prop("disabled", false);
+$('#cetaknotaulang').prop("disabled", true);
+$("#total_bayar").html("Rp 0");
+$("#harus_bayar").html("Rp 0");
+$("#kembalian").html("Rp 0");
+}
+
 function cetakNotaHelp() {
 
     var arrorder = new Array();
@@ -1150,7 +1229,7 @@ function cetakNotaHelp() {
           data:{ order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
           success:function(response)
           {
-            alert('printed');
+            // alert('printed');
           },
           error: function (jqXHR, textStatus, errorThrown)
           {

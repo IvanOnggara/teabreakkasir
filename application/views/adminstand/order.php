@@ -35,7 +35,6 @@
     </div>
 </div>
 
-
 <script src=<?php echo base_url("assets/js/jquery.min.js")?>></script>
 <script src=<?php echo base_url("assets/js/lib/vector-map/jquery.vmap.js")?>></script>
 <script src=<?php echo base_url("assets/js/lib/vector-map/jquery.vmap.min.js")?>></script>
@@ -106,7 +105,7 @@
 
     if (count!=-1) {
         listOrder[count].qty++;
-        $("#qty"+listOrder[count].id_order).text(listOrder[count].qty);
+        $("#qty"+listOrder[count].id_order).html("&nbsp"+listOrder[count].qty+"&nbsp");
     }else{
         var row = table.insertRow(1);
         row.id = count_id_order;
@@ -121,7 +120,7 @@
         // item.tgl_order = tgl_order;
         listOrder.push(item);
         cell1.innerHTML = '<p id="namabjadi'+count_id_order+'">'+nama_bahan_jadi+'</p>';
-        cell2.innerHTML = '<button class="btn center btn-default btnmin btnqty" onclick="minus(\''+count_id_order+'\',this)">-</button><p id="qty'+count_id_order+'" class="qtyitem btnqty">1</p><button class="btn center btn-default btnplus btnqty" onclick="plus(\''+count_id_order+'\',this)">+</button>';
+        cell2.innerHTML = '<button class="btn center btn-default btnmin btnqty" style="font-size: 15px;font-weight: bold;" onclick="minus(\''+count_id_order+'\',this)">-</button><p id="qty'+count_id_order+'" class="qtyitem btnqty" style="font-size: 15px;font-weight: bold;">&nbsp1&nbsp</p><button class="btn center btn-default btnplus btnqty" style="font-size: 15px;font-weight: bold;" onclick="plus(\''+count_id_order+'\',this)">+</button>';
         // cell3.innerHTML = '<p id="tgl_order'+count_id_order+'">'+tgl_order+'</p>';
         cell3.innerHTML = '<div class="row"><button class="col-lg-4 offset-lg-8 btn btn-danger btnremove" onclick="removeBtn(this);">X</button>';
 
@@ -135,7 +134,7 @@
     var value = $("#qty"+id).text();
     value = parseInt(value)+1;
     satuan = parseInt($("#satuan"+id).text().substring(3).replace('.',''));
-    $("#qty"+id).text(value);
+    $("#qty"+id).html("&nbsp"+value+"&nbsp");
     row = rowid.parentNode.parentNode.id;
     for (var i = 0; i < listOrder.length; i++) {
         if (listOrder[i].id_order==row) {
@@ -173,7 +172,7 @@ function minus(id,rowid){
                 listOrder[i].qty = value;
             }
         }
-        $("#qty"+id).text(value);
+        $("#qty"+id).html("&nbsp"+value+"&nbsp");
     }else{
         for (var i = 0; i < listOrder.length; i++) {
             if (listOrder[i].id_order==row) {
