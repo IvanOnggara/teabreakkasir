@@ -284,20 +284,8 @@ function resetbyr(){
         $("#modal_bayar").modal('hide');
         $("#total_bayar").text('0');
     }else{
-        $.ajax({
-          type:"post",
-          url: "<?php echo base_url('controllerdisplay/setThanks')?>/",
-          success: function (response){
-            setTimeout(function () {
-                location.reload();
-            } , 1000);
-            
-          },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
-        });
+        clearAll();
+        $("#modal_bayar").modal('hide');
     }
     
 }
@@ -1175,6 +1163,55 @@ function stoploading() {
         $('#loadingprint').hide();
         alert('PROSES SELESAI');
     }
+}
+
+function clearAll(){
+ nama_produk="";
+ harga_produk=0;
+ harga_topping=0;
+ qty=0;
+ id_produk="";
+ topping = new Array();
+ order = new Array();
+ order_diskon = new Array();
+ list_diskon = new Array();
+ id_itemdisc1 = new Array();
+ id_itemdisc2 = new Array();
+ totalsemuaproduk1 = 0;
+ totalsemuaproduk2 = 0;
+ total_harus_byr=0;
+ count_id_order = 0;
+ diskon = 0;
+ diskonp=0;
+ subtotal = 0;
+ totalygdibayar=0;
+$("#billtable").find("tr:gt(0)").remove();
+$("#subtotal").text("Rp 0");
+$("#diskon").text("Rp 0");
+$("#subtotal").text("Rp 0");
+$("#total_harus_byr").text("Rp 0");
+$("#harus_bayar").text("Rp 0");
+$('#buttonbayar').prop("disabled", true);
+$('#buttonkembali').removeClass('btn-success');
+$('#buttonkembali').html("Kembali");
+$('#buttoncetaknota').prop("disabled", true);
+$('#buttonauto').prop("disabled", false);
+$('#angka1').prop("disabled", false);
+$('#angka2').prop("disabled", false);
+$('#angka3').prop("disabled", false);
+$('#angka4').prop("disabled", false);
+$('#angka5').prop("disabled", false);
+$('#angka6').prop("disabled", false);
+$('#angka7').prop("disabled", false);
+$('#angka8').prop("disabled", false);
+$('#angka9').prop("disabled", false);
+$('#angka0').prop("disabled", false);
+$('#angka00').prop("disabled", false);
+$('#angkadel').prop("disabled", false);
+$('#cetaknotaulang').prop("disabled", true);
+$("#total_bayar").html("Rp 0");
+$("#harus_bayar").html("Rp 0");
+$("#kembalian").html("Rp 0");
 }
 
 function cetakNotaHelp() {
