@@ -148,4 +148,101 @@ class ReceiptPrint {
     $this->printer->cut();
     $this->printer->close();
   }
+
+  public function printrekap($kasawal,$totalpemasukan,$cashdetail,$debitdetail,$ovodetail,$pengeluaran,$sisauang,$sisauangdikasir)
+  {
+    $kasawal = number_format($kasawal,"0",",",".");
+    $totalpemasukan = number_format($totalpemasukan,"0",",",".");
+    $cashdetail = number_format($cashdetail,"0",",",".");
+    $debitdetail = number_format($debitdetail,"0",",",".");
+    $ovodetail = number_format($ovodetail,"0",",",".");
+    $pengeluaran = number_format($pengeluaran,"0",",",".");
+    $sisauang = number_format($sisauang,"0",",",".");
+    $sisauangdikasir = number_format($sisauangdikasir,"0",",",".");
+
+    date_default_timezone_set("Asia/Bangkok");
+    $this->check_connection();
+    $img_logo = EscposImage::load(__DIR__ . "/logo112.png");
+    echo pathinfo(__DIR__ . "\logo.bmp", PATHINFO_EXTENSION);
+    // echo $img_logo;
+    $this->printer->setJustification(Printer::JUSTIFY_CENTER);
+    $this->printer->bitImageColumnFormat($img_logo);
+    $this->add_line("Rekap Pemasukan Pengeluaran");
+    $this->add_line(date('d/m/Y'));
+    $this->add_line("H:i");
+    $this->printer->setJustification(Printer::JUSTIFY_LEFT);
+    $this->add_line("================================");
+
+    $stringkasawal = "Kas Awal    :    Rp.---.---.---";
+    $stringpemasukan = "Pemasukan   :    Rp.---.---.---";
+    $stringcashdetail = "*cash :Rp.--.---.---";
+    $stringdebitdetail = "*debit:Rp.--.---.---";
+    $stringovodetail = "*ovo  :Rp.--.---.---";
+    $stringpengeluaran = "Pengeluaran :    Rp.---.---.---";
+    $stringsisauang = "Sisa Uang   :    Rp.---.---.---";
+    $stringuangdikasir = "Mesin Kasir :    Rp.---.---.---";
+
+    $spacekasawal = 32-(strlen($stringkasawal)+strlen($kasawal));
+    $spacepemasukan = 32-(strlen($stringpemasukan)+strlen($pemasukan));
+    $spacecashdetail = 20-(strlen($stringcashdetail)+strlen($cashdetail));
+    $spacedebitdetail = 20-(strlen($stringdebitdetail)+strlen($debitdetail));
+    $spaceovodetail = 20-(strlen($stringovodetail)+strlen($ovodetail));
+    $spacepengeluaran = 32-(strlen($stringpengeluaran)+strlen($pengeluaran));
+    $spacesisauang = 32-(strlen($stringsisauang)+strlen($sisauang));
+    $spaceuangdikasir = 32-(strlen($stringuangdikasir)+strlen($uangdikasir));
+
+    for ($i=0; $i < $spacekasawal; $i++) { 
+      $stringkasawal = $stringkasawal." ";
+    }
+
+    for ($i=0; $i < $spacepemasukan; $i++) { 
+      $stringpemasukan = $stringpemasukan." ";
+    }
+
+    for ($i=0; $i < $spacecashdetail; $i++) { 
+      $stringcashdetail = $stringcashdetail." ";
+    }
+
+    for ($i=0; $i < $spacedebitdetail; $i++) { 
+      $stringdebitdetail = $stringdebitdetail." ";
+    }
+
+    for ($i=0; $i < $spaceovodetail; $i++) { 
+      $stringovodetail = $stringovodetail." ";
+    }
+
+    for ($i=0; $i < $spacepengeluaran; $i++) { 
+      $stringpengeluaran = $stringpengeluaran." ";
+    }
+
+    for ($i=0; $i < $spacesisauang; $i++) { 
+      $stringsisauang = $stringsisauang." ";
+    }
+
+    for ($i=0; $i < $spaceuangdikasir; $i++) { 
+      $stringuangdikasir = $stringuangdikasir." ";
+    }
+
+    $stringkasawal = $stringkasawal.$kasawal;
+    $stringpemasukan = $stringpemasukan.$totalpemasukan;
+    $stringcashdetail = $stringcashdetail.$cashdetail;
+    $stringdebitdetail = $stringdebitdetail.$debitdetail;
+    $stringovodetail = $stringovodetail.$ovodetail;
+    $stringpengeluaran = $stringpengeluaran.$pengeluaran;
+    $stringsisauang = $stringsisauang.$sisauang;
+    $stringuangdikasir = $stringuangdikasir.$sisauangdikasir;
+
+
+    $this->add_line($stringkasawal);
+    $this->add_line($stringpemasukan);
+    $this->add_line($stringcashdetail);
+    $this->add_line($stringdebitdetail);
+    $this->add_line($stringovodetail);
+    $this->add_line($stringpengeluaran);
+    $this->add_line("                 _______________");
+    $this->add_line($stringsisauang);
+    $this->add_line($stringuangdikasir);
+    $this->printer->cut();
+    $this->printer->close();
+  }
 }

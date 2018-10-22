@@ -1701,6 +1701,7 @@ class AdminStand extends CI_Controller {
 		}
 
 		$totalkasir = $kasawal+$cashdetail-$pengeluaran;
+		$totalallpemasukan = $kasawal+$cashdetail+$ovodetail+$debitdetail-$pengeluaran;
 
 		$lastarraysend = array(
 			'kasawal' => $kasawal,
@@ -1715,4 +1716,17 @@ class AdminStand extends CI_Controller {
 		echo json_encode($lastarraysend);
 
 	}
+
+	public function printrekap()
+  {
+  	$dataprint = json_decode($this->input->post('datarekapharian'));
+
+  	$totalpemasukan = $dataprint->cashdetail+$dataprint->ovodetail+$dataprint->debitdetail;
+  	$sisauang = $totalpemasukan+$dataprint->kasawal-$dataprint->pengeluaran;
+
+  	// var_dump($dataprint->kasawal);
+      $this->load->library('ReceiptPrint');
+      $this->receiptprint->connect('MINIPOS');
+      $this->receiptprint->printrekap($dataprint->kasawal,$totalpemasukan,$dataprint->cashdetail ,$dataprint->debitdetail,$dataprint->ovodetail,$dataprint->pengeluaran,$sisauang,$dataprint->totalkasir);
+  }
 }

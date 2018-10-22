@@ -58,16 +58,22 @@
               </div>
 		</div>
     <div class="col-md-6 col-sm-6 text-right" style="margin-top: 25px">
-      <button class="btn btn-lg btn-primary"><i class="fa fa-print"></i> CETAK LAPORAN </button>
+      <button class="btn btn-lg btn-primary" onclick="printrekapharian()"><i class="fa fa-print"></i> CETAK LAPORAN </button>
     </div>
     <div class="col-md-6 col-sm-6 text-left" style="margin-top: 25px">
-      <button class="btn btn-lg btn-success"><i class="fa fa-save"></i> SIMPAN LAPORAN </button>
+      <button class="btn btn-lg btn-success" onclick="saverekapharian()"><i class="fa fa-save"></i> SIMPAN LAPORAN </button>
       
     </div>
     <div class="col-md-12 col-sm-12 text-center" style="margin-top: 15px">
       <h6 id="tanggal" class="">Tanggal : --/--/----</h6>
         <h6 id="waktu" class="">Waktu : --:--</h6>
     </div>
+
+    <div class="col-md-12 col-sm-12 text-center" style="margin-top: 15px">
+      <h4 id="loadingprint" style="color: green" ><i class="fa fa-spin fa-refresh"></i></h4>
+    </div>
+
+    
 		
 	</div>
 	<div class="row">
@@ -173,6 +179,7 @@
       }
 
       var uangdikasir = 0;
+      var datarekapharian;
 
       $.ajax({
               type:"post",
@@ -204,6 +211,7 @@
                 $('#ovodetail').html(ovodetail);
                 $('#debitdetail').html(debitdetail);
                 $('#totalkasir').html(totalkasir);
+                datarekapharian = response;
               },
               error: function (jqXHR, textStatus, errorThrown)
               {
@@ -218,6 +226,33 @@
           retVal=retVal.replace(/(\d+)(\d{3})/,'$1'+'.'+'$2');
         }
         return retVal;
+      }
+      $('#loadingprint').hide();
+      function printrekapharian() {
+        $('#loadingprint').show();
+        $.ajax({
+              type:"post",
+              url: "<?php echo base_url('adminstand/printrekap')?>/",
+              dataType:"text",
+              data:{ datarekapharian:JSON.stringify(datarekapharian)},
+              success:function(response)
+              {
+                  alert('printed');
+              },
+              error: function (jqXHR, textStatus, errorThrown)
+              {
+                alert(errorThrown);
+              },
+              complete: function (argument) {
+                
+                $('#loadingprint').hide();
+              }
+          }
+        );
+      }
+
+      function saverekapharian() {
+        alert('fungsi masih dalam tahap pengembangan!');
       }
     </script>
 </body>
