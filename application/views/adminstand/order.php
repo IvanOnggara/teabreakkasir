@@ -35,7 +35,6 @@
     </div>
 </div>
 
-
 <script src=<?php echo base_url("assets/js/jquery.min.js")?>></script>
 <script src=<?php echo base_url("assets/js/lib/vector-map/jquery.vmap.js")?>></script>
 <script src=<?php echo base_url("assets/js/lib/vector-map/jquery.vmap.min.js")?>></script>

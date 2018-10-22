@@ -23,16 +23,16 @@ class Controllerdisplay extends CI_Controller {
 		fclose($handle);
   	}
 
-  	public function setThanks()
-  	{
-  		echo shell_exec("MODE COM13 96,N,8,1");
-  		$handle = @fopen("\\\\.\COM13", "w+b") or die("Unable to open file!");
-		// To write into
-		$text = "\fTerima Kasih!!";
-		fwrite($handle, $text);
+  // 	public function setThanks()
+  // 	{
+  // 		echo shell_exec("MODE COM13 96,N,8,1");
+  // 		$handle = @fopen("\\\\.\COM13", "w+b") or die("Unable to open file!");
+		// // To write into
+		// $text = "\fTerima Kasih!!";
+		// fwrite($handle, $text);
 
-		fclose($handle);
-  	}
+		// fclose($handle);
+  // 	}
 
   	public function setItem()
   	{
