@@ -146,7 +146,6 @@
 //MENGHILANGKAN ITEM DARI LIST ORDER
 
 function removeBtn(rowid){
-  checkBtnOrder();
     var a = rowid.parentNode.parentNode.parentNode.rowIndex;
     document.getElementById("billtable").deleteRow(a);
     var table = document.getElementById("billtable");
@@ -156,12 +155,12 @@ function removeBtn(rowid){
             listOrder.splice(i, 1);
         }
     }
+    checkBtnOrder();
 }
 
 //MENGURANGI JUMLAH PADA ORDER, JIKA <1 MAKA DIHILANGKAN DARI LIST
 
 function minus(id,rowid){
-  checkBtnOrder();
     var value = $("#qty"+id).text();
     row = rowid.parentNode.parentNode.id;
     var table = document.getElementById("billtable");
@@ -182,6 +181,7 @@ function minus(id,rowid){
         var a = rowid.parentNode.parentNode.rowIndex;
         document.getElementById("billtable").deleteRow(a);
     }
+  checkBtnOrder();
 }
 
 function checkBtnOrder(){

@@ -1,52 +1,28 @@
-        <div class="breadcrumbs">
-            <div class="col-sm-4">
-                <div class="page-header float-left">
-                    <div class="page-title">
-                        <h1>Order Bahan Jadi Stan</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-8">
-                <div class="page-header float-right">
-                    <div class="page-title">
-                        <ol class="breadcrumb text-right">
-                            <!-- <li class="active">Semua Data Produk</li> -->
-                        </ol>
-                    </div>
-                </div>
+ <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div style="padding: 0px;" class="menujudul">
+                List Order Stan
             </div>
         </div>
+    </div>
 
-        <div class="content mt-3">
-            <div class="animated fadeIn">
-                <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <!-- <h1><span class="badge badge-warning">Fitur dalam tahap Pengembangan!</span></h1> -->
-                        <div class="card">
-                            <div class="card-header">
-                                <strong class="card-title">List Order Stan</strong>
-                            </div>
-                            <div class="card-body">
-                              <table id="mytable" class="table table-striped table-bordered">
-                                <thead>
-                                  <tr>
-                                    <th>ID Order</th>
-                                    <th>Stan</th>
-                                    <th>Tanggal Order</th>
-                                    <th>Detail</th>
-                                    <th>Status</th>
-                                  </tr>
-                                </thead>
-                              </table>
-                            </div>
-                        </div> <!-- .card -->
-                    </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 text-center">
+                  <table id="mytable" class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th>ID Order</th>
+                        <th>Stan</th>
+                        <th>Tanggal Order</th>
+                        <th>Detail</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                  </table>
                 </div>
             </div>
-
-
         </div> <!-- .content -->
-    </div><!-- /#right-panel -->
 
     <!-- Right Panel -->
 
