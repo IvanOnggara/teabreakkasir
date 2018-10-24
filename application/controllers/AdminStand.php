@@ -30,7 +30,7 @@ class AdminStand extends CI_Controller {
   	public function login()
   	{
   		
-  		$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataStan');
+  		$json = @file_get_contents(hosturl().'getDataStan');
 		// $json = @file_get_contents('http://localhost/teabreak/getDataStan');
 		if($json === FALSE){
 			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
@@ -88,6 +88,7 @@ class AdminStand extends CI_Controller {
   			$this->session->set_userdata('aksesadminstan', 'granted');
   			$this->session->set_userdata('id_stan', $username);
   			$this->session->set_userdata('alamat_stan', $uss[0]->alamat);
+  			$this->session->set_userdata('shift', 'pagi');
   		 	echo 'true';
   		}else{
   			echo "false";
@@ -117,7 +118,7 @@ class AdminStand extends CI_Controller {
 
         		//DATA PRODUK
         		
-        		$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataProduk');
+        		$json = @file_get_contents(hosturl().'getDataProduk');
         		// $json = @file_get_contents('http://localhost/teabreak/getDataProduk');
 				if($json === FALSE){
 					
@@ -177,7 +178,7 @@ class AdminStand extends CI_Controller {
 
 				//DATA DISKON
 				
-				$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataDiskon', false, $context);
+				$json = @file_get_contents(hosturl().'getDataDiskon', false, $context);
 				// $json = @file_get_contents('http://localhost/teabreak/getDataDiskon', false, $context);
 				if($json === FALSE){
 					
@@ -227,7 +228,7 @@ class AdminStand extends CI_Controller {
 
 				//DATA DETAIL DISKON (BARANG)
 				
-				$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataDetailDiskonProduk', false, $context);
+				$json = @file_get_contents(hosturl().'getDataDetailDiskonProduk', false, $context);
 				// $json = @file_get_contents('http://localhost/teabreak/getDataDetailDiskonProduk', false, $context);
 				if($json === FALSE){
 					
@@ -266,7 +267,7 @@ class AdminStand extends CI_Controller {
 
 
 				//GET DATA BAHAN JADI TERBARU
-				$json = @file_get_contents('http://teabreak.bekkostudio.com/getDataBahanJadi', false, $context);
+				$json = @file_get_contents(hosturl().'getDataBahanJadi', false, $context);
 				// $json = @file_get_contents('http://localhost/teabreak/getDataBahanJadi', false, $context);
 				if($json === FALSE){
 					
@@ -465,6 +466,7 @@ class AdminStand extends CI_Controller {
 			'total_harga' => $harga_akhir,
 			'pembayaran' => $tipe_pembayaran,
 			'keterangan' => $keterangan,
+			'shift' => $this->session->userdata('shift'),
 			'status_upload' => 'not_upload'
 		);
 
@@ -575,7 +577,7 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataNota', false, $context);
+			$send = @file_get_contents(hosturl().'insertDataNota', false, $context);
 			// $send = @file_get_contents('http://localhost/teabreak/insertDataNota', false, $context);
 			if($send === FALSE){
 				echo 'CANTCONNECT';
@@ -669,6 +671,7 @@ class AdminStand extends CI_Controller {
         if(empty($akses)){
             redirect('login');
         }else{
+        	$this->sinkronpengeluaran();
         	$this->load->view('adminstand/header');
 			$this->load->view('adminstand/pengeluaranlain');
         }
@@ -849,7 +852,7 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataStok', false, $context);
+			$send = @file_get_contents(hosturl().'insertDataStok', false, $context);
 			// $send = @file_get_contents('http://localhost/teabreak/insertDataStok', false, $context);
 			if($send === FALSE){
 				if ($this->input->post('sst') == 'sinkron') {
@@ -1056,7 +1059,7 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataPresensiKaryawan', false, $context);
+			$send = @file_get_contents(hosturl().'insertDataPresensiKaryawan', false, $context);
 			// $send = @file_get_contents('http://localhost/teabreak/insertDataPresensiKaryawan', false, $context);
 			if($send === FALSE){
 				echo 'CANTCONNECT';
@@ -1099,7 +1102,7 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataKaryawanFingerspot', false, $context);
+			$send = @file_get_contents(hosturl().'insertDataKaryawanFingerspot', false, $context);
 			// $send = @file_get_contents('http://localhost/teabreak/insertDataKaryawanFingerspot', false, $context);
 			if($send === FALSE){
 				echo 'CANTCONNECT';
@@ -1149,7 +1152,7 @@ class AdminStand extends CI_Controller {
 	public function dataPengeluaranLain()
 	{
 		$this->load->library('datatables');
-		$this->datatables->select('id_pengeluaran,tanggal,keterangan,pengeluaran');
+		$this->datatables->select('id_pengeluaran,tanggal,keterangan,shift,pengeluaran');
 		$this->datatables->from('pengeluaran_lain');
 		echo $this->datatables->generate();
 	}
@@ -1165,6 +1168,7 @@ class AdminStand extends CI_Controller {
 			'tanggal' => $datenow,
 	        'keterangan' => $keterangan,
 	        'pengeluaran' => $jumlahpengeluaran,
+	        'shift' => $this->session->userdata('shift'),
 	        'status_upload' => 'not_upload'
          );
 
@@ -1179,18 +1183,20 @@ class AdminStand extends CI_Controller {
 		$keteranganbaru = $this->input->post('keteranganbaru');
 		$pengeluaranbaru = $this->input->post('pengeluaranbaru');
 		$id_pengeluaran = $this->input->post('id_pengeluaran');
+		$shiftbaru = $this->input->post('shiftbaru');
 
 		$where = array('id_pengeluaran' => $id_pengeluaran);
 
 		$data = array(
 			'keterangan' => $keteranganbaru,
 	        'pengeluaran' => $pengeluaranbaru,
+	        'shift' => $shiftbaru,
 	        'status_upload' => 'not_upload'
          );
 
 		$realdata = $this->ModelKasir->getData($where,'pengeluaran_lain');
 
-		if ($realdata[0]->keterangan != $keteranganbaru || $realdata[0]->pengeluaran != $pengeluaranbaru) {
+		if ($realdata[0]->keterangan != $keteranganbaru || $realdata[0]->pengeluaran != $pengeluaranbaru || $realdata[0]->shift != $shiftbaru) {
 			$cek = $this->ModelKasir->Update('pengeluaran_lain',$data,$where);
 		}else{
 			$cek = true;
@@ -1226,7 +1232,7 @@ class AdminStand extends CI_Controller {
 
 		$context  = stream_context_create($opts);
 		//DATA NOTA
-		$send = @file_get_contents('http://teabreak.bekkostudio.com/deleteDataPengeluaran', false, $context);
+		$send = @file_get_contents(hosturl().'deleteDataPengeluaran', false, $context);
 		// $send = @file_get_contents('http://localhost/teabreak/deleteDataPengeluaran', false, $context);
 		if($send === FALSE){
 			if ($this->input->post('sst') == 'sinkron') {
@@ -1270,13 +1276,15 @@ class AdminStand extends CI_Controller {
 	public function cekDataKas()
 	{
 		$datenow = date("Y-m-d");
-		$where = array('tanggal' => $datenow);
+		$shift = $this->session->userdata('shift');
+		$where = array('tanggal' => $datenow, 'shift' => $shift);
 		if ($this->ModelKasir->getRowCount('kas',$where) > 0) {
 			
 		}else{
 			$array = array(
 				'tanggal' => $datenow,
 				'kas_awal' => 0,
+				'shift' => $shift,
 				'status_upload' => 'not_upload'
 			);
 
@@ -1291,8 +1299,9 @@ class AdminStand extends CI_Controller {
 	public function simpankas()
 	{
 		$kasbaru = $this->input->post('kas');
+		$shift = $this->session->userdata('shift');
 		$datenow = date("Y-m-d");
-		$where = array('tanggal' => $datenow);
+		$where = array('tanggal' => $datenow, 'shift' => $shift);
 		$data = array('kas_awal' => $kasbaru, 'status_upload' => 'not_upload');
 		$this->ModelKasir->Update('kas',$data,$where);
 		echo "sukses";
@@ -1329,7 +1338,7 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataPengeluaran', false, $context);
+			$send = @file_get_contents(hosturl().'insertDataPengeluaran', false, $context);
 			// $send = @file_get_contents('http://localhost/teabreak/insertDataPengeluaran', false, $context);
 			if($send === FALSE){
 				if ($this->input->post('sst') == 'sinkron') {
@@ -1386,7 +1395,7 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataKas', false, $context);
+			$send = @file_get_contents(hosturl().'insertDataKas', false, $context);
 			// $send = @file_get_contents('http://localhost/teabreak/insertDataKas', false, $context);
 			if($send === FALSE){
 				if ($this->input->post('sst') == 'sinkron') {
@@ -1532,7 +1541,7 @@ class AdminStand extends CI_Controller {
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
-			$send = @file_get_contents('http://teabreak.bekkostudio.com/insertDataNota', false, $context);
+			$send = @file_get_contents(hosturl().'insertDataOrder', false, $context);
 			// $send = @file_get_contents('http://localhost/teabreak/insertDataOrder', false, $context);
 			if($send === FALSE){
 				if ($this->input->post('sst') == 'sinkron') {
@@ -1623,7 +1632,7 @@ class AdminStand extends CI_Controller {
 		);
 
 		$context  = stream_context_create($opts);
-		$send = @file_get_contents('http://teabreak.bekkostudio.com/getUpdateOrder', false, $context);
+		$send = @file_get_contents(hosturl().'getUpdateOrder', false, $context);
 		// $send = @file_get_contents('http://localhost/teabreak/getUpdateOrder', false, $context);
 		if($send === FALSE){
 			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
@@ -1656,10 +1665,11 @@ class AdminStand extends CI_Controller {
 
 	public function getrekapdata()
 	{
+		$shift = $this->session->userdata('shift');
 	    date_default_timezone_set("Asia/Bangkok");
 		$datenow = date("Y-m-d");
-		$where = array('tanggal' => $datenow);
-		$wherenota = array('tanggal_nota' => $datenow);
+		$where = array('tanggal' => $datenow, 'shift' => $shift);
+		$wherenota = array('tanggal_nota' => $datenow, 'shift' => $shift);
 
 		$datapengeluaran = $this->ModelKasir->getData($where,'pengeluaran_lain');
 		$datakas = $this->ModelKasir->getData($where,'kas');
@@ -1727,5 +1737,13 @@ class AdminStand extends CI_Controller {
       $this->load->library('ReceiptPrint');
       $this->receiptprint->connect('MINIPOS');
       $this->receiptprint->printrekap($dataprint->kasawal,$totalpemasukan,$dataprint->cashdetail ,$dataprint->debitdetail,$dataprint->ovodetail,$dataprint->pengeluaran,$sisauang,$dataprint->totalkasir);
+  }
+
+  public function setshift()
+  {
+  	$shift = $this->input->post('shift');
+  	$this->session->set_userdata('shift', $shift);
+  	echo "SUCCESS";
+
   }
 }

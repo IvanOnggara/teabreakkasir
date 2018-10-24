@@ -221,9 +221,17 @@
       );
 
       function currency(number1) {
+        var minus = false;
+        if (number1.toString().charAt(0) == '-') {
+          minus = true;
+        }
         var retVal=number1.toString().replace(/[^\d]/g,'');
         while(/(\d+)(\d{3})/.test(retVal)) {
           retVal=retVal.replace(/(\d+)(\d{3})/,'$1'+'.'+'$2');
+        }
+
+        if (minus) {
+          retVal = '-'+retVal;
         }
         return retVal;
       }

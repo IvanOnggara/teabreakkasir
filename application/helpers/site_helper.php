@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
-    function IDPromoGenerator()
+      function IDPromoGenerator()
       {
         date_default_timezone_set("Asia/Bangkok");
         $date = date("ymdHis");
@@ -29,6 +29,12 @@
       {
         date_default_timezone_set("Asia/Bangkok");
         $date = date("ymdHis");
-        $id = "OR-".$date.$idstan;
+        $id = "OR-".$date."ST-".$idstan;
         return $id;
+      }
+
+      function hosturl()
+      {
+        // return 'http://teabreak.bekkostudio.com/';
+        return 'http://localhost/teabreak/';
       }
