@@ -466,6 +466,7 @@ class AdminStand extends CI_Controller {
 			'total_harga' => $harga_akhir,
 			'pembayaran' => $tipe_pembayaran,
 			'keterangan' => $keterangan,
+			'shift' => $this->session->userdata('shift'),
 			'status_upload' => 'not_upload'
 		);
 
