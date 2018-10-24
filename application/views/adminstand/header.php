@@ -54,6 +54,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 }
 </style>
 <script type="text/javascript">
+
+    var shiftt = "<?php echo $this->session->userdata('shift');?>";
+
+    function shiftcheck() {
+        $('#buttonshift').removeClass('btn-warning');
+        $('#buttonshift').removeClass('btn-secondary');
+        $('#buttonshift').removeClass('btn-success');
+        if (shiftt == 'pagi') {
+            $('#buttonshift').html('<i class="fa fa-sun-o"></i><span> Shift Pagi</span>');
+            $('#buttonshift').addClass('btn-warning');
+            $('#buttonshift').val('pagi');
+        }else{
+            $('#buttonshift').html('<i class="fa fa-moon-o"></i><span> Shift Malam</span>');
+            $('#buttonshift').addClass('btn-secondary');
+            $('#buttonshift').val('malam');
+        }
+    }
     function sinkronnota() {
         alert('sinkron');
         $('#sinkronnota').addClass('fa-spin');
@@ -129,6 +146,49 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     );
     }
 
+    function changeshift() {
+        if ($('#buttonshift').val() == 'pagi') {
+            var send = 'malam';
+        }else{
+            var send = 'pagi';
+        }
+
+        $.ajax({
+              type:"post",
+              url: "<?php echo base_url('adminstand/setshift')?>/",
+              data:{ sst:"sinkron",shift:send},
+              dataType:"text",
+              success:function(response)
+              {
+                if (response == 'SUCCESS') {
+                    // $('#buttonshift').removeClass('btn-warning');
+                    // $('#buttonshift').removeClass('btn-secondary');
+                    // if ($('#buttonshift').val() != 'pagi') {
+                    //     $('#buttonshift').html('<i class="fa fa-sun-o"></i><span> Shift Pagi</span>');
+                    //     $('#buttonshift').addClass('btn-warning');
+                    //     $('#buttonshift').val('pagi');
+                    // }else{
+                    //     $('#buttonshift').html('<i class="fa fa-moon-o"></i><span> Shift Malam</span>');
+                    //     $('#buttonshift').addClass('btn-secondary');
+                    //     $('#buttonshift').val('malam');
+                    // }
+                    $('#buttonshift').removeClass('btn-success');
+                    location.reload();
+                }else{
+                    alert('GAGAL UBAH MODE SHIFT');
+                }
+              },
+              error: function (jqXHR, textStatus, errorThrown)
+              {
+                alert(errorThrown);
+              },
+              complete: function(){
+              }
+          }
+        );
+        
+    }
+
     
 </script>
 <style type="text/css">
@@ -146,7 +206,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     padding: 10px;
 }
 </style>
-<body>
+<body onload="shiftcheck()">
     <div class="header" id="header">
         <div class="col-md-6 col-sm-12">
             <div class="header-left" >
@@ -181,8 +241,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a class="dropdown-toggle" href="rekapdata">REKAP DATA HARI INI</a>
+                    <a class="dropdown-toggle" href="rekapdata">REKAP HARI INI</a>
                 </div>
+                
                 
             </div>
         </div>
@@ -200,12 +261,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="dropdown float-right">
                     <a class="" href="presensi"><i class="fa fa-address-card"></i> Presensi</a>
                 </div>
-                <button onclick="sinkronnota()" class="dropdown float-right active btn btn-lg">
-                    <a style="color: white;"><i class="fa fa-refresh" id="sinkronnota"></i> SINKRON NOTA</a>
-                </button>
-                <button onclick="sinkronstok()" class="dropdown float-right active btn btn-lg">
-                    <a style="color: white;"><i class="fa fa-refresh" id="sinkronstok"></i> SINKRON STOK</a>
-                </button>
+                <div style="margin: auto !important;">
+                    <button  onclick="sinkronnota()" class=" dropdown float-right btn btn-md btn-success">
+                        <a style="color: white;"><i class="fa fa-refresh" id="sinkronnota"></i> SINKRON NOTA</a>
+                    </button>
+                </div>
+                
+                <div style="margin: auto !important;">
+                    <button  onclick="sinkronstok()" class=" dropdown float-right btn btn-md btn-success">
+                        <a style="color: white;"><i class="fa fa-refresh" id="sinkronstok"></i> SINKRON STOK</a>
+                    </button>
+                </div>
+
+                <div style="margin: auto !important;">
+                    <button id="buttonshift" onclick="changeshift()"  class=" dropdown float-right  btn btn-md btn-success" value="pagi">
+                        <i class="fa fa-question"></i>
+                        <span>Shift ....</span>
+                    </button>
+                </div>
+                
 
                 <!-- <button onclick="sinkronpresensi()" class="dropdown float-right active btn btn-lg">
                     <a style="color: white;"><i class="fa fa-refresh" id="sinkronpresensi"></i> SINKRON PRESENSI</a>

@@ -31,8 +31,9 @@
 		        <thead class="thead-dark">
 		          <tr>
 		            <th style="width: 15%;">Tanggal</th>
-		            <th style="width: 40%;">Keterangan</th>
-		            <th style="width: 25%;">Pengeluaran</th>
+		            <th style="width: 35%;">Keterangan</th>
+		            <th style="width: 20%;">Pengeluaran</th>
+                <th style="width: 10%;">Shift</th>
                 <th style="width: 10%;">Edit</th>
                 <th style="width: 10%;">Delete</th>
 		            <!-- <th style="width: 12.5%;">Edit</th> -->
@@ -66,6 +67,15 @@
                         <div class="form-group">
                             <label for="editid" class=" form-control-label">Pengeluaran</label>
                             <input type="text" id="editpeng" placeholder="Masukkan Pengeluaran" class="form-control numeric">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="editshift" class=" form-control-label">Shift</label>
+                            <select name="select" id="shift" class="form-control">
+                                <option value="pagi">Pagi</option>
+                                <option value="malam">Malam</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -201,12 +211,16 @@ jQuery( document ).ready(function( $ ) {
     "url"    : "<?php echo base_url('adminstand/dataPengeluaranLain');?>",
     "dataSrc": function (json) {
       var return_data = new Array();
+      var shift;
       for(var i=0;i< json.data.length; i++){
+        shift = json.data[i].shift;
+        shift = shift.charAt(0).toUpperCase() + shift.slice(1);
         return_data.push({
           'tanggal': uidate(json.data[i].tanggal),
           'keterangan': json.data[i].keterangan.split('-').join(' - '),
           'pengeluaran'  : "Rp. "+currency(json.data[i].pengeluaran)+",-",
-          'edit' : '<button onclick="editpengeluaran(\''+json.data[i].id_pengeluaran+'\',\''+json.data[i].keterangan+'\',\''+json.data[i].pengeluaran+'\')" class="btn btn-warning" >Edit</button> ',
+          'shift' : shift,
+          'edit' : '<button onclick="editpengeluaran(\''+json.data[i].id_pengeluaran+'\',\''+json.data[i].keterangan+'\',\''+json.data[i].pengeluaran+'\',\''+json.data[i].shift+'\')" class="btn btn-warning" >Edit</button> ',
           'delete' : '<button onclick="deletepengeluaran(\''+json.data[i].id_pengeluaran.split(' ').join('+')+'\')" class="btn btn-danger">Delete</button> '
         })
       }
@@ -220,7 +234,7 @@ jQuery( document ).ready(function( $ ) {
                 text: 'Copy',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1]
+                  columns:[0,1,2,3]
                 }
             },{
                 extend: 'excelHtml5',
@@ -228,25 +242,25 @@ jQuery( document ).ready(function( $ ) {
                 className: 'exportExcel',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1]
+                  columns:[0,1,2,3]
                 }
             },{
                 extend: 'csvHtml5',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1]
+                  columns:[0,1,2,3]
                 }
             },{
                 extend: 'pdfHtml5',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1]
+                  columns:[0,1,2,3]
                 }
             },{
                 extend: 'print',
                 filename: 'Produk Data',
                 exportOptions: {
-                  columns:[0,1]
+                  columns:[0,1,2,3]
                 }
             }
         ],
@@ -255,6 +269,7 @@ jQuery( document ).ready(function( $ ) {
     {'data': 'tanggal'},
     {'data': 'keterangan'},
     {'data': 'pengeluaran'},
+    {'data': 'shift'},
     {'data': 'edit','orderable':false,'searchable':false},
     {'data': 'delete','orderable':false,'searchable':false}
   ],
@@ -271,11 +286,12 @@ function reload_table(){
   tabeldata.api().ajax.reload(null,false);
 }
 
-function editpengeluaran(id,keterangan,pengeluaran) {
+function editpengeluaran(id,keterangan,pengeluaran,shift) {
   $('#modal_edit').modal('toggle');
   $('#editket').val(keterangan.split('-').join('\n'));
   $('#editpeng').val(pengeluaran);
   $('#id_lama').val(id);
+  $('#shift').val(shift);
 }
 
 function deletepengeluaran(id) {
@@ -311,6 +327,7 @@ function simpanedit() {
   var keteranganbaru = $('#editket').val().split('\n').join('-');
   var pengeluaranbaru = $('#editpeng').val();
   var id_pengeluaran = $('#id_lama').val();
+  var shiftbaru = $('#shift').val();
 
   if (keteranganbaru == '' || pengeluaranbaru == '') {
     if (keteranganbaru == '') {
@@ -328,7 +345,7 @@ function simpanedit() {
         {
             type:"post",
             url: "<?php echo base_url('adminstand/edit_pengeluaran_lain')?>/",
-            data:{ keteranganbaru:keteranganbaru,pengeluaranbaru:pengeluaranbaru,id_pengeluaran:id_pengeluaran},
+            data:{ keteranganbaru:keteranganbaru,pengeluaranbaru:pengeluaranbaru,id_pengeluaran:id_pengeluaran,shiftbaru:shiftbaru},
             success:function(response)
             {
               reload_table();

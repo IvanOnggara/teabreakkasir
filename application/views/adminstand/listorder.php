@@ -145,8 +145,7 @@
 
                   for(var i=0;i< json.data.length; i++){
                     var id =json.data[i].id_order;
-                    var res = id.split("ST");
-                    var stan = "ST"+res[1];
+                    var stan = id.substr(id.indexOf('ST-')+1);
                     var setdone = "";
 
                     if (json.data[i].status != 'not_done') {
