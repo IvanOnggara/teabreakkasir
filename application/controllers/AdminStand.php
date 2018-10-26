@@ -317,6 +317,43 @@ class AdminStand extends CI_Controller {
 
         	}
 
+        	$datenow = date("Y-m-d");
+			$where = array('tanggal' => $datenow);
+
+			$list_bahan_jadi = $this->ModelKasir->getAllData('bahan_jadi');
+			$list_all_stok = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+			$arrayidbahanjadistok = array();
+
+			foreach ($list_all_stok as $perstok) {
+				array_push($arrayidbahanjadistok, $perstok->id_bahan_jadi);
+			}
+
+			foreach ($list_bahan_jadi as $perbahanjadi) {
+				if (!in_array($perbahanjadi->id_bahan_jadi, $arrayidbahanjadistok)) {
+					$whereLastItem = array('id_bahan_jadi' => $perbahanjadi->id_bahan_jadi);
+					$dataLast = $this->ModelKasir->getDataWhereDesc('stok_bahan_jadi',$whereLastItem,'tanggal');
+
+					if (empty($dataLast)) {
+						$stoksisa = 0;
+					}else{
+						$stoksisa = $dataLast[0]->stok_sisa;
+					}
+					
+					$data = array(
+				        'id_bahan_jadi' => $perbahanjadi->id_bahan_jadi,
+				        'nama_bahan_jadi' => $perbahanjadi->nama_bahan_jadi,
+				        'stok_masuk' => 0,
+				        'stok_keluar' => 0,
+				        'stok_sisa' => $stoksisa,
+				        'tanggal' => $datenow,
+				        'status_upload' => 'not_upload'
+			         );
+
+					$this->ModelKasir->insert('stok_bahan_jadi',$data);
+					$this->sinkronstokbahan();
+				}
+			}	
+
         	$this->load->view('adminstand/header');
             $this->load->view('adminstand/kasir');
         }
@@ -1122,7 +1159,7 @@ class AdminStand extends CI_Controller {
 	public function dataSisaStok()
 	{
 		$tanggal = $this->input->post('tanggal');
-
+		
 		if ($tanggal == '') {
 			$where = array('tanggal' => '');
 			$this->load->library('datatables');
