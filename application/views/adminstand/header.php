@@ -263,13 +263,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </div>
                 <div style="margin: auto !important;">
                     <button  onclick="sinkronnota()" class=" dropdown float-right btn btn-md btn-success">
-                        <a style="color: white;"><i class="fa fa-refresh" id="sinkronnota"></i> SINKRON NOTA</a>
+                        <a style="color: white;"><i class="fa fa-refresh" id="sinkronnota"></i> SYNC NOTA</a>
                     </button>
                 </div>
                 
                 <div style="margin: auto !important;">
                     <button  onclick="sinkronstok()" class=" dropdown float-right btn btn-md btn-success">
-                        <a style="color: white;"><i class="fa fa-refresh" id="sinkronstok"></i> SINKRON STOK</a>
+                        <a style="color: white;"><i class="fa fa-refresh" id="sinkronstok"></i> SYNC STOK</a>
                     </button>
                 </div>
 

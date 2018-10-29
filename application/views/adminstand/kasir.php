@@ -142,7 +142,7 @@
                     <hr class="garis">
                     <div class="row">
                         <div class="col-lg-4">
-                            <input type="radio" name="tipe_bayar" checked="true" value="cash"><label>&nbsp Cash</label>
+                            <input type="radio" name="tipe_bayar" id="cash" checked="true" value="cash"><label>&nbsp Cash</label>
                         </div>
                         <div class="col-lg-4">
                             <input type="radio" name="tipe_bayar" value="debit"><label>&nbsp Debit</label>
@@ -1213,6 +1213,8 @@ function clearAll(){
     $("#total_bayar").html("Rp 0");
     $("#harus_bayar").html("Rp 0");
     $("#kembalian").html("Rp 0");
+    $('#nama_pelanggan').val('');
+    $('#cash').prop('checked',true);
 }
 
 function cetakNotaHelp() {
