@@ -677,15 +677,17 @@ function reset_topping(){
     });
 }
 
-function pilih_topping(produk,harga_jual,produk_id){
+function pilih_topping(kategori,produk,harga_jual,produk_id){
     nama_produk = produk;
     harga_produk = harga_jual;
     id_produk = produk_id;
     qty = 1;
-    $("#modal_topping").modal({
-        backdrop: 'static',
-        keyboard: false
-    });
+    if (kategori!="Topping") {
+        $("#modal_topping").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    }
 }
 
 function pilih_kategori(kategori){
@@ -702,7 +704,7 @@ function pilih_kategori(kategori){
             for(var i=0;i< response.length; i++){
                 var div = document.createElement('div');
                 div.className = "menu col-lg-12 offset-lg-1 col-md-12 offset-md-1";
-                div.setAttribute("onclick", "pilih_topping('"+response[i].nama_produk+"','"+response[i].harga_jual+"','"+response[i].id_produk+"')");
+                div.setAttribute("onclick", "pilih_topping('"+kategori+"','"+response[i].nama_produk+"','"+response[i].harga_jual+"','"+response[i].id_produk+"')");
                 div.innerHTML = response[i].nama_produk;
                 if (kirikanan%2 == 0) {
                     document.getElementById('menusectionright').appendChild(div);
