@@ -129,7 +129,7 @@ class ReceiptPrint {
     $this->add_line("Kembali : ".$kembalian);
     $this->add_line("================================");
     $this->printer->setJustification(Printer::JUSTIFY_CENTER);
-    $this->add_line("Signature Milk Tea, Special Tea, Taste the original fresh!");
+    $this->add_line("Reasonable Price Excellent Taste");
     $this->printer->setTextSize(2, 1);
     $this->add_line("Terima kasih");
 
@@ -173,14 +173,14 @@ class ReceiptPrint {
     $this->printer->setJustification(Printer::JUSTIFY_LEFT);
     $this->add_line("================================");
 
-    $stringkasawal = "Kas Awal    :    Rp.---.---.---";
-    $stringpemasukan = "Pemasukan   :    Rp.---.---.---";
-    $stringcashdetail = "*cash :Rp.--.---.---";
-    $stringdebitdetail = "*debit:Rp.--.---.---";
-    $stringovodetail = "*ovo  :Rp.--.---.---";
-    $stringpengeluaran = "Pengeluaran :    Rp.---.---.---";
-    $stringsisauang = "Sisa Uang   :    Rp.---.---.---";
-    $stringuangdikasir = "Mesin Kasir :    Rp.---.---.---";
+    $stringkasawal = "Kas Awal    :    Rp.";
+    $stringpemasukan = "Pemasukan   :    Rp.";
+    $stringcashdetail = "*cash :Rp.";
+    $stringdebitdetail = "*debit:Rp.";
+    $stringovodetail = "*ovo  :Rp.";
+    $stringpengeluaran = "Pengeluaran :    Rp.";
+    $stringsisauang = "Sisa Uang   :    Rp.";
+    $stringuangdikasir = "Mesin Kasir :    Rp.";
 
     $spacekasawal = 32-(strlen($stringkasawal)+strlen($kasawal));
     $spacepemasukan = 32-(strlen($stringpemasukan)+strlen($pemasukan));
