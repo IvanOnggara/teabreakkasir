@@ -1188,9 +1188,12 @@ class AdminStand extends CI_Controller {
 
 	public function dataPengeluaranLain()
 	{
+		$datenow = date("Y-m-d");
+		$where = array('tanggal' => $datenow);
 		$this->load->library('datatables');
 		$this->datatables->select('id_pengeluaran,tanggal,keterangan,shift,pengeluaran');
 		$this->datatables->from('pengeluaran_lain');
+		$this->datatables->where($where);
 		echo $this->datatables->generate();
 	}
 
