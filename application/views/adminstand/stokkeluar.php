@@ -281,7 +281,7 @@ jQuery( document ).ready(function( $ ) {
             {
                 extend: 'copyHtml5',
                 text: 'Copy',
-                filename: 'Produk Data',
+                filename: 'Stok Keluar Bahan Jadi',
                 exportOptions: {
                   columns:[0,1,2,3]
                 }
@@ -289,25 +289,25 @@ jQuery( document ).ready(function( $ ) {
                 extend: 'excelHtml5',
                 text: 'Excel',
                 className: 'exportExcel',
-                filename: 'Produk Data',
+                filename: 'Stok Keluar Bahan Jadi',
                 exportOptions: {
                   columns:[0,1,2,3]
                 }
             },{
                 extend: 'csvHtml5',
-                filename: 'Produk Data',
+                filename: 'Stok Keluar Bahan Jadi',
                 exportOptions: {
                   columns:[0,1,2,3]
                 }
             },{
                 extend: 'pdfHtml5',
-                filename: 'Produk Data',
+                filename: 'Stok Keluar Bahan Jadi',
                 exportOptions: {
                   columns:[0,1,2,3]
                 }
             },{
                 extend: 'print',
-                filename: 'Produk Data',
+                filename: 'Stok Keluar Bahan Jadi',
                 exportOptions: {
                   columns:[0,1,2,3]
                 }
@@ -321,6 +321,7 @@ jQuery( document ).ready(function( $ ) {
     {'data': 'tanggal'},
     // {'data': 'edit','orderable':false,'searchable':false}
   ],
+  "order": [[ 3, "desc" ]],
       rowCallback: function(row, data, iDisplayIndex) {
         var info = this.fnPagingInfo();
         var page = info.iPage;
