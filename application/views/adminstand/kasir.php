@@ -79,7 +79,6 @@
         <div class="modal-content">
             <div class="header modal-header">
                 <h4 class="modal-title">Pembayaran</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="col-lg-6 col-md-6 col-sm-12">
@@ -188,7 +187,6 @@
         <div class="modal-content">
             <div class="header modal-header">
                 <h4 class="modal-title">Pilih Topping</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="row" id="toppingsection">
@@ -264,10 +262,6 @@ function pembayaran(){
           type:"post",
           url: "<?php echo base_url('controllerdisplay/setTotal')?>/",
           data:{ttl_display:ttl_display},
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
       }
     );
     $("#modal_bayar").modal({
@@ -389,12 +383,6 @@ function tambah_item(){
           type:"post",
           url: "<?php echo base_url('controllerdisplay/setItem')?>/",
           data:{topping:topping,nama_produk:nama_produk,harga_produk:harga_produk},
-          success: function (response){
-          },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
       }
     );
 
@@ -542,10 +530,6 @@ function hitungDiskon(){
         }
 
         countTotal();
-      },
-      error: function (jqXHR, textStatus, errorThrown)
-      {
-        alert(errorThrown);
       }
     });
 }
@@ -560,7 +544,7 @@ function diskon_termurah(totalproduk,arrId){
     while(totalproduk>0){
         for(var i=0;i<order.length;i++){
             if (order[i].qtydisc<order[i].qty&&arrId.includes(order[i].id_produk)) {
-                termurah = order[i].harga_produk;
+                termurah = parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping);
                 id_termurah = i;
                 break;
             }
@@ -568,8 +552,8 @@ function diskon_termurah(totalproduk,arrId){
 
         for(var i=0;i<order.length;i++){
             if (order[i].qtydisc<order[i].qty&&arrId.includes(order[i].id_produk)) {
-                if (parseInt(order[i].harga_produk)<parseInt(termurah)) {
-                    termurah = order[i].harga_produk;
+                if ((parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping))<parseInt(termurah)) {
+                    termurah = parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping);
                     id_termurah = i;
                 }
             }
@@ -611,10 +595,6 @@ function plus(id,rowid){
       data:{topping:topping_display,nama_produk:nama_produk_display,harga_produk:satuan},
       success: function (response){
       },
-      error: function (jqXHR, textStatus, errorThrown)
-      {
-        alert(errorThrown);
-      }
     });
 }
 
@@ -734,10 +714,6 @@ function pilih_kategori(kategori){
                 
             }
           },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
       }
     );
 }
@@ -792,10 +768,6 @@ function reset_menu(){
             }
             pilih_kategori(response[0].kategori);
           },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
       }
     );
 
@@ -826,10 +798,6 @@ function reset_menu(){
                 document.getElementById('toppingsection').appendChild(div);
             }
           },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
       }
     );
 }
@@ -843,10 +811,6 @@ function resetDisplay(){
     $.ajax({
           type:"post",
           url: "<?php echo base_url('controllerdisplay/resetDisplay')?>/",
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
       }
     );
 }
@@ -954,10 +918,6 @@ function cetakNota() {
             //BELUM SELESAI
             // alert(response);
           },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          },
           complete: function (argument) {
             done[0]=true;
               stoploading();
@@ -972,14 +932,6 @@ function cetakNota() {
           type:"post",
           url: "<?php echo base_url('controllerdisplay/setKembalian')?>/",
           data:{kembalian_display:kembalian_display},
-          success:function(response)
-          {
-
-          },
-           error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          },
           complete: function (argument) {
             done[1]=true;
               stoploading();
@@ -991,15 +943,6 @@ function cetakNota() {
           url: "<?php echo base_url('adminstand/printnota')?>/",
           dataType:"text",
           data:{ order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
-          success:function(response)
-          {
-            alert('printed');
-          },
-// >>>>>>> 5cdb102438625863bfe8c13239fed5cc96589daf
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          },
           complete: function (argument) {
             done[2]=true;
               stoploading();
@@ -1161,7 +1104,6 @@ function cetakNota() {
 function stoploading() {
     if (done[0] && done[1] && done[2]) {
         $('#loadingprint').hide();
-        alert('PROSES SELESAI');
     }
 }
 
@@ -1230,14 +1172,6 @@ function cetakNotaHelp() {
           url: "<?php echo base_url('adminstand/printnota')?>/",
           dataType:"text",
           data:{ order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
-          success:function(response)
-          {
-            // alert('printed');
-          },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            alert(errorThrown);
-          }
       }
     );
     
