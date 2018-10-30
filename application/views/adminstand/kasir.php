@@ -230,6 +230,7 @@ var qty;
 var id_produk;
 var topping = new Array();
 var order = new Array();
+var kategori;
 var order_diskon = new Array();
 var list_diskon = new Array();
 var id_itemdisc1 = new Array();
@@ -361,6 +362,7 @@ function tambah_item(){
         item.topping = topping;
         item.diskon = 0;
         item.qty = 1;
+        item.kategori = kategori;
         item.subtotal = parseInt(harga_produk)+parseInt(harga_topping);
         item.qtydisc = 0;
         item.harga_produk = harga_produk;
@@ -543,18 +545,22 @@ function diskon_termurah(totalproduk,arrId){
 
     while(totalproduk>0){
         for(var i=0;i<order.length;i++){
-            if (order[i].qtydisc<order[i].qty&&arrId.includes(order[i].id_produk)) {
-                termurah = parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping);
-                id_termurah = i;
-                break;
+            if (order[i].kategori!="topping") {
+                if (order[i].qtydisc<order[i].qty&&arrId.includes(order[i].id_produk)) {
+                    termurah = parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping);
+                    id_termurah = i;
+                    break;
+                }
             }
         }
 
         for(var i=0;i<order.length;i++){
-            if (order[i].qtydisc<order[i].qty&&arrId.includes(order[i].id_produk)) {
-                if ((parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping))<parseInt(termurah)) {
-                    termurah = parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping);
-                    id_termurah = i;
+            if (order[i].kategori!="topping") {
+                if (order[i].qtydisc<order[i].qty&&arrId.includes(order[i].id_produk)) {
+                    if ((parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping))<parseInt(termurah)) {
+                        termurah = parseInt(order[i].harga_produk)+parseInt(order[i].harga_topping);
+                        id_termurah = i;
+                    }
                 }
             }
         }
@@ -677,16 +683,19 @@ function reset_topping(){
     });
 }
 
-function pilih_topping(kategori,produk,harga_jual,produk_id){
+function pilih_topping(kategori_item,produk,harga_jual,produk_id){
     nama_produk = produk;
     harga_produk = harga_jual;
     id_produk = produk_id;
     qty = 1;
-    if (kategori!="Topping") {
+    kategori = kategori_item;
+    if (kategori!="topping") {
         $("#modal_topping").modal({
             backdrop: 'static',
             keyboard: false
         });
+    }else{
+        tambah_item();
     }
 }
 
@@ -768,6 +777,11 @@ function reset_menu(){
                 div.innerHTML = response[i].kategori;
                 document.getElementById('kategorisection').appendChild(div);
             }
+            var div2 = document.createElement('div');
+            div2.className = "kategori col-lg-8 offset-lg-4 col-sm-12 col-md-10 offset-md-1";
+            div2.setAttribute("onclick", "pilih_kategori('topping')");
+            div2.innerHTML = "Topping";
+            document.getElementById('kategorisection').appendChild(div2);
             pilih_kategori(response[0].kategori);
           },
       }
