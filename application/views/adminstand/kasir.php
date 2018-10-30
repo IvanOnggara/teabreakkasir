@@ -849,8 +849,11 @@ function kalkulatorkasir(number) {
         }
     }else{
         if (nominal == '0') {
-            $("#total_bayar").html(currency(number));
-            hitungKembalian();
+            if (number!='00') {
+                $("#total_bayar").html(currency(number));
+                hitungKembalian();
+            }
+            
         }else{
             if (nominal.length<20) {
                 nominal = nominal + number;
@@ -933,10 +936,22 @@ function cetakNota() {
           {
             //BELUM SELESAI
             // alert(response);
+            $.ajax({
+                      type:"post",
+                      url: "<?php echo base_url('adminstand/printnota')?>/",
+                      dataType:"text",
+                      data:{ idnota:response,order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
+                      complete: function (argument) {
+                        done[2]=true;
+                          stoploading();
+                      }
+                  }
+                );
           },
           complete: function (argument) {
             done[0]=true;
               stoploading();
+
           }
       }
     );
@@ -954,17 +969,7 @@ function cetakNota() {
           }
       });
 // =======
-    $.ajax({
-          type:"post",
-          url: "<?php echo base_url('adminstand/printnota')?>/",
-          dataType:"text",
-          data:{ order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
-          complete: function (argument) {
-            done[2]=true;
-              stoploading();
-          }
-      }
-    );
+    
 
     
 // <<<<<<< HEAD

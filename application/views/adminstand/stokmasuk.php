@@ -170,17 +170,31 @@ $('#namabahanjadi').change(function(){
 });
 
 $('.numeric').on('input', function (event) { 
-    this.value = this.value.replace(/[^0-9]/g, '');
+    this.value = this.value.replace(/[^.0-9]/g, '');
+    if ($(this).val().indexOf('.') == 0) {
+              $(this).val($(this).val().substring(1));
+            }
+
+            if ($(this).val().indexOf('0') == 0) {
+              $(this).val($(this).val().substring(1));
+            }
+
+            if ($(this).val().split(".").length > 2) {
+                this.value = this.value.slice(0,-1);
+            }
 });
 
 $("#namabahanjadi").easyAutocomplete(option);
 
 function tambahstokbahan() {
+  $('#stokmasuk').removeClass("is-invalid");
+  $('#namabahanjadi').removeClass("is-invalid");
+
 	var id_bahan = id;
 	var nama = $('#namabahanjadi').val();
 	var stokmasuk = $('#stokmasuk').val();
 
-	if (id_bahan == 'unidentified') {
+	if (id_bahan == 'unidentified' || $("#namabahanjadi").val().replace(/\s/g, '') == '') {
 		$('#namabahanjadi').addClass("is-invalid");
 	}
 
@@ -188,7 +202,7 @@ function tambahstokbahan() {
 		$('#stokmasuk').addClass("is-invalid");
 	}
 
-	if (id_bahan != 'unidentified' && $('#stokmasuk').val() != '') {
+	if (id_bahan != 'unidentified' && $('#stokmasuk').val() != '' && $("#namabahanjadi").val().replace(/\s/g, '') != '') {
 		$.ajax(
             {
                 type:"post",
