@@ -169,7 +169,18 @@ $('#namabahanjadi').change(function(){
 });
 
 $('.numeric').on('input', function (event) { 
-    this.value = this.value.replace(/[^0-9]/g, '');
+    this.value = this.value.replace(/[^.0-9]/g, '');
+    if ($(this).val().indexOf('.') == 0) {
+              $(this).val($(this).val().substring(1));
+            }
+
+            if ($(this).val().indexOf('0') == 0) {
+              $(this).val($(this).val().substring(1));
+            }
+
+            if ($(this).val().split(".").length > 2) {
+                this.value = this.value.slice(0,-1);
+            }
 });
 
 $("#namabahanjadi").easyAutocomplete(option);

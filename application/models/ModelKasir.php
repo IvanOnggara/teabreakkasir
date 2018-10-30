@@ -18,6 +18,13 @@ class ModelKasir extends CI_Model{
         return $res->num_rows();
     }
 
+    public function getRowCountv2($table,$where){
+        $this->db->select('COUNT(*) as count');
+        $this->db->from($table);
+        $this->db->where($where);
+        return $this->db->get()->result();
+    }
+
     public function getDataLimit($table,$limit){
         $res = $this->db->get($table,$limit,0);
         return $res->result();

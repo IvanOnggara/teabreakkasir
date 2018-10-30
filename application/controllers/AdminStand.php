@@ -572,6 +572,8 @@ class AdminStand extends CI_Controller {
 			$angkaid+=1;
 			array_push($listall, $datadetail);
 		}
+
+		echo $idnota;
 		// var_dump($listall);
 		// var_dump($data);
 
@@ -1474,11 +1476,24 @@ class AdminStand extends CI_Controller {
 		$diskon = $this->input->post('diskon');
 		$totalakhir = $this->input->post('pembayaran');
 		$kembalian = $this->input->post('kembalian');
+		$id_nota = $this->input->post('idnota');
+		$id_nota = explode("NT-", $id_nota);
+		$id_nota = $id_nota[1];
+		$id_nota = substr($id_nota, 0, 6);
+		$id_nota = substr($id_nota, 4)."-".substr($id_nota, 2, 2)."-".substr($id_nota, 0, 2);
+
+		$datenow = date("Y-m-d");
+		$where = array('tanggal_nota' => $datenow);
+		$num = $this->ModelKasir->getRowCountv2('nota',$where);
+
+		$no_urut = $id_nota."_".$num[0]->count;
+		// var_dump($no_urut);
+		// $no_urut++;
 		// var_dump($order);
 
 		  $this->load->library('ReceiptPrint');
 		  $this->receiptprint->connect('MINIPOS');
-		  $this->receiptprint->print_test_receipt($order,$pelanggan,$alamat,$subtotal,$diskon,$totalakhir,$kembalian);
+		  $this->receiptprint->print_test_receipt($order,$pelanggan,$alamat,$subtotal,$diskon,$totalakhir,$kembalian,$no_urut);
 		// } catch (Exception $e) {
 		//   log_message("error", "Error: Could not print. Message ".$e->getMessage());
 		//   echo "error";
