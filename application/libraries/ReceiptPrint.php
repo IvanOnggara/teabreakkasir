@@ -49,7 +49,7 @@ class ReceiptPrint {
     $text = $should_wordwrap ? wordwrap($text, $this->printer_width-8) : $text;
     $this->printer->text($text."\n");
   }
-  public function print_test_receipt($order = "",$Pelanggan = "",$alamat ="",$subtotal="",$diskon,$totalakhir,$kembalian)
+  public function print_test_receipt($order = "",$Pelanggan = "",$alamat ="",$subtotal="",$diskon,$totalakhir,$kembalian,$nourut)
   // $subtotal = "156.000,-";
   //   $diskon = "12.000,-";
   //   $totalakhir = "144.000,-";
@@ -80,6 +80,7 @@ class ReceiptPrint {
 
     $this->printer->setFont(Printer::FONT_B);
     $this->printer->setJustification(Printer::JUSTIFY_LEFT);
+    $this->add_line("Nomor     : ".$nourut);
     $this->add_line("Pelanggan : ".$Pelanggan);
     $this->add_line("================================");
     $this->add_line();
