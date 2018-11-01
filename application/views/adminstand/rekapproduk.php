@@ -19,12 +19,12 @@
         <div class="card">
           <div class="card-body">
                 <div class="h1 text-muted text-right mb-4">
-                    <i class="fa fa-cart-plus"></i>
+                    <i class="h1 fa fa-cart-plus"></i>
                 </div>
-                <div class="h4 mb-0">
+                <div class="h1 mb-0">
                     <span class="count" id="numcountproduk">-</span>
                 </div>
-                <small class="text-muted text-uppercase font-weight-bold">Cup Terjual</small>
+                <label class="text-muted text-uppercase font-weight-bold">Cup Terjual</label>
                 <div class="progress progress-xs mt-3 mb-0 bg-flat-color-3" style="width: 40%; height: 5px;"></div>
             </div>
           </div>
