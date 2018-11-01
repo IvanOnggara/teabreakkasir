@@ -69,6 +69,7 @@ $route['order'] = 'adminstand/order';
 $route['presensi'] = 'adminstand/presensi';
 $route['listorder'] = 'adminstand/listorder';
 $route['rekapdata'] = 'adminstand/rekapdata';
+$route['rekapproduk'] = 'adminstand/rekapproduk';
 
 $route['cobaprint'] = 'adminstand/printjajal';
 

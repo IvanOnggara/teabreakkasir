@@ -150,7 +150,7 @@ class ReceiptPrint {
     $this->printer->close();
   }
 
-  public function printrekap($kasawal,$totalpemasukan,$cashdetail,$debitdetail,$ovodetail,$pengeluaran,$sisauang,$sisauangdikasir)
+  public function printrekap($kasawal,$totalpemasukan,$cashdetail,$debitdetail,$ovodetail,$pengeluaran,$sisauang,$sisauangdikasir,$cash_bersih)
   {
     $kasawal = number_format($kasawal,"0",",",".");
     $totalpemasukan = number_format($totalpemasukan,"0",",",".");
@@ -158,8 +158,9 @@ class ReceiptPrint {
     $debitdetail = number_format($debitdetail,"0",",",".");
     $ovodetail = number_format($ovodetail,"0",",",".");
     $pengeluaran = number_format($pengeluaran,"0",",",".");
-    $sisauang = number_format($sisauang,"0",",",".");
-    $sisauangdikasir = number_format($sisauangdikasir,"0",",",".");
+    $cash_bersih = number_format($cash_bersih,"0",",",".")
+    // $sisauang = number_format($sisauang,"0",",",".");
+    // $sisauangdikasir = number_format($sisauangdikasir,"0",",",".");
 
     date_default_timezone_set("Asia/Bangkok");
     $this->check_connection();
@@ -174,31 +175,34 @@ class ReceiptPrint {
     $this->printer->setJustification(Printer::JUSTIFY_LEFT);
     $this->add_line("================================");
 
-    $stringkasawal = "Kas Awal    :    Rp.";
-    $stringpemasukan = "Pemasukan   :    Rp.";
-    $stringcashdetail = "*cash :Rp.";
-    $stringdebitdetail = "*debit:Rp.";
-    $stringovodetail = "*ovo  :Rp.";
-    $stringpengeluaran = "Pengeluaran :    Rp.";
-    $stringsisauang = "Sisa Uang   :    Rp.";
-    $stringuangdikasir = "Mesin Kasir :    Rp.";
+    $stringkasawal =    "Uang Modal  :    Rp.";
+    // $stringpemasukan =  "Pemasukan   :    Rp.";
+    $stringcashdetail = "*cash :          Rp.";
+    $stringdebitdetail ="*debit:          Rp.";
+    $stringovodetail =  "*ovo  :          Rp.";
+    $stringpengeluaran ="Pengeluaran :    Rp.";
+    $stringcashbersih = "Cash Bersih :    Rp.";
+    // $stringsisauang =   "Sisa Uang   :    Rp.";
+    // $stringuangdikasir ="Mesin Kasir :    Rp.";
 
     $spacekasawal = 32-(strlen($stringkasawal)+strlen($kasawal));
-    $spacepemasukan = 32-(strlen($stringpemasukan)+strlen($pemasukan));
+    // $spacepemasukan = 32-(strlen($stringpemasukan)+strlen($pemasukan));
     $spacecashdetail = 20-(strlen($stringcashdetail)+strlen($cashdetail));
     $spacedebitdetail = 20-(strlen($stringdebitdetail)+strlen($debitdetail));
     $spaceovodetail = 20-(strlen($stringovodetail)+strlen($ovodetail));
     $spacepengeluaran = 32-(strlen($stringpengeluaran)+strlen($pengeluaran));
-    $spacesisauang = 32-(strlen($stringsisauang)+strlen($sisauang));
-    $spaceuangdikasir = 32-(strlen($stringuangdikasir)+strlen($uangdikasir));
+
+    $spacecashbersih = 32-(strlen($stringcashbersih)+strlen($cash_bersih));
+    // $spacesisauang = 32-(strlen($stringsisauang)+strlen($sisauang));
+    // $spaceuangdikasir = 32-(strlen($stringuangdikasir)+strlen($uangdikasir));
 
     for ($i=0; $i < $spacekasawal; $i++) { 
       $stringkasawal = $stringkasawal." ";
     }
 
-    for ($i=0; $i < $spacepemasukan; $i++) { 
-      $stringpemasukan = $stringpemasukan." ";
-    }
+    // for ($i=0; $i < $spacepemasukan; $i++) { 
+    //   $stringpemasukan = $stringpemasukan." ";
+    // }
 
     for ($i=0; $i < $spacecashdetail; $i++) { 
       $stringcashdetail = $stringcashdetail." ";
@@ -216,34 +220,42 @@ class ReceiptPrint {
       $stringpengeluaran = $stringpengeluaran." ";
     }
 
-    for ($i=0; $i < $spacesisauang; $i++) { 
-      $stringsisauang = $stringsisauang." ";
+    for ($i=0; $i < $spacecashbersih; $i++) { 
+      $stringcashbersih = $stringcashbersih." ";
     }
 
-    for ($i=0; $i < $spaceuangdikasir; $i++) { 
-      $stringuangdikasir = $stringuangdikasir." ";
-    }
+    // for ($i=0; $i < $spacesisauang; $i++) { 
+    //   $stringsisauang = $stringsisauang." ";
+    // }
+
+    // for ($i=0; $i < $spaceuangdikasir; $i++) { 
+    //   $stringuangdikasir = $stringuangdikasir." ";
+    // }
 
     $stringkasawal = $stringkasawal.$kasawal;
-    $stringpemasukan = $stringpemasukan.$totalpemasukan;
+    // $stringpemasukan = $stringpemasukan.$totalpemasukan;
     $stringcashdetail = $stringcashdetail.$cashdetail;
     $stringdebitdetail = $stringdebitdetail.$debitdetail;
     $stringovodetail = $stringovodetail.$ovodetail;
     $stringpengeluaran = $stringpengeluaran.$pengeluaran;
-    $stringsisauang = $stringsisauang.$sisauang;
-    $stringuangdikasir = $stringuangdikasir.$sisauangdikasir;
+    $stringcashbersih = $stringcashbersih.$cash_bersih;
+    // $stringsisauang = $stringsisauang.$sisauang;
+    // $stringuangdikasir = $stringuangdikasir.$sisauangdikasir;
 
 
     $this->add_line($stringkasawal);
-    $this->add_line($stringpemasukan);
+    // $this->add_line($stringpemasukan);
     $this->add_line($stringcashdetail);
     $this->add_line($stringdebitdetail);
     $this->add_line($stringovodetail);
     $this->add_line($stringpengeluaran);
     $this->add_line("                 _______________");
-    $this->add_line($stringsisauang);
-    $this->add_line($stringuangdikasir);
+    //32
+    // $this->add_line($stringsisauang);
+    $this->add_line($stringcashbersih);
+    // $this->add_line($stringuangdikasir);
     $this->printer->cut();
+    $this->printer->pulse();
     $this->printer->close();
   }
 }

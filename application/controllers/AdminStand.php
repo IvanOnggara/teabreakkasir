@@ -1801,4 +1801,113 @@ class AdminStand extends CI_Controller {
   	echo "SUCCESS";
 
   }
+
+  public function detailNotaData()
+  {
+  	$id_nota = $this->input->post('id_nota');
+	$array = array('id_nota' => $id_nota);
+	$data = $this->ModelKasir->getData($array,'detail_nota');
+	echo json_encode($data);
+  }
+
+  public function rekapproduk()
+  {
+  	$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+	        $this->load->view('adminstand/rekapproduk');
+        }
+  }
+
+  public function getcupsold()
+  {
+  	$tanggal = $this->input->post('tanggal');
+
+  	if ($tanggal != '') {
+  		$parttanggal = explode('/', $tanggal);
+
+		$tanggal = $parttanggal[2].'/'.$parttanggal[1].'/'.$parttanggal[0];
+		$tanggal = strtotime($tanggal);
+		$tanggal = date('Y-m-d',$tanggal);
+  	}
+
+  	$where = array('tanggal_nota' => $tanggal);
+  	$listnotatoday = $this->ModelKasir->getData($where,'nota');
+  	$cups = 0;
+
+  	if (!empty($listnotatoday)) {
+  		foreach ($listnotatoday as $pernota) {
+  			$wheredetail = array(
+	  			'kategori_produk !=' => 'Others',
+	  			'kategori_produk !=' => 'topping',
+	  			'id_nota' => $pernota->id_nota
+	  		);
+
+	  		$alldetailnota = $this->ModelKasir->getData($wheredetail,'detail_nota');
+
+	  		foreach ($alldetailnota as $perdetail) {
+	  			$cups += $perdetail->jumlah_produk;
+	  		}
+  		}
+  		
+  		echo $cups;
+  	}else{
+  		echo $cups;
+  	}
+  }
+
+  public function datapenjualan()
+  {
+  	$tanggal = $this->input->post('tanggal');
+
+  	if ($tanggal != '') {
+  		$parttanggal = explode('/', $tanggal);
+
+		$tanggal = $parttanggal[2].'/'.$parttanggal[1].'/'.$parttanggal[0];
+		$tanggal = strtotime($tanggal);
+		$tanggal = date('Y-m-d',$tanggal);
+  	}
+
+  	$where = array('tanggal_nota' => $tanggal);
+  	$listnotatoday = $this->ModelKasir->getData($where,'nota');
+  	$arrayproduk = array();
+
+  	if (!empty($listnotatoday)) {
+  		foreach ($listnotatoday as $pernota) {
+  			$wheredetail = array(
+	  			'id_nota' => $pernota->id_nota
+	  		);
+
+	  		$alldetailnota = $this->ModelKasir->getData($wheredetail,'detail_nota');
+
+	  		foreach ($alldetailnota as $perdetail) {
+	  			$new = true;
+	  			$numnow = 0;
+	  			$rowarrayproduk = 0;
+	  			foreach ($arrayproduk as $perdataarray) {
+	  				if ($perdataarray['nama_produk'] == $perdetail->nama_produk) {
+	  					$new = false;
+	  					$rowarrayproduk = $numnow;
+	  				}
+	  				$numnow++;
+	  			}
+
+	  			if ($new) {
+	  				$datadetail = array(
+		  				'nama_produk' => $perdetail->nama_produk,
+		  				'kategori' => $perdetail->kategori_produk,
+		  				'jumlah' => $perdetail->jumlah_produk
+		  			);
+	  				array_push($arrayproduk,$datadetail);
+	  			}else{
+	  				$arrayproduk[$rowarrayproduk]['jumlah']= $arrayproduk[$rowarrayproduk]['jumlah']+$perdetail->jumlah_produk;
+	  			}
+	  		}
+  		}
+  	}
+
+  	echo json_encode($arrayproduk);
+  }
 }
