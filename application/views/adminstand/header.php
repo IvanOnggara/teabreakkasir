@@ -241,7 +241,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a class="dropdown-toggle" href="rekapdata">REKAP HARI INI</a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">REKAP <i class="fa fa-caret-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a class="nav-link" href=<?php echo base_url("rekapdata")?>>Rekap Keuangan Hari ini</a>
+                        <a class="nav-link" href=<?php echo base_url("rekapproduk")?>>Rekap Penjualan Produk</a>
+                    </div>
                 </div>
                 
                 
