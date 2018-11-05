@@ -1784,14 +1784,16 @@ class AdminStand extends CI_Controller {
 	public function printrekap()
   {
   	$dataprint = json_decode($this->input->post('datarekapharian'));
+  	var_dump($dataprint);
 
   	$totalpemasukan = $dataprint->cashdetail+$dataprint->ovodetail+$dataprint->debitdetail;
   	$sisauang = $totalpemasukan+$dataprint->kasawal-$dataprint->pengeluaran;
+  	$cashbersih = $dataprint->cashdetail-$dataprint->pengeluaran;
 
   	// var_dump($dataprint->kasawal);
       $this->load->library('ReceiptPrint');
       $this->receiptprint->connect('MINIPOS');
-      $this->receiptprint->printrekap($dataprint->kasawal,$totalpemasukan,$dataprint->cashdetail ,$dataprint->debitdetail,$dataprint->ovodetail,$dataprint->pengeluaran,$sisauang,$dataprint->totalkasir);
+      $this->receiptprint->printrekap($dataprint->kasawal,$totalpemasukan,$dataprint->cashdetail ,$dataprint->debitdetail,$dataprint->ovodetail,$dataprint->pengeluaran,$sisauang,$dataprint->totalkasir,$cashbersih);
   }
 
   public function setshift()
@@ -1824,6 +1826,7 @@ class AdminStand extends CI_Controller {
   public function getcupsold()
   {
   	$tanggal = $this->input->post('tanggal');
+  	$shift = $this->input->post('shift');
 
   	if ($tanggal != '') {
   		$parttanggal = explode('/', $tanggal);
@@ -1833,7 +1836,13 @@ class AdminStand extends CI_Controller {
 		$tanggal = date('Y-m-d',$tanggal);
   	}
 
-  	$where = array('tanggal_nota' => $tanggal);
+  	if ($shift == 'all') {
+  		$where = array('tanggal_nota' => $tanggal);
+  	}else{
+  		$where = array('tanggal_nota' => $tanggal,'shift' => $shift);
+  	}
+
+  	
   	$listnotatoday = $this->ModelKasir->getData($where,'nota');
   	$cups = 0;
 
@@ -1861,6 +1870,7 @@ class AdminStand extends CI_Controller {
   public function datapenjualan()
   {
   	$tanggal = $this->input->post('tanggal');
+  	$shift = $this->input->post('shift');
 
   	if ($tanggal != '') {
   		$parttanggal = explode('/', $tanggal);
@@ -1870,7 +1880,12 @@ class AdminStand extends CI_Controller {
 		$tanggal = date('Y-m-d',$tanggal);
   	}
 
-  	$where = array('tanggal_nota' => $tanggal);
+  	if ($shift == 'all') {
+  		$where = array('tanggal_nota' => $tanggal);
+  	}else{
+  		$where = array('tanggal_nota' => $tanggal,'shift' => $shift);
+  	}
+  	
   	$listnotatoday = $this->ModelKasir->getData($where,'nota');
   	$arrayproduk = array();
 

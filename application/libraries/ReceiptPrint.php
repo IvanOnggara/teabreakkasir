@@ -56,11 +56,13 @@ class ReceiptPrint {
   //   $kembalian = "0,-";
   // $listallitem = "",
   {
+    $this->printer->pulse();
     date_default_timezone_set("Asia/Bangkok");
     $this->check_connection();
     $img_logo = EscposImage::load(__DIR__ . "/logo112.png");
     echo pathinfo(__DIR__ . "\logo.bmp", PATHINFO_EXTENSION);
     // echo $img_logo;
+    
     $this->printer->setJustification(Printer::JUSTIFY_CENTER);
     // $this->printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
     $this->printer->bitImageColumnFormat($img_logo);
@@ -80,6 +82,7 @@ class ReceiptPrint {
 
     $this->printer->setFont(Printer::FONT_B);
     $this->printer->setJustification(Printer::JUSTIFY_LEFT);
+    var_dump($nourut);
     $this->add_line("Nomor     : ".$nourut);
     $this->add_line("Pelanggan : ".$Pelanggan);
     $this->add_line("================================");
@@ -147,6 +150,7 @@ class ReceiptPrint {
     // $this->add_line(date('Y-m-d H:i:s'));
     // $this->printer->cut(Printer::CUT_PARTIAL);
     $this->printer->cut();
+
     $this->printer->close();
   }
 
@@ -158,7 +162,7 @@ class ReceiptPrint {
     $debitdetail = number_format($debitdetail,"0",",",".");
     $ovodetail = number_format($ovodetail,"0",",",".");
     $pengeluaran = number_format($pengeluaran,"0",",",".");
-    $cash_bersih = number_format($cash_bersih,"0",",",".")
+    $cash_bersih = number_format($cash_bersih,"0",",",".");
     // $sisauang = number_format($sisauang,"0",",",".");
     // $sisauangdikasir = number_format($sisauangdikasir,"0",",",".");
 
@@ -171,7 +175,7 @@ class ReceiptPrint {
     $this->printer->bitImageColumnFormat($img_logo);
     $this->add_line("Rekap Pemasukan Pengeluaran");
     $this->add_line(date('d/m/Y'));
-    $this->add_line("H:i");
+    $this->add_line(date("H:i"));
     $this->printer->setJustification(Printer::JUSTIFY_LEFT);
     $this->add_line("================================");
 
@@ -187,9 +191,9 @@ class ReceiptPrint {
 
     $spacekasawal = 32-(strlen($stringkasawal)+strlen($kasawal));
     // $spacepemasukan = 32-(strlen($stringpemasukan)+strlen($pemasukan));
-    $spacecashdetail = 20-(strlen($stringcashdetail)+strlen($cashdetail));
-    $spacedebitdetail = 20-(strlen($stringdebitdetail)+strlen($debitdetail));
-    $spaceovodetail = 20-(strlen($stringovodetail)+strlen($ovodetail));
+    $spacecashdetail = 32-(strlen($stringcashdetail)+strlen($cashdetail));
+    $spacedebitdetail = 32-(strlen($stringdebitdetail)+strlen($debitdetail));
+    $spaceovodetail = 32-(strlen($stringovodetail)+strlen($ovodetail));
     $spacepengeluaran = 32-(strlen($stringpengeluaran)+strlen($pengeluaran));
 
     $spacecashbersih = 32-(strlen($stringcashbersih)+strlen($cash_bersih));
@@ -255,7 +259,7 @@ class ReceiptPrint {
     $this->add_line($stringcashbersih);
     // $this->add_line($stringuangdikasir);
     $this->printer->cut();
-    $this->printer->pulse();
+    
     $this->printer->close();
   }
 }

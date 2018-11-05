@@ -16,6 +16,14 @@
             <label>Tanggal</label>
             <input type="text" class="form-control" id="tanggal" placeholder="Tanggal">
         </div>
+        <div class="form-group">
+            <label for="id" class=" form-control-label">Shift</label>
+            <select name="select" id="shift" class="form-control" onchange="join()">
+                <option value="pagi">Pagi</option>
+                <option value="malam">Malam</option>
+                <option value="all">Semua Shift</option>
+            </select>
+        </div>
         <div class="card">
           <div class="card-body">
                 <div class="h1 text-muted text-right mb-4">
@@ -74,9 +82,13 @@
         });
 
         $("#tanggal").on("dp.change", function(e) {
-            refreshcupterjual()
-            reload_table();
+            join();
         });
+
+        function join() {
+          refreshcupterjual()
+            reload_table();
+        }
 
         var d = new Date();
 
@@ -94,7 +106,8 @@
                   type:"post",
                   url: "<?php echo base_url('adminstand/getcupsold')?>/",
                   data:{
-                    tanggal:$('#tanggal').val()
+                    tanggal:$('#tanggal').val(),
+                    shift : $('#shift').val()
                   },
                   success:function(response)
                   {
@@ -128,7 +141,8 @@
           "type"   : "POST",
           "url"    : "<?php echo base_url('adminstand/datapenjualan');?>",
           "data": function(d){
-              d.tanggal = $("#tanggal").val()
+              d.tanggal = $("#tanggal").val(),
+              d.shift = $('#shift').val()
           },
           "dataSrc": function (json) {
             var return_data = new Array();

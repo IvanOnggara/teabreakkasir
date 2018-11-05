@@ -1173,7 +1173,7 @@ function clearAll(){
     $('#angka00').prop("disabled", false);
     $('#angkadel').prop("disabled", false);
     $('#cetaknotaulang').prop("disabled", true);
-    $("#total_bayar").html("Rp 0");
+    $("#total_bayar").html("0");
     $("#harus_bayar").html("Rp 0");
     $("#kembalian").html("Rp 0");
     $('#nama_pelanggan').val('');
