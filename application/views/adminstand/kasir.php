@@ -900,12 +900,12 @@ function cetakNota() {
     if (keterangan.length==0) {
         keterangan = "none";
     }
+    $('#buttonkembali').prop("disabled", true);
 
     $('#buttoncetaknota').prop("disabled", true);
     $('#cetaknotaulang').prop("disabled", false);
     $('#buttonauto').prop("disabled", true);
-    $('#buttonkembali').addClass('btn-success');
-    $('#buttonkembali').html("Selesai");
+    
 
     $('#angka1').prop("disabled", true);
     $('#angka2').prop("disabled", true);
@@ -927,36 +927,39 @@ function cetakNota() {
     for (var i = order.length - 1; i >= 0; i--) {
         arrorder.push(Object.assign({}, order[i]));
     }
+    var idnota ="";
+    $.ajax({
+          type:"post",
+          url: "<?php echo base_url('adminstand/saveNota')?>/",
+          dataType:"text",
+          data:{ order:JSON.stringify(arrorder),list_diskon:list_diskon,harga_akhir:harga_akhir,tipe_pembayaran:tipe_pembayaran,keterangan:keterangan},
+          success:function(response)
+          { 
+            var idnota = response;
+            //BELUM SELESAI
+            // alert(response);
+            
+          },
+          complete: function (argument) {
+            done[0]=true;
+              stoploading();
+
+          }
+      }
+    );
 
     $.ajax({
-                      type:"post",
-                      url: "<?php echo base_url('adminstand/printnota')?>/",
-                      dataType:"text",
-                      data:{ idnota:response,order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
-                      complete: function (argument) {
-                        done[2]=true;
-                          stoploading();
-                          $.ajax({
-                              type:"post",
-                              url: "<?php echo base_url('adminstand/saveNota')?>/",
-                              dataType:"text",
-                              data:{ order:JSON.stringify(arrorder),list_diskon:list_diskon,harga_akhir:harga_akhir,tipe_pembayaran:tipe_pembayaran,keterangan:keterangan},
-                              success:function(response)
-                              {
-                                //BELUM SELESAI
-                                // alert(response);
-                                
-                              },
-                              complete: function (argument) {
-                                done[0]=true;
-                                  stoploading();
-
-                              }
-                          }
-                        );
-                      }
-                  }
-                );
+          type:"post",
+          url: "<?php echo base_url('adminstand/printnota')?>/",
+          dataType:"text",
+          data:{ idnota:idnota,order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
+          complete: function (argument) {
+            done[2]=true;
+              stoploading();
+              
+          }
+      }
+    );
 
     
 
@@ -1129,6 +1132,9 @@ function cetakNota() {
 function stoploading() {
     if (done[0] && done[1] && done[2]) {
         $('#loadingprint').hide();
+        $('#buttonkembali').prop("disabled", false);
+        $('#buttonkembali').addClass('btn-success');
+        $('#buttonkembali').html("Selesai");
     }
 }
 
