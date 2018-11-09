@@ -927,16 +927,8 @@ function cetakNota() {
     for (var i = order.length - 1; i >= 0; i--) {
         arrorder.push(Object.assign({}, order[i]));
     }
+
     $.ajax({
-          type:"post",
-          url: "<?php echo base_url('adminstand/saveNota')?>/",
-          dataType:"text",
-          data:{ order:JSON.stringify(arrorder),list_diskon:list_diskon,harga_akhir:harga_akhir,tipe_pembayaran:tipe_pembayaran,keterangan:keterangan},
-          success:function(response)
-          {
-            //BELUM SELESAI
-            // alert(response);
-            $.ajax({
                       type:"post",
                       url: "<?php echo base_url('adminstand/printnota')?>/",
                       dataType:"text",
@@ -944,17 +936,29 @@ function cetakNota() {
                       complete: function (argument) {
                         done[2]=true;
                           stoploading();
+                          $.ajax({
+                              type:"post",
+                              url: "<?php echo base_url('adminstand/saveNota')?>/",
+                              dataType:"text",
+                              data:{ order:JSON.stringify(arrorder),list_diskon:list_diskon,harga_akhir:harga_akhir,tipe_pembayaran:tipe_pembayaran,keterangan:keterangan},
+                              success:function(response)
+                              {
+                                //BELUM SELESAI
+                                // alert(response);
+                                
+                              },
+                              complete: function (argument) {
+                                done[0]=true;
+                                  stoploading();
+
+                              }
+                          }
+                        );
                       }
                   }
                 );
-          },
-          complete: function (argument) {
-            done[0]=true;
-              stoploading();
 
-          }
-      }
-    );
+    
 
 // <<<<<<< HEAD
     var kembalian_display = parseInt($("#kembalian").html().substring(3).replace('.',''));
