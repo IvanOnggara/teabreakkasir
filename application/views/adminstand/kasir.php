@@ -942,6 +942,7 @@ function cetakNota() {
           },
           complete: function (argument) {
             done[0]=true;
+            //ajax print nota
             $.ajax({
             	type:"post",
           		url: "<?php echo base_url('adminstand/printnota')?>/",
@@ -952,6 +953,16 @@ function cetakNota() {
               		stoploading();
           		}
       		});
+
+      		//ajax untuk sync nota
+			$.ajax({
+		          type:"post",
+		          url: "<?php echo base_url('adminstand/sinkronnota')?>/",
+		          complete: function (argument) {
+		            done[3]=true;
+		              stoploading();
+		          }
+		      });
      	   }
     });
 
@@ -970,15 +981,6 @@ function cetakNota() {
           }
       });
 // =======
-	//ajax untuk sync nota
-	$.ajax({
-          type:"post",
-          url: "<?php echo base_url('adminstand/sinkronnota')?>/",
-          complete: function (argument) {
-            done[3]=true;
-              stoploading();
-          }
-      });
     
 
     
