@@ -582,12 +582,16 @@ class AdminStand extends CI_Controller {
 		$this->sinkronnota();
 	}
 
-	public function sinkronnota()
+	public function sinkronnota($stat = 'ok')
 	{
 		$whereforsinkron = array('status_upload' => 'not_upload');
 
 		if ($this->ModelKasir->getRowCount('nota',$whereforsinkron) <1) {
-			echo "SUCCESSSAVE";
+
+			if ($stat == 'ok') {
+				echo "SUCCESSSAVE";
+			}
+			
 		}else{
 			$listnotabelumupload = $this->ModelKasir->getData($whereforsinkron,'nota');
 			$listnotarray = array();
@@ -619,7 +623,10 @@ class AdminStand extends CI_Controller {
 			$send = @file_get_contents(hosturl().'insertDataNota', false, $context);
 			// $send = @file_get_contents('http://localhost/teabreak/insertDataNota', false, $context);
 			if($send === FALSE){
-				echo 'CANTCONNECT';
+				if ($stat == 'ok') {
+					echo 'CANTCONNECT';
+				}
+				
 			}else{
 				if ($send == 'true') {
 					// var_dump($send);
@@ -629,9 +636,15 @@ class AdminStand extends CI_Controller {
 						$this->ModelKasir->update('nota',$update,$where);
 						
 					}
-					echo "SUCCESSSAVE";
+					if ($stat == 'ok') {
+						echo "SUCCESSSAVE";
+					}
+					
 				}else{
-					echo "PENYIMPANANGAGAL";
+					if ($stat == 'ok') {
+						echo "PENYIMPANANGAGAL";
+					}
+					
 				}
 			}
 		}
@@ -650,14 +663,17 @@ class AdminStand extends CI_Controller {
 		$id = $this->input->post('id_nota');
 		$password = $this->input->post('pwd');
 		$id_stan = $this->session->userdata('id_stan');
+		$ket = $this->input->post('ket');
 
 		$where = array('id_stan' => $id_stan,'password' => $password);
   		
   		if ($this->ModelKasir->getRowCount('stan',$where) > 0) {
   			$where2 = array('id_nota' => $id);
-			$data = array('status' => 'void' );
+			$data = array('status' => 'void','keterangan_void' => $ket,'status_upload'=>'not_upload');
+
 
 			$this->ModelKasir->update('nota', $data, $where2);
+			$this->sinkronnota('not ok');
   		 	echo 'true';
   		}else{
   			echo "false";
@@ -702,6 +718,28 @@ class AdminStand extends CI_Controller {
         }else{
         	$this->load->view('adminstand/header');
 			$this->load->view('adminstand/laporanstok');
+        }
+	}
+
+	public function stokperhari()
+	{
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/stokperhari');
+        }
+	}
+
+	public function historistok()
+	{
+		$akses = $this->session->userdata('aksesadminstan');
+        if(empty($akses)){
+            redirect('login');
+        }else{
+        	$this->load->view('adminstand/header');
+			$this->load->view('adminstand/historistok');
         }
 	}
 
@@ -1165,7 +1203,7 @@ class AdminStand extends CI_Controller {
 		if ($tanggal == '') {
 			$where = array('tanggal' => '');
 			$this->load->library('datatables');
-			$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_masuk,stok_keluar,stok_sisa');
+			$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_masuk,stok_keluar,stok_sisa,keterangan');
 			$this->datatables->from('stok_bahan_jadi');
 			$this->datatables->where($where);
 			
@@ -1180,12 +1218,18 @@ class AdminStand extends CI_Controller {
 			// return json_encode($alldata);
 
 			$this->load->library('datatables');
-			$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_masuk,stok_keluar,stok_sisa');
+			$this->datatables->select('id_bahan_jadi,nama_bahan_jadi,stok_masuk,stok_keluar,stok_sisa,keterangan');
 			$this->datatables->from('stok_bahan_jadi');
 			$this->datatables->where($where);
 			
 			echo $this->datatables->generate();
 		}
+	}
+
+	public function savedatastokhariini()
+	{
+		$data = $this->input->post('data');
+		var_dump($data);
 	}
 
 	public function dataPengeluaranLain()

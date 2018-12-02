@@ -52,10 +52,20 @@
                   <p style="font-weight: 600!important;font-size: 4vh;color: black;text-align: center;" id="labelid"></p>
                   <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                      <label class="col-lg-12">Password : <input type="password" id="password_stand"></label>
-                      <label id="error" style="display: none;color: red;">Password Anda Salah!</label>
+                      <label class="col-lg-12">Password : <input class="form-control" type="password" id="password_stand"></label>
+                      
                     </div>
                   </div>
+                  <div class="row">
+                    <div class="col-lg-8 offset-lg-2">
+                       <div class="form-group">
+                          <label for="comment">Keterangan:</label>
+                          <textarea class="form-control" rows="5" id="keteranganvoid"></textarea>
+                        </div> 
+                        <p id="error" style="display: none;color: red;">Password Anda Salah!</p>
+                    </div>
+                  </div>
+
               </div>
               <div class="modal-footer">
                   <button type="button" data-dismiss="modal" onclick="reset_modal_void()" class="btn btn-default">Batal</button>
@@ -171,6 +181,7 @@
     $("#password_stand").val('');
     $("#modal_void").modal('hide');
     $("#labelid").text('');
+    $("#keteranganvoid").val('');
     $("#error").css("display", "none");;
   }
 
@@ -303,10 +314,13 @@
 
   function confirm_void(){
     var pwd = $("#password_stand").val();
+    var ket = $("#keteranganvoid").val();
+
+    if (ket.replace(/\s/g, '').length>0 && pwd.replace(/\s/g, '').length>0) {
       $.ajax({
             type:"post",
             url: "<?php echo base_url('adminstand/voidNota')?>/",
-            data:{ id_nota:id_nota,pwd:pwd},
+            data:{ id_nota:id_nota,pwd:pwd,ket:ket},
             success:function(response)
             {
               console.log(response);
@@ -317,6 +331,7 @@
                 reload_table();
               }else{
                 $("#error").css("display", "block");;
+                $("#error").html("Password anda salah");
               }
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -324,7 +339,12 @@
               alert(errorThrown);
             }
         }
-    );
+      );
+    }else{
+      $("#error").css("display", "block");;
+      $("#error").html("Pastikan Seluruh Kolom Terisi");
+    }
+      
   }
 
   var tabeldata;
