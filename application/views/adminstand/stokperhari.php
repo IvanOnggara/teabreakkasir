@@ -10,16 +10,15 @@
 	<br>
 	<div class="row">
 		<div class="col-md-12 col-sm-12">
-			<input type="text" class="numeric" name="">
 			<button class="btn btn-lg btn-success" style="margin-bottom: 10px;" onclick="savealldata()">SAVE ALL</button>
 			<table id="mytable" class="table table-striped table-bordered">
 		        <thead class="thead-dark">
 		          <tr>
 		            <th style="width: 15%;">ID Bahan Jadi</th>
-		            <th style="width: 35%;">Nama Bahan Jadi</th>
-		            <th style="width: 7%;">Masuk</th>
-		            <th style="width: 7%;">Keluar</th>
-		            <th style="width: 7%;">Sisa <i id="tooltip" class="fa fa-question-circle-o" style="color: yellow" data-toggle="tooltip"  title="Lakukan Save untuk merubah sisa"></i></th>
+		            <th style="width: 29%;">Nama Bahan Jadi</th>
+		            <th style="width: 9%;">Masuk</th>
+		            <th style="width: 9%;">Keluar</th>
+		            <th style="width: 9%;">Sisa <i id="tooltip" class="fa fa-question-circle-o" style="color: yellow" data-toggle="tooltip"  title="Lakukan Save untuk merubah sisa"></i></th>
 		            <th style="width: 19%;">Keterangan</th>
 		            <!-- <th style="width: 12.5%;">Edit</th> -->
 		          </tr>
@@ -110,7 +109,6 @@
       oLanguage: {
         sProcessing: "loading..."
       },
-      responsive: true,
       ajax: {
     "type"   : "POST",
     "url"    : "<?php echo base_url('adminstand/dataSisaStok');?>",
@@ -158,6 +156,10 @@
 		    if ($(this).val().split(".").length > 2) {
 		        this.value = this.value.slice(0,-1);
 		    }
+
+        if ($(this).val()=='') {
+            this.value = 0;
+        }
 		});
     }
     });
@@ -170,16 +172,27 @@
 
     function savealldata() {
 		var data = tabeldata.$('input').serializeArray();
-        console.log(data);
-        //save disini
 
-        $.post({
+		if(confirm('Apakah anda yakin mengubah data?')){
+	      	$.post({
 	         url: 'adminstand/savedatastokhariini',
 	         data: { data:data},
+	         success:function(response){
+	         	reload_table();
+	         }
 	      });
+	    }
+        // console.log(data);
+        //save disini
+
+        
 	}
 
 	function stok_masuk_keluar(argument) {
 		return false;
+	}
+
+	function reload_table(){
+	  tabeldata.ajax.reload(null,false);
 	}
 </script>

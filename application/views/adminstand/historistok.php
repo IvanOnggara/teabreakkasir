@@ -7,12 +7,17 @@
 		</div>
 	</div>
 	<br>
+  <div class="row">
+    <div class="col-md-4 col-sm-4">
+      <div class="form-group">
+        <label for="usr">Tanggal:</label>
+        <input type="text" class="form-control" id="tanggalstok">
+      </div>
+    </div>
+  </div>
 	<div class="row">
 		<div class="col-md-12 col-sm-12">
-			<div class="form-group">
-        <label for="usr">Tanggal:</label>
-        <input type="text" class="form-control" id="tanggal">
-      </div>
+			
 			<table id="mytable" class="table table-striped table-bordered">
 		        <thead class="thead-dark">
 		          <tr>
@@ -30,33 +35,6 @@
 		
 	</div>
 </div>
-<!-- 
-<div class="modal fade" id="modal_edit" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="header modal-header">
-                <h4 class="modal-title">Edit</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="editid" class=" form-control-label">Stok Masuk</label>
-                            <input type="text" id="editsm" placeholder="Masukkan Stok Masuk" class="form-control numeric">
-                            <input type="hidden" name="id_lama" id="id_lama">
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-            <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn btn-default">Batal</button>
-                <button type="button" onclick="simpanedit()" class="btn add_field_button btn-info">Simpan</button>
-            </div>
-        </div>
-    </div>
-</div> -->
 
 
 <script src=<?php echo base_url("assets/js/jquery.min.js")?>></script>
@@ -79,19 +57,43 @@
 <script src=<?php echo base_url("assets/vendors/pdfmake-master/build/pdfmake.min.js")?>></script>
 <script src=<?php echo base_url("assets/vendors/pdfmake-master/build/vfs_fonts.js")?>></script>
 <script src=<?php echo base_url("assets/js/jquery.easy-autocomplete.js")?>></script>
+<!-- bootstrap-daterangepicker -->
+    <script src=<?php echo base_url("assets/vendors/moment/min/moment.min.js")?>></script>
+    <script src=<?php echo base_url("assets/vendors/bootstrap-daterangepicker/daterangepicker.js")?>></script>
+    <!-- bootstrap-datetimepicker -->    
+<script src=<?php echo base_url("assets/vendors/Date-Time-Picker-Bootstrap-4/build/js/bootstrap-datetimepicker.min.js")?>></script>
 </body>
 </html>
 <script type="text/javascript">
-	var d = new Date();
-	var date = d.getDate();
-	var month = d.getMonth();
-	var month1 = month+1;
-	var months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]; 
-	var year = d.getFullYear();
-	var alldate = date + " " + months[month] +" "+year;
-	$("#judul").html("STOK HARI INI ( "+alldate+" )");
 
-	
+  var d = new Date();
+  var date = d.getDate();
+  var month = d.getMonth();
+  var month1 = month+1;
+  var months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]; 
+  var year = d.getFullYear();
+  var alldate = date + " " + months[month] +" "+year;
+
+  if (date< 10) {
+    date = "0"+date;
+  }
+
+  if (month<10) {
+    month = "0"+month;
+  }
+
+  var datee = date + "/" + month1 +"/"+year;
+
+  $('#tanggalstok').datetimepicker({
+      format: 'DD/MM/YYYY',
+      useCurrent: true
+  });
+
+  $('#tanggalstok').val(datee);
+
+  $("#tanggalstok").on("dp.change", function(e) {
+      reload_table();
+  });
 
 
 		$("#tooltip").tooltip();
@@ -115,7 +117,9 @@
     "type"   : "POST",
     "url"    : "<?php echo base_url('adminstand/dataSisaStok');?>",
     "data": function(d){
-        d.tanggal = year+"-"+month1+"-"+date;
+        var datt = $('#tanggalstok').val();
+        datt = datt.split("/");
+        d.tanggal = datt[2]+"-"+datt[1]+"-"+datt[0];
     },
     "dataSrc": function (json) {
       var return_data = new Array();
@@ -123,10 +127,10 @@
         return_data.push({
           'id_bahan_jadi': json.data[i].id_bahan_jadi,
           'nama_bahan_jadi'  : json.data[i].nama_bahan_jadi,
-          'stok_masuk' : '<input name="masuk_'+json.data[i].id_bahan_jadi+'" type="text" placeholder="" class="form-control numeric" onchange="stok_masuk_keluar(\'sisa_'+json.data[i].id_bahan_jadi+'\')" value="'+json.data[i].stok_masuk+'">',
-          'stok_keluar' : '<input name="keluar_'+json.data[i].id_bahan_jadi+'" type="text" placeholder="" class="form-control numeric" value="'+json.data[i].stok_keluar+'">',
-          'stok_sisa' : '<div id="sisa_'+json.data[i].id_bahan_jadi+'">'+json.data[i].stok_sisa+'</div>',
-          'keterangan' : '<input name="keterangan_'+json.data[i].id_bahan_jadi+'" type="text" placeholder="" class="form-control" value="'+json.data[i].keterangan+'">',
+          'stok_masuk' : json.data[i].stok_masuk,
+          'stok_keluar' : json.data[i].stok_keluar,
+          'stok_sisa' : json.data[i].stok_sisa,
+          'keterangan' : json.data[i].keterangan,
         })
       }
       return return_data;
@@ -151,4 +155,8 @@
 	function stok_masuk_keluar(argument) {
 		return false;
 	}
+
+  function reload_table(){
+    tabeldata.ajax.reload(null,false);
+  }
 </script>

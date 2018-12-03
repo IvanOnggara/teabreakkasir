@@ -1229,7 +1229,64 @@ class AdminStand extends CI_Controller {
 	public function savedatastokhariini()
 	{
 		$data = $this->input->post('data');
-		var_dump($data);
+		// var_dump($data);
+
+		$datenow = date("Y-m-d");
+		$iterator = 0;
+		$masuk = 0;
+		$keluar = 0;
+		$sisa = 0;
+		$id = '';
+		$keterangan = '';
+
+
+		foreach ($data as $perdata) {
+			// var_dump($perdata['name']);
+			if ($iterator==0) {
+				$id = substr($perdata['name'], 6);
+				$masuk = $perdata['value'];
+			}else if ($iterator==1) {
+				$keluar = $perdata['value'];
+			}else if ($iterator==2) {
+				$keterangan = $perdata['value'];
+			}
+			
+			$iterator++;
+			if ($iterator == 3) {
+				$where = array('id_bahan_jadi' => $id, 'tanggal' => $datenow);
+
+				$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+				$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa - $dataBeforeUpdate[0]->stok_masuk+ $dataBeforeUpdate[0]->stok_keluar;
+
+				$dataarray = array(
+			        'stok_masuk' => $masuk,
+			        'stok_keluar' => $keluar,
+			        'stok_sisa' => $stoksisabefore+$masuk-$keluar,
+			        'keterangan' => $keterangan,
+			        'status_upload' => 'not_upload'
+		         );
+
+				// var_dump($dataarray);
+				$this->ModelKasir->update('stok_bahan_jadi', $dataarray, $where);
+				$iterator = 0;
+			}
+		}
+
+		$this->sinkronstokbahan();
+
+		// $where = array('id_bahan_jadi' => $id, 'tanggal' => $datenow);
+
+		// 	$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+		// 	$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa - $dataBeforeUpdate[0]->stok_masuk;
+		// 	$data = array(
+		//         'stok_masuk' => $stokmasuk,
+		//         'stok_sisa' => $stoksisabefore+$stokmasuk,
+		//         'status_upload' => 'not_upload'
+	 //         );
+
+		// 	$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
+		// 	$this->sinkronstokbahan();
+		// 	echo "Data telah di update!.";
 	}
 
 	public function dataPengeluaranLain()
