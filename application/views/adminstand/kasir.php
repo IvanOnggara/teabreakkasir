@@ -889,7 +889,7 @@ function convertURIToImageData(URI) {
   });
 }
 
-var done = [false,false,false];
+var done = [false,false,false,false];
 $('#loadingprint').hide();
 function cetakNota() {
     $('#loadingprint').show();
@@ -942,24 +942,29 @@ function cetakNota() {
           },
           complete: function (argument) {
             done[0]=true;
-              stoploading();
+            //ajax print nota
+            $.ajax({
+            	type:"post",
+          		url: "<?php echo base_url('adminstand/printnota')?>/",
+          		dataType:"text",
+          		data:{ idnota:idnota,order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
+          		complete: function (argument) {
+            		done[2]=true;
+              		stoploading();
+          		}
+      		});
 
-          }
-      }
-    );
-
-    $.ajax({
-          type:"post",
-          url: "<?php echo base_url('adminstand/printnota')?>/",
-          dataType:"text",
-          data:{ idnota:idnota,order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
-          complete: function (argument) {
-            done[2]=true;
-              stoploading();
-              
-          }
-      }
-    );
+      		//ajax untuk sync nota
+			$.ajax({
+		          type:"post",
+		          url: "<?php echo base_url('adminstand/sinkronnota')?>/",
+		          complete: function (argument) {
+		            done[3]=true;
+		              stoploading();
+		          }
+		      });
+     	   }
+    });
 
     
 
@@ -1130,7 +1135,7 @@ function cetakNota() {
 }
 
 function stoploading() {
-    if (done[0] && done[1] && done[2]) {
+    if (done[0] && done[1] && done[2] && done[3]) {
         $('#loadingprint').hide();
         $('#buttonkembali').prop("disabled", false);
         $('#buttonkembali').addClass('btn-success');

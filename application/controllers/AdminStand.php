@@ -579,7 +579,7 @@ class AdminStand extends CI_Controller {
 
 		//SAVE NOTA
 
-		$this->sinkronnota();
+		// $this->sinkronnota(); //sync bukan setelah save nota, tapi ajax sendiri
 	}
 
 	public function sinkronnota($stat = 'ok')
