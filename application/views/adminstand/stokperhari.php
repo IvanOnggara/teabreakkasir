@@ -121,8 +121,8 @@
         return_data.push({
           'id_bahan_jadi': json.data[i].id_bahan_jadi,
           'nama_bahan_jadi'  : json.data[i].nama_bahan_jadi,
-          'stok_masuk' : '<input name="masuk_'+json.data[i].id_bahan_jadi+'" type="text" placeholder="" class="form-control numeric" onchange="stok_masuk_keluar(\'sisa_'+json.data[i].id_bahan_jadi+'\')" value="'+json.data[i].stok_masuk+'">',
-          'stok_keluar' : '<input name="keluar_'+json.data[i].id_bahan_jadi+'" type="text" placeholder="" class="form-control numeric" value="'+json.data[i].stok_keluar+'">',
+          'stok_masuk' : '<input name="masuk_'+json.data[i].id_bahan_jadi+'" type="number" placeholder="" class="form-control numeric" onchange="stok_masuk_keluar(\'sisa_'+json.data[i].id_bahan_jadi+'\')" value="'+json.data[i].stok_masuk+'">',
+          'stok_keluar' : '<input name="keluar_'+json.data[i].id_bahan_jadi+'" type="number" placeholder="" class="form-control numeric" value="'+json.data[i].stok_keluar+'">',
           'stok_sisa' : '<div id="sisa_'+json.data[i].id_bahan_jadi+'">'+json.data[i].stok_sisa+'</div>',
           'keterangan' : '<input name="keterangan_'+json.data[i].id_bahan_jadi+'" type="text" placeholder="" class="form-control" value="'+json.data[i].keterangan+'">',
         })
@@ -179,6 +179,7 @@
 	         data: { data:data},
 	         success:function(response){
 	         	reload_table();
+            alert("Berhasil Disimpan");
 	         }
 	      });
 	    }
