@@ -25,6 +25,8 @@ class AdminStand extends CI_Controller {
 	    $this->load->helper('site_helper');
 	    $this->load->model('ModelKasir');
 	    $this->load->library('session');
+
+	    // date_default_timezone_set("Asia/Jakarta"); //perlu dipertimbangkan karena sempat komputer kasir salah timezone
   	}
 
   	public function login()
@@ -1486,7 +1488,8 @@ class AdminStand extends CI_Controller {
 		$where = array('tanggal_nota' => $datenow);
 		$num = $this->ModelKasir->getRowCountv2('nota',$where);
 
-		$no_urut = $id_nota."_".$num[0]->count;
+		// $no_urut = $id_nota."_".$num[0]->count;
+		$no_urut = $num[0]->count; //sementara dihilangkan bug id nota gak muncul
 		// var_dump($no_urut);
 		// $no_urut++;
 		// var_dump($order);

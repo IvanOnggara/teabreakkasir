@@ -940,6 +940,9 @@ function cetakNota() {
             // alert(response);
             
           },
+          error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        	alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+    	  },  
           complete: function (argument) {
             done[0]=true;
             //ajax print nota
