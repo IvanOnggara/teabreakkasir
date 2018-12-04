@@ -224,6 +224,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <a class="nav-link" href=<?php echo base_url("sisastok")?>>Sisa Stok</a>
                         <a class="nav-link" href=<?php echo base_url("stokmasuk")?>>Stok Masuk</a>
                         <a class="nav-link" href=<?php echo base_url("stokkeluar")?>>Stok Keluar</a>
+                        <a class="nav-link" href=<?php echo base_url("stokperhari")?>>Stok Hari Ini</a>
+                        <a class="nav-link" href=<?php echo base_url("historistok")?>>Histori Stok</a>
                     </div>
                 </div>
                 <div class="dropdown">
