@@ -35,6 +35,6 @@
 
       function hosturl()
       {
-        // return 'http://teabreak.bekkostudio.com/';
+        // return 'http://teabreaksurabaya.transindoinnovative.com/';
         return 'http://localhost/teabreak/';
       }

@@ -934,14 +934,41 @@ function cetakNota() {
           dataType:"text",
           data:{ order:JSON.stringify(arrorder),list_diskon:list_diskon,harga_akhir:harga_akhir,tipe_pembayaran:tipe_pembayaran,keterangan:keterangan},
           success:function(response)
-          { 
+          {
             var idnota = response;
+            if (response.includes("error")) {
+
+            	//testing untuk melihat error log
+	          	$.ajax({
+	          		type:"post",
+		          	url: "<?php echo base_url('adminstand/simpanerrorlog')?>/",
+		          	dataType:"text",
+		          	data: {errorlog:response},
+		          	success: function (argument) {
+		          	}
+	      		});
+
+
+            	//error
+	          	if(confirm('Gagal Menyimpan data penjualan. \n'+response+'\nApakah tetap ingin mencetak nota?')){
+	          		$.ajax({
+		            	type:"post",
+		          		url: "<?php echo base_url('adminstand/printnota')?>/",
+		          		dataType:"text",
+		          		data:{ idnota:idnota,order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
+		          		complete: function (argument) {
+		            		done[2]=true;
+		              		stoploading();
+		          		}
+	      			});
+	          	}else{
+	          		//jika tidak cetak nota, tetap bisa close
+	          		done[2]=true;
+		            stoploading();
+	          	}
+            }
             //BELUM SELESAI
             // alert(response);
-            
-          },
-          complete: function (argument) {
-            done[0]=true;
             //ajax print nota
             $.ajax({
             	type:"post",
@@ -953,14 +980,46 @@ function cetakNota() {
               		stoploading();
           		}
       		});
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
 
+     		//testing untuk melihat error log
+	        $.ajax({
+	         	type:"post",
+		        url: "<?php echo base_url('adminstand/simpanerrorlog')?>/",
+		        dataType:"text",
+		        data: {errorlog:errorThrown},
+		        success: function (argument) {
+		        }
+	      	});
+
+          	//error
+          	if(confirm('Gagal Menyimpan data penjualan. \n'+textStatus+'\nErrorThrown: '+errorThrown+'\nApakah tetap ingin mencetak nota?')){
+          		$.ajax({
+	            	type:"post",
+	          		url: "<?php echo base_url('adminstand/printnota')?>/",
+	          		dataType:"text",
+	          		data:{ idnota:idnota,order:JSON.stringify(arrorder),pelanggan:$('#nama_pelanggan').val(),subtotal:$("#subtotal").html().replace('Rp ',''),diskon:$("#diskon").html().replace('Rp ',''),pembayaran:$("#total_bayar").html(),kembalian:$("#kembalian").html().replace('Rp ','')},
+	          		complete: function (argument) {
+	            		done[2]=true;
+	              		stoploading();
+	          		}
+      			});
+          	}else{
+          		//jika tidak cetak nota, tetap bisa close
+          		done[2]=true;
+	            stoploading();
+          	} 
+    	  },  
+          complete: function (argument) {
+            done[0]=true;
       		//ajax untuk sync nota
 			$.ajax({
 		          type:"post",
 		          url: "<?php echo base_url('adminstand/sinkronnota')?>/",
 		          complete: function (argument) {
 		            done[3]=true;
-		              stoploading();
+		            stoploading();
 		          }
 		      });
      	   }
