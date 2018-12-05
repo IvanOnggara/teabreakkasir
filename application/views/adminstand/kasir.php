@@ -937,7 +937,7 @@ function cetakNota() {
           { 
             var idnota = response;
             //BELUM SELESAI
-            // alert(response);
+            //alert(response);
             
           },
           complete: function (argument) {
