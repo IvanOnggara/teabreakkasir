@@ -14,8 +14,8 @@ class Controllerdisplay extends CI_Controller {
 
   	public function resetDisplay()
   	{
-  		echo shell_exec("MODE COM13 96,N,8,1");
-  		$handle = @fopen("\\\\.\COM13", "w+b") or die("Unable to open file!");
+  		echo shell_exec("MODE COM4 96,N,8,1");
+  		$handle = @fopen("\\\\.\COM4", "w+b") or die("Unable to open file!");
 		// To write into
 		$text = "\fSelamat Datang!\t\t\t\t\tSilahkan Pilih Menu";
 		fwrite($handle, $text);
@@ -25,8 +25,8 @@ class Controllerdisplay extends CI_Controller {
 
   // 	public function setThanks()
   // 	{
-  // 		echo shell_exec("MODE COM13 96,N,8,1");
-  // 		$handle = @fopen("\\\\.\COM13", "w+b") or die("Unable to open file!");
+  // 		echo shell_exec("MODE COM4 96,N,8,1");
+  // 		$handle = @fopen("\\\\.\COM4", "w+b") or die("Unable to open file!");
 		// // To write into
 		// $text = "\fTerima Kasih!!";
 		// fwrite($handle, $text);
@@ -39,7 +39,7 @@ class Controllerdisplay extends CI_Controller {
   		$topping = $this->input->post('topping');
   		$nama_produk = $this->input->post('nama_produk');
   		$harga_produk = $this->input->post('harga_produk');
-  		echo shell_exec("MODE COM13 96,N,8,1");
+  		echo shell_exec("MODE COM4 96,N,8,1");
   		if(strlen($nama_produk)>=15){
   			$arr = explode(" ", $nama_produk);
   			if (sizeof($arr)<=1) {
@@ -61,7 +61,7 @@ class Controllerdisplay extends CI_Controller {
   			$nama_produk = $nama_produk."+top";
   		}
 
-  		$handle = @fopen("\\\\.\COM13", "w+b") or die("Unable to open file!");
+  		$handle = @fopen("\\\\.\COM4", "w+b") or die("Unable to open file!");
 		// To write into
 		$txtNama = $nama_produk;
 		$text = "\f";
@@ -85,8 +85,8 @@ class Controllerdisplay extends CI_Controller {
 
   	public function setKembalian()
   	{
-  		echo shell_exec("MODE COM13 96,N,8,1");
-  		$handle = @fopen("\\\\.\COM13", "w+b") or die("Unable to open file!");
+  		echo shell_exec("MODE COM4 96,N,8,1");
+  		$handle = @fopen("\\\\.\COM4", "w+b") or die("Unable to open file!");
   		$total = $this->input->post('kembalian_display');
 		// To write into
 		$text = "\fKembali :";
@@ -107,8 +107,8 @@ class Controllerdisplay extends CI_Controller {
 
   	public function setTotal()
   	{
-  		echo shell_exec("MODE COM13 96,N,8,1");
-  		$handle = @fopen("\\\\.\COM13", "w+b") or die("Unable to open file!");
+  		echo shell_exec("MODE COM4 96,N,8,1");
+  		$handle = @fopen("\\\\.\COM4", "w+b") or die("Unable to open file!");
   		$total = $this->input->post('ttl_display');
 		// To write into
 		$text = "\fTotal :";
