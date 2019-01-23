@@ -211,19 +211,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="col-md-6 col-sm-12">
             <div class="header-left" >
                 <img class="navbar-brand" align="left" src=<?php echo base_url("images/logo.png")?>>
-                <div class="dropdown">
+                <!-- <div class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">KASIR <i class="fa fa-caret-down"></i></a>
                     <div class="dropdown-menu">
                         <a class="nav-link" href=<?php echo base_url("kasir")?>>Kasir</a>
                         <a class="nav-link" href=<?php echo base_url("voidnota")?>>Void Nota</a>
                     </div>
-                </div>
+                </div> -->
                 <div class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">STOK <i class="fa fa-caret-down"></i></a>
                     <div class="dropdown-menu">
-                        <!-- <a class="nav-link" href=<?php echo base_url("sisastok")?>>Sisa Stok</a>
-                        <a class="nav-link" href=<?php echo base_url("stokmasuk")?>>Stok Masuk</a>
-                        <a class="nav-link" href=<?php echo base_url("stokkeluar")?>>Stok Keluar</a> -->
                         <a class="nav-link" href=<?php echo base_url("stokperhari")?>>Stok Hari Ini</a>
                         <a class="nav-link" href=<?php echo base_url("historistok")?>>Histori Stok</a>
                     </div>
@@ -242,13 +239,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <a class="nav-link" href=<?php echo base_url("listorder")?>>List Order</a>
                     </div>
                 </div>
-                <div class="dropdown">
+                <!-- <div class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">REKAP <i class="fa fa-caret-down"></i></a>
                     <div class="dropdown-menu">
                         <a class="nav-link" href=<?php echo base_url("rekapdata")?>>Rekap Keuangan Hari ini</a>
                         <a class="nav-link" href=<?php echo base_url("rekapproduk")?>>Rekap Penjualan Produk</a>
                     </div>
-                </div>
+                </div> -->
                 
                 
             </div>
@@ -267,11 +264,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="dropdown float-right">
                     <a class="" href="presensi"><i class="fa fa-address-card"></i> Presensi</a>
                 </div>
-                <div style="margin: auto !important;">
+                <!-- <div style="margin: auto !important;">
                     <button  onclick="sinkronnota()" class=" dropdown float-right btn btn-md btn-success">
                         <a style="color: white;"><i class="fa fa-refresh" id="sinkronnota"></i> SYNC NOTA</a>
                     </button>
-                </div>
+                </div> -->
                 
                 <div style="margin: auto !important;">
                     <button  onclick="sinkronstok()" class=" dropdown float-right btn btn-md btn-success">

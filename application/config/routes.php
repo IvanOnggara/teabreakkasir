@@ -49,17 +49,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'adminstand/kasir';
+$route['default_controller'] = 'adminstand/stokperhari';
 $route['404_override'] = '';
 
 $route['login'] = 'adminstand/login';
 // $route['gantipassword'] = 'adminstand/gantipassword';
 $route['logout'] = 'adminstand/logout';
 
-$route['kasir'] = 'adminstand/kasir';
-$route['voidnota'] = 'adminstand/viewvoidnota';
-$route['stokmasuk'] = 'adminstand/stokmasuk';
-$route['stokkeluar'] = 'adminstand/stokkeluar';
+// $route['kasir'] = 'adminstand/kasir';
+// $route['voidnota'] = 'adminstand/viewvoidnota';
+// $route['stokmasuk'] = 'adminstand/stokmasuk';
+// $route['stokkeluar'] = 'adminstand/stokkeluar';
 $route['stokperhari'] = 'adminstand/stokperhari';
 $route['historistok'] = 'adminstand/historistok';
 $route['laporanstok'] = 'adminstand/laporanstok';
