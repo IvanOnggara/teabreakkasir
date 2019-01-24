@@ -36,5 +36,5 @@
       function hosturl()
       {
         // return 'http://teabreaksurabaya.transindoinnovative.com/';
-        return 'http://localhost/teabreak/';
+        return 'http://localhost:81/teabreak/';
       }

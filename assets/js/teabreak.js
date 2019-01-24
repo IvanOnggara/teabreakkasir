@@ -57,3 +57,14 @@ function currency(x) {
 	}
 	return retVal;
 }
+
+function currency_special(x) {
+	var awal = x.split('.');
+	awal = x[0];
+	var koma = x[1];
+	var retVal=awal.toString().replace(/[^\d]/g,'');
+	while(/(\d+)(\d{3})/.test(retVal)) {
+	  retVal=retVal.replace(/(\d+)(\d{3})/,'$1'+'.'+'$2');
+	}
+	return retVal+","+koma;
+}
