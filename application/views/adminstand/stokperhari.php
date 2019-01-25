@@ -177,32 +177,28 @@
     function savealldata() {
 		var data = tabeldata.$('input').serializeArray();
 
-		if(confirm('Apakah anda yakin mengubah data?')){
-          $('#loadingprint').show();
-          $('#loadingprint').addClass("fa-spin");
-          $('#loadingprint').addClass("fa-refresh");
-          $('#loadingprint').removeClass("fa-check");
-          $('#loadingprint').html("");
-          $('#loadingprint').removeClass("fa-times");
-          $("#saveall").prop('disabled', true);
 
-	      	$.post({
-	         url: 'adminstand/savedatastokhariini',
-	         data: { data:data},
-	         success:function(response){
-	         	reload_table();
-            // alert("Berhasil Disimpan");
+      $('#loadingprint').show();
+      $('#loadingprint').addClass("fa-spin");
+      $('#loadingprint').addClass("fa-refresh");
+      $('#loadingprint').removeClass("fa-check");
+      $('#loadingprint').html("");
+      $('#loadingprint').removeClass("fa-times");
+      $("#saveall").prop('disabled', true);
+
+          $.post({
+           url: 'adminstand/savedatastokhariini',
+           data: { data:data},
+           success:function(response){
+            reload_table();
             stoploading('success');
-	         },
+           },
            error:function(xhr, status, error) {
               var err = eval("(" + xhr.responseText + ")");
               alert(err.Message);
               stoploading('error');
            }
-	      });
-	    }
-        // console.log(data);
-        //save disini
+        });
 
         
 	}

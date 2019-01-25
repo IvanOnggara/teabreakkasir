@@ -104,7 +104,7 @@
                         $('#error').addClass('green');
                         $('#error').removeClass('red');
                         $('#error').html('Success !');
-                        window.location.href = "kasir";
+                        window.location.href = "stokperhari";
                       }else{
                         $('#error').addClass('red');
                         $('#error').removeClass('green');
