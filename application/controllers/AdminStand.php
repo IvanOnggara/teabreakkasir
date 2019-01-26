@@ -20,19 +20,19 @@ class AdminStand extends CI_Controller {
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
 	public function __construct(){
-	    parent::__construct();
-	    $this->load->helper('url');
-	    $this->load->helper('site_helper');
-	    $this->load->model('ModelKasir');
-	    $this->load->library('session');
+		parent::__construct();
+		$this->load->helper('url');
+		$this->load->helper('site_helper');
+		$this->load->model('ModelKasir');
+		$this->load->library('session');
 
 	    // date_default_timezone_set("Asia/Jakarta"); //perlu dipertimbangkan karena sempat komputer kasir salah timezone
-  	}
+	}
 
-  	public function login()
-  	{
-  		
-  		$json = @file_get_contents(hosturl().'getDataStan');
+	public function login()
+	{
+
+		$json = @file_get_contents(hosturl().'getDataStan');
 		// $json = @file_get_contents('http://localhost/teabreak/getDataStan');
 		if($json === FALSE){
 			echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
@@ -45,16 +45,16 @@ class AdminStand extends CI_Controller {
 			foreach ($datas as $data) {
 				$exist = $this->ModelKasir->checkExist('stan',$data->id_stan);
 				$array = array(
-			        'id_stan' => $data->id_stan,
-			        'nama_stan' => $data->nama_stan,
-			        'alamat' => $data->alamat,
-			        'password' => $data->password
-			    );
+					'id_stan' => $data->id_stan,
+					'nama_stan' => $data->nama_stan,
+					'alamat' => $data->alamat,
+					'password' => $data->password
+					);
 
 				if ($exist) {
 					$where = array(
-				        'id_stan' => $data->id_stan
-				    );
+						'id_stan' => $data->id_stan
+						);
 					$this->ModelKasir->update('stan', $array, $where);
 				}else{
 					$this->ModelKasir->insert('stan',$array);
@@ -71,56 +71,56 @@ class AdminStand extends CI_Controller {
 
 			echo "<p class='green'>(success) data stan terupdate</p>";
 		}
-  		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            $this->load->view('adminstand/login');
-        }else{
-        	redirect('kasir');
-        }
-  	}
+		$akses = $this->session->userdata('aksesadminstan');
+		if(empty($akses)){
+			$this->load->view('adminstand/login');
+		}else{
+			redirect('stokperhari');
+		}
+	}
 
-  	public function prosesLogin()
-  	{
-  		$username = $this->input->post('username');
-  		$password = $this->input->post('password');
-  		$where = array('id_stan' => $username,'password' => $password);
-  		
-  		if ($this->ModelKasir->getRowCount('stan',$where) > 0) {
-  			$uss = $this->ModelKasir->getData($where,'stan');
-  			$this->session->set_userdata('aksesadminstan', 'granted');
-  			$this->session->set_userdata('id_stan', $username);
-  			$this->session->set_userdata('alamat_stan', $uss[0]->alamat);
-  			$this->session->set_userdata('shift', 'pagi');
-  		 	echo 'true';
-  		}else{
-  			echo "false";
-  			
-  		} 
-  	}
+	public function prosesLogin()
+	{
+		$username = $this->input->post('username');
+		$password = $this->input->post('password');
+		$where = array('id_stan' => $username,'password' => $password);
 
-  	public function logout()
-  	{
-  		$this->session->unset_userdata('aksesadminstan');
-  		$this->session->unset_userdata('id_stan');
-  		$this->session->unset_userdata('update');
-  		$this->session->unset_userdata('alamat_stan');
-  		redirect('login');
-  	}
+		if ($this->ModelKasir->getRowCount('stan',$where) > 0) {
+			$uss = $this->ModelKasir->getData($where,'stan');
+			$this->session->set_userdata('aksesadminstan', 'granted');
+			$this->session->set_userdata('id_stan', $username);
+			$this->session->set_userdata('alamat_stan', $uss[0]->alamat);
+			$this->session->set_userdata('shift', 'pagi');
+			echo 'true';
+		}else{
+			echo "false";
+
+		} 
+	}
+
+	public function logout()
+	{
+		$this->session->unset_userdata('aksesadminstan');
+		$this->session->unset_userdata('id_stan');
+		$this->session->unset_userdata('update');
+		$this->session->unset_userdata('alamat_stan');
+		redirect('login');
+	}
 
 	public function kasir()
 	{
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$updated = $this->session->userdata('update');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$updated = $this->session->userdata('update');
 
-        	if (empty($updated)) {
-        		$status = 'true';
+			if (empty($updated)) {
+				$status = 'true';
 
         		//DATA PRODUK
-        		
-        		$json = @file_get_contents(hosturl().'getDataProduk');
+
+				$json = @file_get_contents(hosturl().'getDataProduk');
         		// $json = @file_get_contents('http://localhost/teabreak/getDataProduk');
 				if($json === FALSE){
 					
@@ -134,16 +134,16 @@ class AdminStand extends CI_Controller {
 					foreach ($datas as $data) {
 						$exist = $this->ModelKasir->checkExist('produk',$data->id_produk);
 						$array = array(
-					        'id_produk' => $data->id_produk,
-					        'nama_produk' => $data->nama_produk,
-					        'kategori' => $data->kategori,
-					        'harga_jual' => $data->harga_jual
-					    );
+							'id_produk' => $data->id_produk,
+							'nama_produk' => $data->nama_produk,
+							'kategori' => $data->kategori,
+							'harga_jual' => $data->harga_jual
+							);
 
 						if ($exist) {
 							$where = array(
-						        'id_produk' => $data->id_produk
-						    );
+								'id_produk' => $data->id_produk
+								);
 							$this->ModelKasir->update('produk', $array, $where);
 						}else{
 							$this->ModelKasir->insert('produk',$array);
@@ -161,18 +161,18 @@ class AdminStand extends CI_Controller {
 
 
 				$postdata = http_build_query(
-				    array(
-				        'id_stan' => $this->session->userdata('id_stan')
-				    )
-				);
+					array(
+						'id_stan' => $this->session->userdata('id_stan')
+						)
+					);
 
 				$opts = array('http' =>
-				    array(
-				        'method'  => 'POST',
-				        'header'  => 'Content-type: application/x-www-form-urlencoded',
-				        'content' => $postdata
-				    )
-				);
+					array(
+						'method'  => 'POST',
+						'header'  => 'Content-type: application/x-www-form-urlencoded',
+						'content' => $postdata
+						)
+					);
 
 				$context  = stream_context_create($opts);
 
@@ -195,21 +195,21 @@ class AdminStand extends CI_Controller {
 						foreach ($datas as $data) {
 							$exist = $this->ModelKasir->checkExist('diskon',$data->id_diskon);
 							$array = array(
-						        'id_diskon' => $data->id_diskon,
-						        'nama_diskon' => $data->nama_diskon,
-						        'jenis_diskon' => $data->jenis_diskon,
-						        'tanggal_mulai' => $data->tanggal_mulai,
-						        'tanggal_akhir' => $data->tanggal_akhir,
-						        'jam_mulai' => $data->jam_mulai,
-						        'jam_akhir' => $data->jam_akhir,
-						        'hari' => $data->hari,
-						        'status' => $data->status,
-						    );
+								'id_diskon' => $data->id_diskon,
+								'nama_diskon' => $data->nama_diskon,
+								'jenis_diskon' => $data->jenis_diskon,
+								'tanggal_mulai' => $data->tanggal_mulai,
+								'tanggal_akhir' => $data->tanggal_akhir,
+								'jam_mulai' => $data->jam_mulai,
+								'jam_akhir' => $data->jam_akhir,
+								'hari' => $data->hari,
+								'status' => $data->status,
+								);
 
 							if ($exist) {
 								$where = array(
-							        'id_diskon' => $data->id_diskon
-							    );
+									'id_diskon' => $data->id_diskon
+									);
 								$this->ModelKasir->update('diskon', $array, $where);
 							}else{
 								$this->ModelKasir->insert('diskon',$array);
@@ -246,8 +246,8 @@ class AdminStand extends CI_Controller {
 							$exist = $this->ModelKasir->checkExistDetailBarangDiskon($where);
 							$array = array(
 								'id_diskon' => $data->id_diskon,
-						        'id_produk' => $data->id_produk
-						    );
+								'id_produk' => $data->id_produk
+								);
 
 							if (!$exist) {
 								$this->ModelKasir->insert('detail_barang_diskon',$array);
@@ -283,14 +283,14 @@ class AdminStand extends CI_Controller {
 						foreach ($datas as $data) {
 							$exist = $this->ModelKasir->checkExist('bahan_jadi',$data->id_bahan_jadi);
 							$array = array(
-						        'id_bahan_jadi' => $data->id_bahan_jadi,
-						        'nama_bahan_jadi' => $data->nama_bahan_jadi
-						    );
+								'id_bahan_jadi' => $data->id_bahan_jadi,
+								'nama_bahan_jadi' => $data->nama_bahan_jadi
+								);
 
 							if ($exist) {
 								$where = array(
-							        'id_bahan_jadi' => $data->id_bahan_jadi
-							    );
+									'id_bahan_jadi' => $data->id_bahan_jadi
+									);
 								$this->ModelKasir->update('bahan_jadi', $array, $where);
 							}else{
 								$this->ModelKasir->insert('bahan_jadi',$array);
@@ -317,9 +317,9 @@ class AdminStand extends CI_Controller {
 					echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
 				}
 
-        	}
+			}
 
-        	$datenow = date("Y-m-d");
+			$datenow = date("Y-m-d");
 			$where = array('tanggal' => $datenow);
 
 			$list_bahan_jadi = $this->ModelKasir->getAllData('bahan_jadi');
@@ -342,23 +342,120 @@ class AdminStand extends CI_Controller {
 					}
 					
 					$data = array(
-				        'id_bahan_jadi' => $perbahanjadi->id_bahan_jadi,
-				        'nama_bahan_jadi' => $perbahanjadi->nama_bahan_jadi,
-				        'stok_masuk' => 0,
-				        'stok_keluar' => 0,
-				        'stok_sisa' => $stoksisa,
-				        'tanggal' => $datenow,
-				        'status_upload' => 'not_upload'
-			         );
+						'id_bahan_jadi' => $perbahanjadi->id_bahan_jadi,
+						'nama_bahan_jadi' => $perbahanjadi->nama_bahan_jadi,
+						'stok_masuk' => 0,
+						'stok_keluar' => 0,
+						'stok_sisa' => $stoksisa,
+						'tanggal' => $datenow,
+						'status_upload' => 'not_upload'
+						);
 
 					$this->ModelKasir->insert('stok_bahan_jadi',$data);
 					$this->sinkronstokbahan();
 				}
 			}	
 
-        	$this->load->view('adminstand/header');
-            $this->load->view('adminstand/kasir');
-        }
+			$this->load->view('adminstand/header');
+			$this->load->view('adminstand/kasir');
+		}
+		
+	}
+
+	public function downloadBahanJadi()
+	{
+		$updated = $this->session->userdata('update');
+
+		if (empty($updated)) {
+			$status = 'true';
+
+			//GET DATA BAHAN JADI TERBARU
+			$json = @file_get_contents(hosturl().'getDataBahanJadi', false, $context);
+			if($json === FALSE){
+
+				$status = 'false';
+			}else{
+				$datas = json_decode($json);
+				$localdatabahanjadi = $this->ModelKasir->getSpecificColumn('bahan_jadi','id_bahan_jadi');
+				$onlinedatabahanjadi = array();
+				// var_dump($localdataproduk);
+				if (!empty($datas)) {
+					foreach ($datas as $data) {
+						$exist = $this->ModelKasir->checkExist('bahan_jadi',$data->id_bahan_jadi);
+						$array = array(
+							'id_bahan_jadi' => $data->id_bahan_jadi,
+							'nama_bahan_jadi' => $data->nama_bahan_jadi
+							);
+
+						if ($exist) {
+							$where = array(
+								'id_bahan_jadi' => $data->id_bahan_jadi
+								);
+							$this->ModelKasir->update('bahan_jadi', $array, $where);
+						}else{
+							$this->ModelKasir->insert('bahan_jadi',$array);
+						}
+						array_push($onlinedatabahanjadi,$data->id_bahan_jadi);
+					}
+
+					foreach ($localdatabahanjadi as $perbahanjadi) {
+						if (!in_array($perbahanjadi->id_bahan_jadi, $onlinedatabahanjadi)) {
+							$this->ModelKasir->delete('bahan_jadi',$perbahanjadi->id_bahan_jadi);
+						}
+					}
+				}else{
+					$this->ModelKasir->deleteAllData('bahan_jadi');
+				}
+
+
+			}
+
+			if ($status == 'true') {
+				$this->session->set_userdata('update','updated');
+				echo "<p class='green'>(success) seluruh data telah terupdate</p>";
+			}else{
+				echo "<p class='red'>(warning) tidak bisa tersambung ke server !</p>";
+			}
+
+		}
+
+		$datenow = date("Y-m-d");
+		$where = array('tanggal' => $datenow);
+
+		$list_bahan_jadi = $this->ModelKasir->getAllData('bahan_jadi');
+		$list_all_stok = $this->ModelKasir->getData($where,'stok_bahan_jadi');
+		$arrayidbahanjadistok = array();
+
+		foreach ($list_all_stok as $perstok) {
+			array_push($arrayidbahanjadistok, $perstok->id_bahan_jadi);
+		}
+
+		foreach ($list_bahan_jadi as $perbahanjadi) {
+			if (!in_array($perbahanjadi->id_bahan_jadi, $arrayidbahanjadistok)) {
+				$whereLastItem = array('id_bahan_jadi' => $perbahanjadi->id_bahan_jadi);
+				$dataLast = $this->ModelKasir->getDataWhereDesc('stok_bahan_jadi',$whereLastItem,'tanggal');
+
+				if (empty($dataLast)) {
+					$stoksisa = 0;
+				}else{
+					$stoksisa = $dataLast[0]->stok_sisa;
+				}
+
+				$data = array(
+					'id_bahan_jadi' => $perbahanjadi->id_bahan_jadi,
+					'nama_bahan_jadi' => $perbahanjadi->nama_bahan_jadi,
+					'stok_masuk' => 0,
+					'stok_keluar' => 0,
+					'stok_sisa' => $stoksisa,
+					'tanggal' => $datenow,
+					'status_upload' => 'not_upload'
+					);
+
+				$this->ModelKasir->insert('stok_bahan_jadi',$data);
+				$this->sinkronstokbahan();
+			}
+		}
+
 		
 	}
 
@@ -367,7 +464,7 @@ class AdminStand extends CI_Controller {
 		$this->sinkronDoneOrder();
 
 		$this->load->view('adminstand/header');
-        $this->load->view('adminstand/order');
+		$this->load->view('adminstand/order');
 	}
 
 	public function getAllKategori()//GET KATEGORI
@@ -400,29 +497,29 @@ class AdminStand extends CI_Controller {
 		$timenow = date("H:i:s");
 		switch ($daynow) {
 			case 0:
-				$daynow = 'minggu';
-				break;
+			$daynow = 'minggu';
+			break;
 			case 1:
-				$daynow = 'senin';
-				break;
+			$daynow = 'senin';
+			break;
 			case 2:
-				$daynow = 'selasa';
-				break;
+			$daynow = 'selasa';
+			break;
 			case 3:
-				$daynow = 'rabu';
-				break;
+			$daynow = 'rabu';
+			break;
 			case 4:
-				$daynow = 'kamis';
-				break;
+			$daynow = 'kamis';
+			break;
 			case 5:
-				$daynow = 'jumat';
-				break;
+			$daynow = 'jumat';
+			break;
 			case 6:
-				$daynow = 'sabtu';
-				break;
+			$daynow = 'sabtu';
+			break;
 			
 			default:
-				break;
+			break;
 		}
 		$daynow = "%".$daynow."%";
 
@@ -438,7 +535,7 @@ class AdminStand extends CI_Controller {
 			'hari LIKE'=>$daynow,
 			'jam_mulai<='=>$timenow,
 			'jam_akhir>='=>$timenow,
-		);
+			);
 
 		$alldiskon = $this->ModelKasir->getData($wheretanggal,'diskon');
 		// $alldiskon = $this->ModelKasir->getAllData('diskon');
@@ -509,7 +606,7 @@ class AdminStand extends CI_Controller {
 				'keterangan' => $keterangan,
 				'shift' => $this->session->userdata('shift'),
 				'status_upload' => 'not_upload'
-			);
+				);
 
 			// var_dump($dataorder);
 			$this->ModelKasir->insert('nota',$data);
@@ -532,10 +629,10 @@ class AdminStand extends CI_Controller {
 				}
 
 				// if ($perorder->diskon>0) {
-					if (!array_key_exists($perorder->id_produk, $arraydiskonprod)) {
-					    $arraydiskonprod[$perorder->id_produk] = 0;
-					}
-					$arraydiskonprod[$perorder->id_produk] = $arraydiskonprod[$perorder->id_produk] + $perorder->diskon;
+				if (!array_key_exists($perorder->id_produk, $arraydiskonprod)) {
+					$arraydiskonprod[$perorder->id_produk] = 0;
+				}
+				$arraydiskonprod[$perorder->id_produk] = $arraydiskonprod[$perorder->id_produk] + $perorder->diskon;
 				// }
 
 				foreach ($perorder->list_idtopping as $pertopping) {
@@ -551,7 +648,7 @@ class AdminStand extends CI_Controller {
 					}
 
 					if (!array_key_exists($pertopping, $arraydiskonprod)) {
-					    $arraydiskonprod[$pertopping] = 0;
+						$arraydiskonprod[$pertopping] = 0;
 					}
 					$arraydiskonprod[$pertopping] = $arraydiskonprod[$pertopping] + $perorder->diskon;
 				}
@@ -571,7 +668,7 @@ class AdminStand extends CI_Controller {
 					'kategori_produk' => $dataprod[0]->kategori,
 					'harga_produk' => $dataprod[0]->harga_jual,
 					'total_harga_produk' => intval($listjumlahproduk[$i])*intval($dataprod[0]->harga_jual)-$arraydiskonprod[$listidproduk[$i]]
-				);
+					);
 				$this->ModelKasir->insert('detail_nota',$datadetail);
 				$angkaid+=1;
 				array_push($listall, $datadetail);
@@ -611,20 +708,20 @@ class AdminStand extends CI_Controller {
 			
 
 			$postdata = http_build_query(
-			    array(
-			        'allnota' => json_encode($listnotabelumupload),
-			        'detailnota' => json_encode($listalldetailnota),
-			        'id_stan' => $this->session->userdata('id_stan')
-			    )
-			);
+				array(
+					'allnota' => json_encode($listnotabelumupload),
+					'detailnota' => json_encode($listalldetailnota),
+					'id_stan' => $this->session->userdata('id_stan')
+					)
+				);
 
 			$opts = array('http' =>
-			    array(
-			        'method'  => 'POST',
-			        'header'  => 'Content-type: application/x-www-form-urlencoded',
-			        'content' => $postdata
-			    )
-			);
+				array(
+					'method'  => 'POST',
+					'header'  => 'Content-type: application/x-www-form-urlencoded',
+					'content' => $postdata
+					)
+				);
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
@@ -674,113 +771,115 @@ class AdminStand extends CI_Controller {
 		$ket = $this->input->post('ket');
 
 		$where = array('id_stan' => $id_stan,'password' => $password);
-  		
-  		if ($this->ModelKasir->getRowCount('stan',$where) > 0) {
-  			$where2 = array('id_nota' => $id);
+
+		if ($this->ModelKasir->getRowCount('stan',$where) > 0) {
+			$where2 = array('id_nota' => $id);
 			$data = array('status' => 'void','keterangan_void' => $ket,'status_upload'=>'not_upload');
 
 
 			$this->ModelKasir->update('nota', $data, $where2);
 			$this->sinkronnota('not ok');
-  		 	echo 'true';
-  		}else{
-  			echo "false";
-  		} 
+			echo 'true';
+		}else{
+			echo "false";
+		} 
 	}
 
 	public function viewvoidnota(){
 
-        $akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
+		$akses = $this->session->userdata('aksesadminstan');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/notavoid');
-        }
+		}
 	}
 
 	public function stokmasuk(){
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/stokmasuk');
-        }
+		}
 	}
 
 	public function stokkeluar(){
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/stokkeluar');
-        }
+		}
 	}
 
 	public function laporanstok(){
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/laporanstok');
-        }
+		}
 	}
 
 	public function stokperhari()
 	{
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->downloadBahanJadi();
+
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/stokperhari');
-        }
+		}
 	}
 
 	public function historistok()
 	{
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/historistok');
-        }
+		}
 	}
 
 	public function pengeluaranlain(){
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->sinkronpengeluaran();
-        	$this->load->view('adminstand/header');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->sinkronpengeluaran();
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/pengeluaranlain');
-        }
+		}
 	}
 
 	public function orderproduk(){
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/orderproduk');
-        }
+		}
 	}
 
 	public function sisastok()
 	{
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/sisastok');
-        }
+		}
 	}
 
 	public function getNamaBahanJadi()
@@ -822,24 +921,24 @@ class AdminStand extends CI_Controller {
 			$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
 			$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa - $dataBeforeUpdate[0]->stok_masuk;
 			$data = array(
-		        'stok_masuk' => $stokmasuk,
-		        'stok_sisa' => $stoksisabefore+$stokmasuk,
-		        'status_upload' => 'not_upload'
-	         );
+				'stok_masuk' => $stokmasuk,
+				'stok_sisa' => $stoksisabefore+$stokmasuk,
+				'status_upload' => 'not_upload'
+				);
 
 			$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
 			$this->sinkronstokbahan();
 			echo "Data telah di update!.";
 		}else{
 			$data = array(
-		        'id_bahan_jadi' => $id,
-		        'nama_bahan_jadi' => $nama,
-		        'stok_masuk' => $stokmasuk,
-		        'stok_keluar' => 0,
-		        'stok_sisa' => $stoksisa+$stokmasuk,
-		        'tanggal' => $datenow,
-		        'status_upload' => 'not_upload'
-	         );
+				'id_bahan_jadi' => $id,
+				'nama_bahan_jadi' => $nama,
+				'stok_masuk' => $stokmasuk,
+				'stok_keluar' => 0,
+				'stok_sisa' => $stoksisa+$stokmasuk,
+				'tanggal' => $datenow,
+				'status_upload' => 'not_upload'
+				);
 
 			$this->ModelKasir->insert('stok_bahan_jadi',$data);
 			$this->sinkronstokbahan();
@@ -882,24 +981,24 @@ class AdminStand extends CI_Controller {
 			$dataBeforeUpdate = $this->ModelKasir->getData($where,'stok_bahan_jadi');
 			$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa + $dataBeforeUpdate[0]->stok_keluar;
 			$data = array(
-		        'stok_keluar' => $stokkeluar,
-		        'stok_sisa' => $stoksisabefore-$stokkeluar,
-		        'status_upload' => 'not_upload'
-	         );
+				'stok_keluar' => $stokkeluar,
+				'stok_sisa' => $stoksisabefore-$stokkeluar,
+				'status_upload' => 'not_upload'
+				);
 
 			$this->ModelKasir->update('stok_bahan_jadi', $data, $where);
 			$this->sinkronstokbahan();
 			echo "Data telah di update!.";
 		}else{
 			$data = array(
-		        'id_bahan_jadi' => $id,
-		        'nama_bahan_jadi' => $nama,
-		        'stok_masuk' => 0,
-		        'stok_keluar' => $stokkeluar,
-		        'stok_sisa' => $stoksisa-$stokkeluar,
-		        'tanggal' => $datenow,
-		        'status_upload' => 'not_upload'
-	         );
+				'id_bahan_jadi' => $id,
+				'nama_bahan_jadi' => $nama,
+				'stok_masuk' => 0,
+				'stok_keluar' => $stokkeluar,
+				'stok_sisa' => $stoksisa-$stokkeluar,
+				'tanggal' => $datenow,
+				'status_upload' => 'not_upload'
+				);
 
 			$this->ModelKasir->insert('stok_bahan_jadi',$data);
 			$this->sinkronstokbahan();
@@ -921,19 +1020,19 @@ class AdminStand extends CI_Controller {
 			// var_dump($liststokbelumupload);
 
 			$postdata = http_build_query(
-			    array(
-			        'allstok' => json_encode($liststokbelumupload),
-			        'id_stan' => $this->session->userdata('id_stan')
-			    )
-			);
+				array(
+					'allstok' => json_encode($liststokbelumupload),
+					'id_stan' => $this->session->userdata('id_stan')
+					)
+				);
 
 			$opts = array('http' =>
-			    array(
-			        'method'  => 'POST',
-			        'header'  => 'Content-type: application/x-www-form-urlencoded',
-			        'content' => $postdata
-			    )
-			);
+				array(
+					'method'  => 'POST',
+					'header'  => 'Content-type: application/x-www-form-urlencoded',
+					'content' => $postdata
+					)
+				);
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
@@ -1011,7 +1110,7 @@ class AdminStand extends CI_Controller {
 			$a = $this->webservice($port,$urlscan1,$parameter);
 
 			$urlscan = $getdata[0]->ip."/scanlog/all/paging";
-				
+
 		}
 
 		$server_output_scan = $this->webservice($port,$urlscan,$parameter);		
@@ -1031,7 +1130,7 @@ class AdminStand extends CI_Controller {
 						'io_mode' => $scan->IOMode,
 						'work_code' => $scan->WorkCode,
 						'status_upload' =>'not_upload'
-					);
+						);
 
 					$this->ModelKasir->insert('presensi_karyawan',$data);
 				}
@@ -1049,7 +1148,7 @@ class AdminStand extends CI_Controller {
 		$getdata = $this->ModelKasir->getDataLimit('device_finger',1);
 		$parameter = "sn=".$getdata[0]->sn."&limit=100";
 		$port = $getdata[0]->port;
-			
+
 		$url = $getdata[0]->ip."/user/all/paging";
 		$server_output = $this->webservice($port,$url,$parameter);		
 		$content_alluser = json_decode($server_output);
@@ -1072,7 +1171,7 @@ class AdminStand extends CI_Controller {
 							'pin' => $user->PIN,
 							'nama' => $user->Name,
 							'status_upload' => 'not_upload'
-						);
+							);
 
 						$this->ModelKasir->insert('karyawan_fingerspot',$data);
 					}
@@ -1087,7 +1186,7 @@ class AdminStand extends CI_Controller {
 									$data = array(
 										'nama' => $user->Name,
 										'status_upload' => 'not_upload'
-									);
+										);
 									$this->ModelKasir->update('karyawan_fingerspot', $data, $where);
 								}
 								$adauser = true;
@@ -1099,7 +1198,7 @@ class AdminStand extends CI_Controller {
 								'pin' => $user->PIN,
 								'nama' => $user->Name,
 								'status_upload' => 'not_upload'
-							);
+								);
 
 							$this->ModelKasir->insert('karyawan_fingerspot',$data);
 						}
@@ -1128,19 +1227,19 @@ class AdminStand extends CI_Controller {
 			$listpresensibelumupload = $this->ModelKasir->getData($whereforsinkron,'presensi_karyawan');
 
 			$postdata = http_build_query(
-			    array(
-			        'allpresensi' => json_encode($listpresensibelumupload),
-			        'id_stan' => $this->session->userdata('id_stan')
-			    )
-			);
+				array(
+					'allpresensi' => json_encode($listpresensibelumupload),
+					'id_stan' => $this->session->userdata('id_stan')
+					)
+				);
 
 			$opts = array('http' =>
-			    array(
-			        'method'  => 'POST',
-			        'header'  => 'Content-type: application/x-www-form-urlencoded',
-			        'content' => $postdata
-			    )
-			);
+				array(
+					'method'  => 'POST',
+					'header'  => 'Content-type: application/x-www-form-urlencoded',
+					'content' => $postdata
+					)
+				);
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
@@ -1171,19 +1270,19 @@ class AdminStand extends CI_Controller {
 			$listkaryawanbelumupload = $this->ModelKasir->getData($whereforsinkron,'karyawan_fingerspot');
 
 			$postdata = http_build_query(
-			    array(
-			        'allkaryawan' => json_encode($listkaryawanbelumupload),
-			        'id_stan' => $this->session->userdata('id_stan')
-			    )
-			);
+				array(
+					'allkaryawan' => json_encode($listkaryawanbelumupload),
+					'id_stan' => $this->session->userdata('id_stan')
+					)
+				);
 
 			$opts = array('http' =>
-			    array(
-			        'method'  => 'POST',
-			        'header'  => 'Content-type: application/x-www-form-urlencoded',
-			        'content' => $postdata
-			    )
-			);
+				array(
+					'method'  => 'POST',
+					'header'  => 'Content-type: application/x-www-form-urlencoded',
+					'content' => $postdata
+					)
+				);
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
@@ -1267,12 +1366,12 @@ class AdminStand extends CI_Controller {
 				$stoksisabefore = $dataBeforeUpdate[0]->stok_sisa - $dataBeforeUpdate[0]->stok_masuk+ $dataBeforeUpdate[0]->stok_keluar;
 
 				$dataarray = array(
-			        'stok_masuk' => $masuk,
-			        'stok_keluar' => $keluar,
-			        'stok_sisa' => $stoksisabefore+$masuk-$keluar,
-			        'keterangan' => $keterangan,
-			        'status_upload' => 'not_upload'
-		         );
+					'stok_masuk' => $masuk,
+					'stok_keluar' => $keluar,
+					'stok_sisa' => $stoksisabefore+$masuk-$keluar,
+					'keterangan' => $keterangan,
+					'status_upload' => 'not_upload'
+					);
 
 				// var_dump($dataarray);
 				$this->ModelKasir->update('stok_bahan_jadi', $dataarray, $where);
@@ -1317,11 +1416,11 @@ class AdminStand extends CI_Controller {
 		
 		$data = array(
 			'tanggal' => $datenow,
-	        'keterangan' => $keterangan,
-	        'pengeluaran' => $jumlahpengeluaran,
-	        'shift' => $this->session->userdata('shift'),
-	        'status_upload' => 'not_upload'
-         );
+			'keterangan' => $keterangan,
+			'pengeluaran' => $jumlahpengeluaran,
+			'shift' => $this->session->userdata('shift'),
+			'status_upload' => 'not_upload'
+			);
 
 		$this->ModelKasir->insert('pengeluaran_lain',$data);
 		$this->sinkronpengeluaran();
@@ -1340,10 +1439,10 @@ class AdminStand extends CI_Controller {
 
 		$data = array(
 			'keterangan' => $keteranganbaru,
-	        'pengeluaran' => $pengeluaranbaru,
-	        'shift' => $shiftbaru,
-	        'status_upload' => 'not_upload'
-         );
+			'pengeluaran' => $pengeluaranbaru,
+			'shift' => $shiftbaru,
+			'status_upload' => 'not_upload'
+			);
 
 		$realdata = $this->ModelKasir->getData($where,'pengeluaran_lain');
 
@@ -1367,19 +1466,19 @@ class AdminStand extends CI_Controller {
 		$id_pengeluaran = $this->input->post('id');
 
 		$postdata = http_build_query(
-		    array(
-		        'id_pengeluaran' => $id_pengeluaran,
-		        'id_stan' => $this->session->userdata('id_stan')
-		    )
-		);
+			array(
+				'id_pengeluaran' => $id_pengeluaran,
+				'id_stan' => $this->session->userdata('id_stan')
+				)
+			);
 
 		$opts = array('http' =>
-		    array(
-		        'method'  => 'POST',
-		        'header'  => 'Content-type: application/x-www-form-urlencoded',
-		        'content' => $postdata
-		    )
-		);
+			array(
+				'method'  => 'POST',
+				'header'  => 'Content-type: application/x-www-form-urlencoded',
+				'content' => $postdata
+				)
+			);
 
 		$context  = stream_context_create($opts);
 		//DATA NOTA
@@ -1415,12 +1514,12 @@ class AdminStand extends CI_Controller {
 	public function kasawal()
 	{
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
 			$this->load->view('adminstand/kasawal');
-        }
+		}
 
 	}
 
@@ -1437,7 +1536,7 @@ class AdminStand extends CI_Controller {
 				'kas_awal' => 0,
 				'shift' => $shift,
 				'status_upload' => 'not_upload'
-			);
+				);
 
 			$this->ModelKasir->insert('kas',$array);
 		}
@@ -1473,19 +1572,19 @@ class AdminStand extends CI_Controller {
 			// var_dump($liststokbelumupload);
 
 			$postdata = http_build_query(
-			    array(
-			        'allpengeluaran' => json_encode($listpengeluaranbelumupload),
-			        'id_stan' => $this->session->userdata('id_stan')
-			    )
-			);
+				array(
+					'allpengeluaran' => json_encode($listpengeluaranbelumupload),
+					'id_stan' => $this->session->userdata('id_stan')
+					)
+				);
 
 			$opts = array('http' =>
-			    array(
-			        'method'  => 'POST',
-			        'header'  => 'Content-type: application/x-www-form-urlencoded',
-			        'content' => $postdata
-			    )
-			);
+				array(
+					'method'  => 'POST',
+					'header'  => 'Content-type: application/x-www-form-urlencoded',
+					'content' => $postdata
+					)
+				);
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
@@ -1530,19 +1629,19 @@ class AdminStand extends CI_Controller {
 			$listkasbelumupload = $this->ModelKasir->getData($whereforsinkron,'kas');
 
 			$postdata = http_build_query(
-			    array(
-			        'allkas' => json_encode($listkasbelumupload),
-			        'id_stan' => $this->session->userdata('id_stan')
-			    )
-			);
+				array(
+					'allkas' => json_encode($listkasbelumupload),
+					'id_stan' => $this->session->userdata('id_stan')
+					)
+				);
 
 			$opts = array('http' =>
-			    array(
-			        'method'  => 'POST',
-			        'header'  => 'Content-type: application/x-www-form-urlencoded',
-			        'content' => $postdata
-			    )
-			);
+				array(
+					'method'  => 'POST',
+					'header'  => 'Content-type: application/x-www-form-urlencoded',
+					'content' => $postdata
+					)
+				);
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
@@ -1601,9 +1700,9 @@ class AdminStand extends CI_Controller {
 		// $no_urut++;
 		// var_dump($order);
 
-		  $this->load->library('ReceiptPrint');
-		  $this->receiptprint->connect('MINIPOS');
-		  $this->receiptprint->print_test_receipt($order,$pelanggan,$alamat,$subtotal,$diskon,$totalakhir,$kembalian,$no_urut);
+		$this->load->library('ReceiptPrint');
+		$this->receiptprint->connect('MINIPOS');
+		$this->receiptprint->print_test_receipt($order,$pelanggan,$alamat,$subtotal,$diskon,$totalakhir,$kembalian,$no_urut);
 		// } catch (Exception $e) {
 		//   log_message("error", "Error: Could not print. Message ".$e->getMessage());
 		//   echo "error";
@@ -1622,7 +1721,7 @@ class AdminStand extends CI_Controller {
 		//     $printer -> text("Rp 10.000\n");
 		//     $printer -> text("aaaaa\n");
 		//     $printer -> cut();
-		    
+
 		//     /* Close printer */
 		//     $printer -> close();
 		// } catch (Exception $e) {
@@ -1633,7 +1732,7 @@ class AdminStand extends CI_Controller {
 	public function presensi()
 	{
 		$this->load->view('adminstand/header');
-        $this->load->view('adminstand/presensi');
+		$this->load->view('adminstand/presensi');
 	}
 
 	public function saveOrder()
@@ -1650,7 +1749,7 @@ class AdminStand extends CI_Controller {
 			'tanggal_order' => $datenow,
 			'status' => 'not_done',
 			'status_upload' => 'not_upload'
-		);
+			);
 		$this->ModelKasir->insert('order_bahan_jadi_stan',$data);
 		$num = 0;
 
@@ -1660,7 +1759,7 @@ class AdminStand extends CI_Controller {
 				'id_order' => $idorder,
 				'nama_bahan_jadi' => $peritem->nama_bahan_jadi,
 				'jumlah' => $peritem->qty
-			);
+				);
 			$num++;
 
 			$this->ModelKasir->insert('detail_order_bahan_jadi_stan',$datadetail);
@@ -1689,20 +1788,20 @@ class AdminStand extends CI_Controller {
 			
 
 			$postdata = http_build_query(
-			    array(
-			        'allorder' => json_encode($listorderbelumupload),
-			        'detailorder' => json_encode($listalldetailorder),
-			        'id_stan' => $this->session->userdata('id_stan')
-			    )
-			);
+				array(
+					'allorder' => json_encode($listorderbelumupload),
+					'detailorder' => json_encode($listalldetailorder),
+					'id_stan' => $this->session->userdata('id_stan')
+					)
+				);
 
 			$opts = array('http' =>
-			    array(
-			        'method'  => 'POST',
-			        'header'  => 'Content-type: application/x-www-form-urlencoded',
-			        'content' => $postdata
-			    )
-			);
+				array(
+					'method'  => 'POST',
+					'header'  => 'Content-type: application/x-www-form-urlencoded',
+					'content' => $postdata
+					)
+				);
 
 			$context  = stream_context_create($opts);
 			//DATA NOTA
@@ -1739,14 +1838,14 @@ class AdminStand extends CI_Controller {
 	public function listorder()
 	{
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->sinkronDoneOrder();
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->sinkronDoneOrder();
 
 			$this->load->view('adminstand/header');
-	        $this->load->view('adminstand/listorder');
-        }
+			$this->load->view('adminstand/listorder');
+		}
 		
 	}
 
@@ -1761,13 +1860,13 @@ class AdminStand extends CI_Controller {
 	public function getSpecificOrderDetail()
 	{
 		$id_order = $this->input->post('id_order');
-	    $where = array('id_order' => $id_order);
+		$where = array('id_order' => $id_order);
 
-	    $this->load->library('datatables');
-	    $this->datatables->select('nama_bahan_jadi,jumlah');
-	    $this->datatables->from('detail_order_bahan_jadi_stan');
-	    $this->datatables->where($where);
-	    echo $this->datatables->generate();
+		$this->load->library('datatables');
+		$this->datatables->select('nama_bahan_jadi,jumlah');
+		$this->datatables->from('detail_order_bahan_jadi_stan');
+		$this->datatables->where($where);
+		echo $this->datatables->generate();
 	}
 
 	public function sinkronDoneOrder()
@@ -1782,19 +1881,19 @@ class AdminStand extends CI_Controller {
 
 
 		$postdata = http_build_query(
-		    array(
-		    	'list_id_not_done' => $arrayIdNotDone,
-		        'id_stan' => $this->session->userdata('id_stan')
-		    )
-		);
+			array(
+				'list_id_not_done' => $arrayIdNotDone,
+				'id_stan' => $this->session->userdata('id_stan')
+				)
+			);
 
 		$opts = array('http' =>
-		    array(
-		        'method'  => 'POST',
-		        'header'  => 'Content-type: application/x-www-form-urlencoded',
-		        'content' => $postdata
-		    )
-		);
+			array(
+				'method'  => 'POST',
+				'header'  => 'Content-type: application/x-www-form-urlencoded',
+				'content' => $postdata
+				)
+			);
 
 		$context  = stream_context_create($opts);
 		$send = @file_get_contents(hosturl().'getUpdateOrder', false, $context);
@@ -1820,18 +1919,18 @@ class AdminStand extends CI_Controller {
 	public function rekapdata()
 	{
 		$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
-	        $this->load->view('adminstand/rekapdata');
-        }
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
+			$this->load->view('adminstand/rekapdata');
+		}
 	}
 
 	public function getrekapdata()
 	{
 		$shift = $this->session->userdata('shift');
-	    date_default_timezone_set("Asia/Bangkok");
+		date_default_timezone_set("Asia/Bangkok");
 		$datenow = date("Y-m-d");
 		$where = array('tanggal' => $datenow, 'shift' => $shift);
 		$wherenota = array('tanggal_nota' => $datenow, 'shift' => $shift);
@@ -1885,167 +1984,167 @@ class AdminStand extends CI_Controller {
 			'ovodetail' => $ovodetail,
 			'debitdetail' => $debitdetail,
 			'totalkasir' => $totalkasir
-		);
+			);
 
 		echo json_encode($lastarraysend);
 
 	}
 
 	public function printrekap()
-  {
-  	$dataprint = json_decode($this->input->post('datarekapharian'));
-  	var_dump($dataprint);
+	{
+		$dataprint = json_decode($this->input->post('datarekapharian'));
+		var_dump($dataprint);
 
-  	$totalpemasukan = $dataprint->cashdetail+$dataprint->ovodetail+$dataprint->debitdetail;
-  	$sisauang = $totalpemasukan+$dataprint->kasawal-$dataprint->pengeluaran;
-  	$cashbersih = $dataprint->cashdetail-$dataprint->pengeluaran;
+		$totalpemasukan = $dataprint->cashdetail+$dataprint->ovodetail+$dataprint->debitdetail;
+		$sisauang = $totalpemasukan+$dataprint->kasawal-$dataprint->pengeluaran;
+		$cashbersih = $dataprint->cashdetail-$dataprint->pengeluaran;
 
   	// var_dump($dataprint->kasawal);
-      $this->load->library('ReceiptPrint');
-      $this->receiptprint->connect('MINIPOS');
-      $this->receiptprint->printrekap($dataprint->kasawal,$totalpemasukan,$dataprint->cashdetail ,$dataprint->debitdetail,$dataprint->ovodetail,$dataprint->pengeluaran,$sisauang,$dataprint->totalkasir,$cashbersih);
-  }
+		$this->load->library('ReceiptPrint');
+		$this->receiptprint->connect('MINIPOS');
+		$this->receiptprint->printrekap($dataprint->kasawal,$totalpemasukan,$dataprint->cashdetail ,$dataprint->debitdetail,$dataprint->ovodetail,$dataprint->pengeluaran,$sisauang,$dataprint->totalkasir,$cashbersih);
+	}
 
-  public function setshift()
-  {
-  	$shift = $this->input->post('shift');
-  	$this->session->set_userdata('shift', $shift);
-  	echo "SUCCESS";
+	public function setshift()
+	{
+		$shift = $this->input->post('shift');
+		$this->session->set_userdata('shift', $shift);
+		echo "SUCCESS";
 
-  }
+	}
 
-  public function detailNotaData()
-  {
-  	$id_nota = $this->input->post('id_nota');
-	$array = array('id_nota' => $id_nota);
-	$data = $this->ModelKasir->getData($array,'detail_nota');
-	echo json_encode($data);
-  }
+	public function detailNotaData()
+	{
+		$id_nota = $this->input->post('id_nota');
+		$array = array('id_nota' => $id_nota);
+		$data = $this->ModelKasir->getData($array,'detail_nota');
+		echo json_encode($data);
+	}
 
-  public function rekapproduk()
-  {
-  	$akses = $this->session->userdata('aksesadminstan');
-        if(empty($akses)){
-            redirect('login');
-        }else{
-        	$this->load->view('adminstand/header');
-	        $this->load->view('adminstand/rekapproduk');
-        }
-  }
+	public function rekapproduk()
+	{
+		$akses = $this->session->userdata('aksesadminstan');
+		if(empty($akses)){
+			redirect('login');
+		}else{
+			$this->load->view('adminstand/header');
+			$this->load->view('adminstand/rekapproduk');
+		}
+	}
 
-  public function getcupsold()
-  {
-  	$tanggal = $this->input->post('tanggal');
-  	$shift = $this->input->post('shift');
+	public function getcupsold()
+	{
+		$tanggal = $this->input->post('tanggal');
+		$shift = $this->input->post('shift');
 
-  	if ($tanggal != '') {
-  		$parttanggal = explode('/', $tanggal);
+		if ($tanggal != '') {
+			$parttanggal = explode('/', $tanggal);
 
-		$tanggal = $parttanggal[2].'/'.$parttanggal[1].'/'.$parttanggal[0];
-		$tanggal = strtotime($tanggal);
-		$tanggal = date('Y-m-d',$tanggal);
-  	}
+			$tanggal = $parttanggal[2].'/'.$parttanggal[1].'/'.$parttanggal[0];
+			$tanggal = strtotime($tanggal);
+			$tanggal = date('Y-m-d',$tanggal);
+		}
 
-  	if ($shift == 'all') {
-  		$where = array('tanggal_nota' => $tanggal);
-  	}else{
-  		$where = array('tanggal_nota' => $tanggal,'shift' => $shift);
-  	}
+		if ($shift == 'all') {
+			$where = array('tanggal_nota' => $tanggal);
+		}else{
+			$where = array('tanggal_nota' => $tanggal,'shift' => $shift);
+		}
 
-  	
-  	$listnotatoday = $this->ModelKasir->getData($where,'nota');
-  	$cups = 0;
 
-  	if (!empty($listnotatoday)) {
-  		foreach ($listnotatoday as $pernota) {
-  			$wheredetail = array(
-	  			'kategori_produk !=' => 'Others',
-	  			'kategori_produk !=' => 'topping',
-	  			'id_nota' => $pernota->id_nota
-	  		);
+		$listnotatoday = $this->ModelKasir->getData($where,'nota');
+		$cups = 0;
 
-	  		$alldetailnota = $this->ModelKasir->getData($wheredetail,'detail_nota');
+		if (!empty($listnotatoday)) {
+			foreach ($listnotatoday as $pernota) {
+				$wheredetail = array(
+					'kategori_produk !=' => 'Others',
+					'kategori_produk !=' => 'topping',
+					'id_nota' => $pernota->id_nota
+					);
 
-	  		foreach ($alldetailnota as $perdetail) {
-	  			$cups += $perdetail->jumlah_produk;
-	  		}
-  		}
-  		
-  		echo $cups;
-  	}else{
-  		echo $cups;
-  	}
-  }
+				$alldetailnota = $this->ModelKasir->getData($wheredetail,'detail_nota');
 
-  public function datapenjualan()
-  {
-  	$tanggal = $this->input->post('tanggal');
-  	$shift = $this->input->post('shift');
+				foreach ($alldetailnota as $perdetail) {
+					$cups += $perdetail->jumlah_produk;
+				}
+			}
 
-  	if ($tanggal != '') {
-  		$parttanggal = explode('/', $tanggal);
+			echo $cups;
+		}else{
+			echo $cups;
+		}
+	}
 
-		$tanggal = $parttanggal[2].'/'.$parttanggal[1].'/'.$parttanggal[0];
-		$tanggal = strtotime($tanggal);
-		$tanggal = date('Y-m-d',$tanggal);
-  	}
+	public function datapenjualan()
+	{
+		$tanggal = $this->input->post('tanggal');
+		$shift = $this->input->post('shift');
 
-  	if ($shift == 'all') {
-  		$where = array('tanggal_nota' => $tanggal);
-  	}else{
-  		$where = array('tanggal_nota' => $tanggal,'shift' => $shift);
-  	}
-  	
-  	$listnotatoday = $this->ModelKasir->getData($where,'nota');
-  	$arrayproduk = array();
+		if ($tanggal != '') {
+			$parttanggal = explode('/', $tanggal);
 
-  	if (!empty($listnotatoday)) {
-  		foreach ($listnotatoday as $pernota) {
-  			$wheredetail = array(
-	  			'id_nota' => $pernota->id_nota
-	  		);
+			$tanggal = $parttanggal[2].'/'.$parttanggal[1].'/'.$parttanggal[0];
+			$tanggal = strtotime($tanggal);
+			$tanggal = date('Y-m-d',$tanggal);
+		}
 
-	  		$alldetailnota = $this->ModelKasir->getData($wheredetail,'detail_nota');
+		if ($shift == 'all') {
+			$where = array('tanggal_nota' => $tanggal);
+		}else{
+			$where = array('tanggal_nota' => $tanggal,'shift' => $shift);
+		}
 
-	  		foreach ($alldetailnota as $perdetail) {
-	  			$new = true;
-	  			$numnow = 0;
-	  			$rowarrayproduk = 0;
-	  			foreach ($arrayproduk as $perdataarray) {
-	  				if ($perdataarray['nama_produk'] == $perdetail->nama_produk) {
-	  					$new = false;
-	  					$rowarrayproduk = $numnow;
-	  				}
-	  				$numnow++;
-	  			}
+		$listnotatoday = $this->ModelKasir->getData($where,'nota');
+		$arrayproduk = array();
 
-	  			if ($new) {
-	  				$datadetail = array(
-		  				'nama_produk' => $perdetail->nama_produk,
-		  				'kategori' => $perdetail->kategori_produk,
-		  				'jumlah' => $perdetail->jumlah_produk
-		  			);
-	  				array_push($arrayproduk,$datadetail);
-	  			}else{
-	  				$arrayproduk[$rowarrayproduk]['jumlah']= $arrayproduk[$rowarrayproduk]['jumlah']+$perdetail->jumlah_produk;
-	  			}
-	  		}
-  		}
-  	}
+		if (!empty($listnotatoday)) {
+			foreach ($listnotatoday as $pernota) {
+				$wheredetail = array(
+					'id_nota' => $pernota->id_nota
+					);
 
-  	echo json_encode($arrayproduk);
-  }
+				$alldetailnota = $this->ModelKasir->getData($wheredetail,'detail_nota');
+
+				foreach ($alldetailnota as $perdetail) {
+					$new = true;
+					$numnow = 0;
+					$rowarrayproduk = 0;
+					foreach ($arrayproduk as $perdataarray) {
+						if ($perdataarray['nama_produk'] == $perdetail->nama_produk) {
+							$new = false;
+							$rowarrayproduk = $numnow;
+						}
+						$numnow++;
+					}
+
+					if ($new) {
+						$datadetail = array(
+							'nama_produk' => $perdetail->nama_produk,
+							'kategori' => $perdetail->kategori_produk,
+							'jumlah' => $perdetail->jumlah_produk
+							);
+						array_push($arrayproduk,$datadetail);
+					}else{
+						$arrayproduk[$rowarrayproduk]['jumlah']= $arrayproduk[$rowarrayproduk]['jumlah']+$perdetail->jumlah_produk;
+					}
+				}
+			}
+		}
+
+		echo json_encode($arrayproduk);
+	}
 
 
 
 
 
   //sementara hanya untuk melihat error yang muncul di stan
-  public function simpanerrorlog(){
-  	$errorlog = $this->input->post('errorlog');
-  	$myfile = fopen("errorlogpenjualan.txt", "a") or die("Unable to open file!");
-	$txt = "Error:".$errorlog."\n\n";
-	fwrite($myfile, $txt);
-	fclose($myfile);
-  }
+	public function simpanerrorlog(){
+		$errorlog = $this->input->post('errorlog');
+		$myfile = fopen("errorlogpenjualan.txt", "a") or die("Unable to open file!");
+		$txt = "Error:".$errorlog."\n\n";
+		fwrite($myfile, $txt);
+		fclose($myfile);
+	}
 }
