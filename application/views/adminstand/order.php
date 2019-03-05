@@ -105,7 +105,7 @@
 
     if (count!=-1) {
         listOrder[count].qty++;
-        $("#qty"+listOrder[count].id_order).html("&nbsp"+listOrder[count].qty+"&nbsp");
+        $("#qty"+listOrder[count].id_order).val(listOrder[count].qty);
     }else{
         var row = table.insertRow(1);
         row.id = count_id_order;
@@ -120,7 +120,7 @@
         // item.tgl_order = tgl_order;
         listOrder.push(item);
         cell1.innerHTML = '<p id="namabjadi'+count_id_order+'">'+nama_bahan_jadi+'</p>';
-        cell2.innerHTML = '<button class="btn center btn-default btnmin btnqty" style="font-size: 15px;font-weight: bold;" onclick="minus(\''+count_id_order+'\',this)">-</button><p id="qty'+count_id_order+'" class="qtyitem btnqty" style="font-size: 15px;font-weight: bold;">&nbsp1&nbsp</p><button class="btn center btn-default btnplus btnqty" style="font-size: 15px;font-weight: bold;" onclick="plus(\''+count_id_order+'\',this)">+</button>';
+        cell2.innerHTML = '<button class="btn center btn-default btnmin btnqty" style="font-size: 15px;font-weight: bold;" onclick="minus(\''+count_id_order+'\',this)">-</button><input type="text" onkeyup="changeqty(\''+count_id_order+'\',this)"  value="1" id="qty'+count_id_order+'" class="qtyitem btnqty" style="font-size: 15px;font-weight: bold;width:30%"><button class="btn center btn-default btnplus btnqty" style="font-size: 15px;font-weight: bold;" onclick="plus(\''+count_id_order+'\',this)">+</button>';
         // cell3.innerHTML = '<p id="tgl_order'+count_id_order+'">'+tgl_order+'</p>';
         cell3.innerHTML = '<div class="row"><button class="col-lg-4 offset-lg-8 btn btn-danger btnremove" onclick="removeBtn(this);">X</button>';
 
@@ -131,16 +131,30 @@
 
   function plus(id,rowid){
     checkBtnOrder();
-    var value = $("#qty"+id).text();
+    var value = $("#qty"+id).val();
     value = parseInt(value)+1;
     satuan = parseInt($("#satuan"+id).text().substring(3).replace('.',''));
-    $("#qty"+id).html("&nbsp"+value+"&nbsp");
+    $("#qty"+id).val(value);
     row = rowid.parentNode.parentNode.id;
     for (var i = 0; i < listOrder.length; i++) {
         if (listOrder[i].id_order==row) {
             listOrder[i].qty = value;
         }
     }
+}
+
+function changeqty(id,rowid) {
+  checkBtnOrder();
+  var value = $("#qty"+id).val();
+  value = parseInt(value);
+
+  row = rowid.parentNode.parentNode.id;
+  for (var i = 0; i < listOrder.length; i++) {
+      if (listOrder[i].id_order==row) {
+          listOrder[i].qty = value;
+      }
+  }
+
 }
 
 //MENGHILANGKAN ITEM DARI LIST ORDER
@@ -161,7 +175,7 @@ function removeBtn(rowid){
 //MENGURANGI JUMLAH PADA ORDER, JIKA <1 MAKA DIHILANGKAN DARI LIST
 
 function minus(id,rowid){
-    var value = $("#qty"+id).text();
+    var value = $("#qty"+id).val();
     row = rowid.parentNode.parentNode.id;
     var table = document.getElementById("billtable");
     if (parseInt(value)>1) {
@@ -171,8 +185,9 @@ function minus(id,rowid){
                 listOrder[i].qty = value;
             }
         }
-        $("#qty"+id).html("&nbsp"+value+"&nbsp");
+        $("#qty"+id).val(value);
     }else{
+      alert('asd0');
         for (var i = 0; i < listOrder.length; i++) {
             if (listOrder[i].id_order==row) {
                 listOrder.splice(i, 1);
